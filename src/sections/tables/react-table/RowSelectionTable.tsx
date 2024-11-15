@@ -44,7 +44,7 @@ function ReactTable({ data, columns }: { data: TableDataProps[]; columns: Column
     debugTable: true
   });
 
-  useEffect(() => setRowSelection({ 5: true }), []);
+  //useEffect(() => setRowSelection({ 5: true }), []);
 
   let headers: LabelKeyObject[] = [];
   columns.map(

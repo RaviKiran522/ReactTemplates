@@ -35,6 +35,18 @@ export default function UsersList() {
     console.log('row.........',row)
   };
 
+  const handleBlock = (row: any) => {
+    console.log('row.........',row)
+  };
+
+  const handleLeave = (row: any) => {
+    console.log('row.........',row)
+  };
+  
+  const buttonHandler = (action: string, users: any) => {
+    console.log("action: ", action, "users: ", users)
+  }
+
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -45,14 +57,15 @@ export default function UsersList() {
     const handleClose = () => {
       setAnchorEl(null);
     };
-
     return (
       <>
         <IconButton onClick={handleClick}>...</IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleView(row); handleClose(); }}>View</MenuItem>
+          <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
           <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
           <MenuItem onClick={() => { handleDelete(row); handleClose(); }}>Delete</MenuItem>
+          <MenuItem onClick={() => { handleBlock(row); handleClose(); }}>Block</MenuItem>
+          <MenuItem onClick={() => { handleLeave(row); handleClose(); }}>Leave</MenuItem>
         </Menu>
       </>
     );
@@ -88,12 +101,17 @@ export default function UsersList() {
 
   return (
     <ReactTable
+      title={"Users"}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}
       includeSearch={true}
       needCSV={true}
       pagination={'top'}
+      columnVisibility={true}
+      needCheckBoxes={true}
+      needActivateAndSuspendButtons={true}
+      buttonHandler={buttonHandler}
     />
   );
-}
+} 

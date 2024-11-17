@@ -10,6 +10,7 @@ import { SimpleLayoutType } from 'config';
 import SimpleLayout from 'layout/Simple';
 import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard/index';
+import Login from 'pages/auth/auth1/login';
 
 // render - landing page
 const PagesLanding = Loadable(lazy(() => import('pages/landing')));
@@ -24,7 +25,7 @@ const router = createBrowserRouter(
       children: [
         {
           index: true,
-          element: <DashboardLayout />
+          element: <Login />
         }
       ]
     },

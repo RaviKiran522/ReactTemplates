@@ -16,7 +16,7 @@ import { MenuFromAPI } from 'menu-items/dashboard';
 import useConfig from 'hooks/useConfig';
 import { MenuOrientation, HORIZONTAL_MAX_ITEM } from 'config';
 import { useGetMenu, useGetMenuMaster } from 'api/menu';
-
+import { loadingMenu } from 'Common/SideNavBarItems';
 // types
 import { NavItemType } from 'types/menu';
 
@@ -46,7 +46,7 @@ export default function Navigation() {
   const [selectedLevel, setSelectedLevel] = useState<number>(0);
   const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [] });
 
-  let dashboardMenu = MenuFromAPI();
+  let dashboardMenu: any = MenuFromAPI();
   useLayoutEffect(() => {
     if (menuLoading && !isFound(menuItem, 'group-dashboard-loading')) {
       menuItem.items.splice(0, 0, dashboardMenu);
@@ -80,7 +80,7 @@ export default function Navigation() {
     }));
   }
 
-  const navGroups = menuItems.items.slice(0, lastItemIndex + 1).map((item) => {
+  const navGroups = loadingMenu?.map((item: any) => {
     switch (item.type) {
       case 'group':
         if (item.url && item.id !== lastItemId) {

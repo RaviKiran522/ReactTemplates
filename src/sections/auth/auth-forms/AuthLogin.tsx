@@ -1,7 +1,7 @@
 import { useState, SyntheticEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { preload } from 'swr';
-
+import { useNavigate } from 'react-router-dom';
 // material-ui
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -33,7 +33,7 @@ import { Eye, EyeSlash } from 'iconsax-react';
 
 export default function AuthLogin({ forgot }: { forgot?: string }) {
   const [checked, setChecked] = useState(false);
-
+  const navigation = useNavigate();
   const { isLoggedIn, login } = useAuth();
   const scriptedRef = useScriptRef();
 
@@ -64,7 +64,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
-              preload('react/dashboard', fetcher); // load menu on login success
+              navigation('/dashboard'); // load menu on login success
             }
           } catch (err: any) {
             console.error(err);

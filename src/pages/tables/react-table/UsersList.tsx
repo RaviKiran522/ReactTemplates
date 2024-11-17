@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import ReactTable from "components/ReactTable";  // Ensure this is the correct import for ReactTable
+import ReactTable from "ReusableComponents/ReactTable";  // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
 import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';

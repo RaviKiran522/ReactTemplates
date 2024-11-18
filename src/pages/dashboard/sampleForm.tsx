@@ -3,7 +3,8 @@ import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Button, Grid, Container } from '@mui/material';
 import _ from 'lodash';
-// import CommonDatePicker from 'pages/common-components/common-date';
+import CommonDatePicker from 'pages/common-components/common-date';
+import moment from "moment"
 
 const SampleForm: React.FC = () => {
   // Define the structure of form data for type safety
@@ -136,11 +137,12 @@ const SampleForm: React.FC = () => {
     newFormData[name].helperText = '';
     setFormData(newFormData);
   };
-  const handleDateChange = (name: string, value: Date | string) => {
+ 
+  const handleDateChange = (name: string, value: Date | null) => {  // Change to Date | null
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
     newFormData[name].error = false;
-    // newFormData[name].helperText = '';
+    newFormData[name].helperText = '';
     setFormData(newFormData);
   };
 
@@ -150,7 +152,8 @@ const SampleForm: React.FC = () => {
       name : formData.name.value,
       email : formData.email.value,
       address : formData.address.value,
-      selectName : formData.selectName.value
+      selectName : formData.selectName.value,
+      date : moment(formData.date.value).format('YYYY/MM/DD')
 
     }
     console.log('sampleObject.........',sampleObject)
@@ -176,9 +179,9 @@ const SampleForm: React.FC = () => {
           <Grid item xs={6}>
             <CommonSelectField inputProps={formData.address} onSelectChange={handleSelectChange} />
           </Grid>
-          {/* <Grid item xs={6}>
+          <Grid item xs={6}>
             <CommonDatePicker inputProps={formData.date} onDateChange={handleDateChange} />
-          </Grid> */}
+          </Grid>
 
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">

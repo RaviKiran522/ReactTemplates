@@ -13,6 +13,7 @@ import { loader as productsLoader, productLoader } from 'api/products';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
+const SampleForm = Loadable(lazy(()=> import('pages/dashboard/sampleForm')));
 
 // render - widget
 const WidgetStatistics = Loadable(lazy(() => import('pages/widget/statistics')));
@@ -161,6 +162,10 @@ const MainRoutes = {
             {
               path: 'createUser',
               element: <UsersList />
+            },
+            {
+              path: 'createUser',
+              element: <SampleForm />
             }
           ]
         },

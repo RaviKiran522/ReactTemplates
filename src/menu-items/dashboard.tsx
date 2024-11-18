@@ -51,7 +51,7 @@ const loadingMenu: NavItemType = {
           breadcrumbs: false
         },
         {
-          id: 'blockedStaff',
+          id: 'createUser',
           title: 'loading',
           type: 'item',
           url: '/dashboard/createUser',

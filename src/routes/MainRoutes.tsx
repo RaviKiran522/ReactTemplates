@@ -159,10 +159,10 @@ const MainRoutes = {
               path: 'suspendedStaff',
               element: <UsersList />
             },
-            {
-              path: 'createUser',
-              element: <UsersList />
-            },
+            // {
+            //   path: 'createUser',
+            //   element: <UsersList />
+            // },
             {
               path: 'createUser',
               element: <SampleForm />

@@ -49,6 +49,13 @@ export const loadingMenu = [
             ]
           },
           {
+            id: 'createUser',
+            title: 'Create User',
+            type: 'item',
+            url: '/dashboard/createUser',
+            breadcrumbs: false
+          },
+          {
             id: 'franchise',
             title: "Franchise",
             type: 'collapse',

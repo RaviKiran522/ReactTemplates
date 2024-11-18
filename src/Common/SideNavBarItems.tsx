@@ -11,7 +11,7 @@ export const loadingMenu = [
           id: 'dashboard',
           title: 'Dashboard',
           type: 'item',
-          url: '/others',
+          url: '/dashboard',
           breadcrumbs: false
         },
         {
@@ -108,11 +108,68 @@ export const loadingMenu = [
           },]
         },
         {
-          id: 'customerManagemetn',
+          id: 'customerManagement',
           title: 'Customer Management',
-          type: 'item',
-          url: '/customerManagemetn',
-          breadcrumbs: false
+          type: 'collapse',
+          breadcrumbs: false,
+          children: [
+            {
+              id: 'listCustomers',
+              title: 'List Customers',
+              type: 'item',
+              url: '/customerManagement/listCustomers',
+              breadcrumbs: false
+            },
+            {
+              id: 'freeCustomers',
+              title: 'Free Customers',
+              type: 'item',
+              url: '/customerManagement/freeCustomers',
+              breadcrumbs: false
+            },
+            {
+              id: 'paidCustomers',
+              title: 'Paid Customers',
+              type: 'item',
+              url: '/customerManagement/paidCustomers',
+              breadcrumbs: false
+            },
+            {
+              id: 'blockedCustomers',
+              title: 'Blocked Customers',
+              type: 'item',
+              url: '/customerManagement/blockedCustomers',
+              breadcrumbs: false
+            },
+            {
+              id: 'convertedCustomers',
+              title: 'Converted Customers',
+              type: 'item',
+              url: '/customerManagement/convertedCustomers',
+              breadcrumbs: false
+            },
+            {
+              id: 'planExpiredCutomers',
+              title: 'Plan Expired Customers',
+              type: 'item',
+              url: '/customerManagement/planExpiredCustomers',
+              breadcrumbs: false
+            },
+            {
+              id: 'blockedRequests',
+              title: 'Blocked Requests',
+              type: 'item',
+              url: '/customerManagement/blockedRequests',
+              breadcrumbs: false
+            },
+            {
+              id: 'createCustomer',
+              title: 'Create Customer',
+              type: 'item',
+              url: '/customerManagement/createCustomer',
+              breadcrumbs: false
+            }
+          ]
         }, 
         {
           id: 'staffCalling',
@@ -145,9 +202,24 @@ export const loadingMenu = [
         {
           id: 'addNewDetails',
           title: 'Add New Details',
-          type: 'item',
-          url: '/addNewDetails',
-          breadcrumbs: false
+          type: 'collapse',
+          breadcrumbs: false,
+          children: [
+            {
+              id: 'country',
+              title: 'Country',
+              type: 'item',
+              url: '/addNewDetails/country',
+              breadcrumbs: false
+            },
+            {
+              id: 'state',
+              title: 'State',
+              type: 'item',
+              url: '/addNewDetails/state',
+              breadcrumbs: false
+            }
+          ]
         },
         {
           id: 'siteSetup',

@@ -7,6 +7,7 @@ import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 
 // The UsersList component now passes actions to the ReactTable component
 export default function UsersList() {
+  const [open, setOpen] = useState({ flag: false, action: '' });
   const data: any = [
     { empId: "4321", name: "vamsi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "1234", name: "ravi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Complicated" },
@@ -25,26 +26,46 @@ export default function UsersList() {
 
   const handleEdit = (row: any) => {
     console.log('row.........',row)
+    const newUrl = '/react/userManagement/editUser';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
 
   const handleDelete = (row: any) => {
-    console.log('row.........',row)
+    console.log('delete row.........',row)
   };
 
   const handleView = (row: any) => {
     console.log('row.........',row)
+    const newUrl = '/react/userManagement/viewUser';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
 
   const handleBlock = (row: any) => {
-    console.log('row.........',row)
+    console.log('block row.........',row)
   };
 
   const handleLeave = (row: any) => {
-    console.log('row.........',row)
+    console.log('leave row.........',row)
   };
   
   const buttonHandler = (action: string, users: any) => {
-    console.log("action: ", action, "users: ", users)
+    if(action === "delete") {
+      handleDelete(users)
+    }
+    else if(action === "block") {
+      handleBlock(users)
+    }
+    else if(action === "leave") {
+      handleLeave(users)
+    }
+    else if(action ==="suspend") {
+      console.log("action: ", action, "users: ", users)
+    }
+    else if(action ==="activate") {
+      console.log("action: ", action, "users: ", users)
+    }
   }
 
   const ActionMenu = ({ row }: { row: any }) => {
@@ -63,9 +84,9 @@ export default function UsersList() {
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
           <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          <MenuItem onClick={() => { handleDelete(row); handleClose(); }}>Delete</MenuItem>
-          <MenuItem onClick={() => { handleBlock(row); handleClose(); }}>Block</MenuItem>
-          <MenuItem onClick={() => { handleLeave(row); handleClose(); }}>Leave</MenuItem>
+          <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
+          <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
+          <MenuItem onClick={() => { setOpen({ flag: true, action: 'leave' }); handleClose(); }}>Leave</MenuItem>
         </Menu>
       </>
     );
@@ -112,6 +133,8 @@ export default function UsersList() {
       needCheckBoxes={true}
       needActivateAndSuspendButtons={true}
       buttonHandler={buttonHandler}
+      open = {open}
+      setOpen = {setOpen}
     />
   );
 } 

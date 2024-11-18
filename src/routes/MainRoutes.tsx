@@ -9,6 +9,8 @@ import SimpleLayout from 'layout/Simple';
 
 import { SimpleLayoutType } from 'config';
 import { loader as productsLoader, productLoader } from 'api/products';
+import EditUser from 'pages/Users/EditUser';
+import ViewUser from 'pages/Users/ViewUser';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -166,7 +168,29 @@ const MainRoutes = {
             {
               path: 'createUser',
               element: <SampleForm />
+            },
+          ]
+        },
+        {
+          path: 'branches',
+          children: [
+            {
+              path: 'listBranch',
+              element: <UsersList />
             }
+          ]
+        },
+        {
+          path: 'userManagement',
+          children: [
+            {
+              path: 'editUser',
+              element: <EditUser />
+            },
+            {
+              path: 'viewUser',
+              element: <ViewUser />
+            },
           ]
         },
         {

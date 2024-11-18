@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import Grid from '@mui/material/Grid';
 import AnimateButton from 'components/@extended/AnimateButton';
 import Button from '@mui/material/Button';
@@ -98,10 +99,13 @@ export default function ReactTable({
   columnVisibility,
   needCheckBoxes,
   needActivateAndSuspendButtons,
-  buttonHandler
+  buttonHandler,
+  open,
+  setOpen
 }: any) {
   const [globalFilter, setGlobalFilter] = useState('');
-  const [open, setOpen] = useState({ flag: false, action: '' });
+  //const [open, setOpen] = useState({ flag: false, action: '' });
+  const [rowdata, setRowdata] = useState<any>({});
   const [columnFilters, setColumnFilters] = useState<any>([]);
   const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [sorting, setSorting] = useState<SortingState>([{ id: 'age', desc: false }]);
@@ -284,7 +288,7 @@ export default function ReactTable({
                       </TableCell>
                     ))}
                     {/* Render Actions for Each Row */}
-                    {actions && <TableCell>{actions(row.original)}</TableCell>}
+                    {actions && <TableCell onClick={()=>setRowdata(row)}>{actions(row.original)}</TableCell>}
                   </TableRow>
                 ))}
               </TableBody>
@@ -349,11 +353,22 @@ export default function ReactTable({
               <Stack direction="row" justifyContent="space-around" spacing={3}>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button
-                  onClick={() =>
-                    buttonHandler(
-                      open.action,
-                      table.getSelectedRowModel().flatRows.map((row) => row.original)
-                    )
+                  onClick={() => {
+                    if(open.action === "delete" || open.action === "block" || open.action === "leave") {
+                      console.log("rowdata: ", rowdata.original);
+                      buttonHandler(
+                        open.action,
+                        rowdata.original
+                      )
+                      setOpen(false);
+                    }
+                    else {
+                      buttonHandler(
+                        open.action,
+                        table.getSelectedRowModel().flatRows.map((row) => row.original)
+                      )
+                    }
+                  }
                   }
                   sx={{ mt: 2 }}
                 >

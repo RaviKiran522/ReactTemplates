@@ -83,9 +83,24 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
+  borderRadius: '8px',
   p: 4
+};
+
+const style1 = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80%', // Increase the width
+  maxWidth: '800px', // Set a maximum width
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  maxHeight: '80vh',
+  overflowY: 'auto',
+  p: 4,
+  borderRadius: '8px'
 };
 
 export default function ReactTable({
@@ -101,7 +116,12 @@ export default function ReactTable({
   needActivateAndSuspendButtons,
   buttonHandler,
   open,
-  setOpen
+  setOpen,
+  HandleFormInPopup,
+  setRowsPerPage,
+  setPageNumber,
+  pageNumber,
+  totalPageCount
 }: any) {
   const [globalFilter, setGlobalFilter] = useState('');
   //const [open, setOpen] = useState({ flag: false, action: '' });
@@ -234,7 +254,11 @@ export default function ReactTable({
                     setPageSize: table.setPageSize,
                     setPageIndex: table.setPageIndex,
                     getState: table.getState,
-                    getPageCount: table.getPageCount
+                    getPageCount: table.getPageCount,
+                    setRowsPerPage: setRowsPerPage,
+                    setPageNumber: setPageNumber,
+                    pageNumber: pageNumber,
+                    totalPageCount: totalPageCount,
                   }}
                 />
               </Box>
@@ -288,7 +312,7 @@ export default function ReactTable({
                       </TableCell>
                     ))}
                     {/* Render Actions for Each Row */}
-                    {actions && <TableCell onClick={()=>setRowdata(row)}>{actions(row.original)}</TableCell>}
+                    {actions && <TableCell onClick={() => setRowdata(row)}>{actions(row.original)}</TableCell>}
                   </TableRow>
                 ))}
               </TableBody>
@@ -306,7 +330,11 @@ export default function ReactTable({
                     setPageSize: table.setPageSize,
                     setPageIndex: table.setPageIndex,
                     getState: table.getState,
-                    getPageCount: table.getPageCount
+                    getPageCount: table.getPageCount,
+                    setRowsPerPage: setRowsPerPage,
+                    setPageNumber: setPageNumber,
+                    pageNumber: pageNumber,
+                    totalPageCount: totalPageCount,
                   }}
                 />
               </Box>
@@ -344,39 +372,86 @@ export default function ReactTable({
         </Grid>
       )}
       <Modal open={open.flag} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
-        <Box sx={style}>
-          <Typography id="modal-description" sx={{ mt: 2 }}>
-            Are you sure, you want to {open.action} users? 
-          </Typography>
-          <Grid container spacing={3} paddingTop={3} paddingBottom={3}>
-            <Grid item xs={12}>
-              <Stack direction="row" justifyContent="space-around" spacing={3}>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button
-                  onClick={() => {
-                    if(open.action === "delete" || open.action === "block" || open.action === "leave") {
-                      console.log("rowdata: ", rowdata.original);
-                      buttonHandler(
-                        open.action,
-                        rowdata.original
-                      )
-                      setOpen(false);
-                    }
-                    else {
-                      buttonHandler(
-                        open.action,
-                        table.getSelectedRowModel().flatRows.map((row) => row.original)
-                      )
-                    }
-                  }
-                  }
-                  sx={{ mt: 2 }}
-                >
-                  Ok
-                </Button>
-              </Stack>
+        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' ? style : style1}>
+          {open.action === 'edit' ? (
+            <>
+              <HandleFormInPopup />
+              <Grid container spacing={3} paddingTop={3} paddingBottom={3}>
+                <Grid item xs={12}>
+                  <Stack direction="row" justifyContent="content-start" paddingLeft={3}>
+                    <Button
+                      sx={{
+                        mt: 3,
+                        backgroundColor: 'darkgray',
+                        color: 'black',
+                        '&:hover': {
+                          backgroundColor: 'gray',
+                          color: 'black'
+                        }
+                      }}
+                      onClick={handleClose}
+                    >
+                      Close
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </>
+          ) : (
+            <Stack direction="row" justifyContent="space-around" spacing={3}>
+              <Typography id="modal-description" sx={{ mt: 2 }}>
+                Are you sure, you want to {open.action} users?
+              </Typography>
+            </Stack>
+          )}
+          {open.action !== 'edit' && (
+            <Grid container spacing={3} paddingTop={3} paddingBottom={3}>
+              <Grid item xs={12}>
+                <Stack direction="row" justifyContent="space-around" spacing={3}>
+                  <Button
+                    sx={{
+                      mt: 3,
+                      backgroundColor: 'darkgray',
+                      color: 'black',
+                      '&:hover': {
+                        backgroundColor: 'gray',
+                        color: 'black'
+                      }
+                    }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    sx={{
+                      mt: 3,
+                      backgroundColor: 'blue',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: 'darkblue',
+                        color: 'white'
+                      }
+                    }}
+                    onClick={() => {
+                      if (open.action === 'delete' || open.action === 'block' || open.action === 'leave') {
+                        console.log('rowdata: ', rowdata.original);
+                        buttonHandler(open.action, rowdata.original);
+                        setOpen(false);
+                      } else if (open.action === 'edit') {
+                      } else {
+                        buttonHandler(
+                          open.action,
+                          table.getSelectedRowModel().flatRows.map((row) => row.original)
+                        );
+                      }
+                    }}
+                  >
+                    Ok
+                  </Button>
+                </Stack>
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </Box>
       </Modal>
     </>

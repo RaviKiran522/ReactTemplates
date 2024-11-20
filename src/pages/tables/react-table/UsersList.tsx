@@ -1,13 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable";  // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
 import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
+import SampleForm from '../../../pages/dashboard/sampleForm'
 
 // The UsersList component now passes actions to the ReactTable component
 export default function UsersList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
+  const [rowsPerPage, setRowsPerPage] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
     { empId: "4321", name: "vamsi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "1234", name: "ravi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Complicated" },
@@ -17,12 +20,12 @@ export default function UsersList() {
     { empId: "122", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "124", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "125", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "126", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
+  ];
+  const data2 = [    { empId: "126", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "127", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "128", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "129", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }
-  ];
+    { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }]
 
   const handleEdit = (row: any) => {
     console.log('row.........',row)
@@ -75,6 +78,9 @@ export default function UsersList() {
       setAnchorEl(event.currentTarget);
     };
 
+    useEffect(()=>{
+      console.log("page size: ", rowsPerPage, "pageNumber: ", pageNumber)
+    }, [rowsPerPage, pageNumber])
     const handleClose = () => {
       setAnchorEl(null);
     };
@@ -83,7 +89,7 @@ export default function UsersList() {
         <IconButton onClick={handleClick}>...</IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+          <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'leave' }); handleClose(); }}>Leave</MenuItem>
@@ -135,6 +141,11 @@ export default function UsersList() {
       buttonHandler={buttonHandler}
       open = {open}
       setOpen = {setOpen}
+      HandleFormInPopup={SampleForm}
+      setRowsPerPage={setRowsPerPage}
+      setPageNumber={setPageNumber}
+      pageNumber={pageNumber}
+      totalPageCount={60}
     />
   );
 } 

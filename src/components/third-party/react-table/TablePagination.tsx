@@ -18,12 +18,16 @@ interface TablePaginationProps {
   setPageIndex: (updater: Updater<number>) => void;
   getState: () => TableState;
   getPageCount: () => number;
+  setRowsPerPage: (updater: Updater<number>) => void;
+  setPageNumber: (updater: Updater<number>) => void;
+  totalPageCount: number;
+  pageNumber: number;
   initialPageSize?: number;
 }
 
 // ==============================|| TABLE PAGINATION ||============================== //
 
-export default function TablePagination({ getPageCount, setPageIndex, setPageSize, getState, initialPageSize }: TablePaginationProps) {
+export default function TablePagination({ getPageCount, setPageIndex, setPageSize, getState, setRowsPerPage, setPageNumber, pageNumber, totalPageCount, initialPageSize }: TablePaginationProps) {
   const [open, setOpen] = useState(false);
   let options: number[] = [10, 25, 50, 100];
 
@@ -36,7 +40,7 @@ export default function TablePagination({ getPageCount, setPageIndex, setPageSiz
   }
 
   // eslint-disable-next-line
-  useEffect(() => setPageSize(initialPageSize || 10), []);
+  useEffect(() => {setPageSize(initialPageSize || 10); setRowsPerPage(initialPageSize || 10)} , []);
 
   const handleClose = () => {
     setOpen(false);
@@ -48,9 +52,11 @@ export default function TablePagination({ getPageCount, setPageIndex, setPageSiz
 
   const handleChangePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageIndex(value - 1);
+    setPageNumber(value);
   };
 
   const handleChange = (event: SelectChangeEvent<number>) => {
+    setRowsPerPage(Number(event.target.value));
     setPageSize(Number(event.target.value));
   };
 
@@ -87,10 +93,21 @@ export default function TablePagination({ getPageCount, setPageIndex, setPageSiz
           <TextField
             size="small"
             type="number"
-            value={getState().pagination.pageIndex + 1}
+            value={pageNumber > totalPageCount ? totalPageCount : pageNumber }
             onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              setPageIndex(page);
+              let page = e.target.value ? Number(e.target.value) - 1 : 0;
+              if(page>=totalPageCount) {
+                setPageNumber(totalPageCount);
+                setPageIndex(totalPageCount-1);
+              }
+              else if(page<=0) {
+                setPageNumber(1);
+                setPageIndex(0);
+              }
+              else {
+                setPageNumber(page+1);
+                setPageIndex(page);
+              }
             }}
             sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1.25, width: 36 } }}
           />
@@ -99,8 +116,8 @@ export default function TablePagination({ getPageCount, setPageIndex, setPageSiz
       <Grid item sx={{ mt: { xs: 2, sm: 0 } }}>
         <Pagination
           sx={{ '& .MuiPaginationItem-root': { my: 0.5 } }}
-          count={getPageCount()}
-          page={getState().pagination.pageIndex + 1}
+          count={totalPageCount}
+          page={pageNumber}
           onChange={handleChangePagination}
           color="primary"
           variant="combined"

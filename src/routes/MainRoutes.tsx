@@ -9,9 +9,19 @@ import SimpleLayout from 'layout/Simple';
 
 import { SimpleLayoutType } from 'config';
 import { loader as productsLoader, productLoader } from 'api/products';
-import EditUser from 'pages/Users/EditUser';
-import ViewUser from 'pages/Users/ViewUser';
-
+import County from 'pages/Addnewdetails/Country';
+import State from 'pages/Addnewdetails/State';
+import City from 'pages/Addnewdetails/City';
+import District from 'pages/Addnewdetails/District';
+import Religion from 'pages/Addnewdetails/Religion';
+import Caste from 'pages/Addnewdetails/Caste';
+import Subcaste from 'pages/Addnewdetails/Subcaste';
+import Occuption from 'pages/Addnewdetails/Occuption';
+import Education from 'pages/Addnewdetails/Education';
+import Languages from 'pages/Addnewdetails/Languages';
+import ViewUser from 'pages/user-management/branches/ViewUser';
+import EditUser from 'pages/user-management/branches/EditUser';
+import CreateStaff from 'pages/user-management/CreateStaff';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -150,6 +160,10 @@ const MainRoutes = {
           path: 'dashboard',
           children: [
             {
+              path: 'default',
+              element: <DashboardDefault />
+            },
+            {
               path: 'listUsers',
               element: <UsersList />
             },
@@ -193,6 +207,53 @@ const MainRoutes = {
             },
           ]
         },
+        {
+          path: 'addNewDetails',
+          children: [
+            {
+              path: 'country',
+              element: <County />
+            },
+            {
+              path: 'state',
+              element: <State />
+            },
+            {
+              path: 'district',
+              element: <District/>
+            },
+            {
+              path: 'city',
+              element: <City />
+            },
+            {
+              path: 'religion',
+              element: <Religion/>
+            },
+            {
+              path: 'caste',
+              element: <Caste />
+            },
+            {
+              path: 'subcaste',
+              element: <Subcaste />
+            },
+            {
+              path: 'occuption',
+              element: <Occuption/>
+            },
+            {
+              path: 'education',
+              element: <Education/>
+            },
+            {
+              path: 'languages',
+              element: <Languages/>
+            },
+          ]
+        },
+       
+
         {
           path: 'widget',
           children: [
@@ -560,6 +621,19 @@ const MainRoutes = {
             {
               path: 'price2',
               element: <PricingPage2 />
+            }
+          ]
+        },
+        {
+          path: 'agents',
+          children: [
+            {
+              path: 'createAgents',
+              element: <CreateStaff />
+            },
+            {
+              path: 'listAgents',
+              element: <UsersList />
             }
           ]
         }

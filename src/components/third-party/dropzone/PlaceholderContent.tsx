@@ -17,14 +17,14 @@ export default function PlaceholderContent({ type }: { type?: DropzopType }) {
     <>
       {type !== DropzopType.STANDARD && (
         <Stack
-          spacing={2}
+          spacing={1}
           alignItems="center"
           justifyContent="center"
           direction={{ xs: 'column', md: 'row' }}
           sx={{ width: 1, textAlign: { xs: 'center', md: 'left' } }}
         >
-          <CardMedia component="img" image={UploadCover} sx={{ width: 150 }} />
-          <Stack sx={{ p: 3 }} spacing={1}>
+          <CardMedia component="img" image={UploadCover} sx={{ width: 100 }} />
+          <Stack sx={{ paddingLeft: 2, paddingRight: 2 }} spacing={1}>
             <Typography variant="h5">Drag & Drop or Select file</Typography>
 
             <Typography color="secondary">

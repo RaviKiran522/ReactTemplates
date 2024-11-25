@@ -64,7 +64,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
-              navigation('/dashboard'); // load menu on login success
+              navigation('/dashboard/default'); // load menu on login success
             }
           } catch (err: any) {
             console.error(err);

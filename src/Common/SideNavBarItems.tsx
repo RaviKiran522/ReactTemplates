@@ -11,7 +11,7 @@ export const loadingMenu = [
           id: 'dashboard',
           title: 'Dashboard',
           type: 'item',
-          url: '/dashboard',
+          url: '/dashboard/default',
           breadcrumbs: false
         },
         {
@@ -218,7 +218,79 @@ export const loadingMenu = [
               type: 'item',
               url: '/addNewDetails/state',
               breadcrumbs: false
-            }
+            },
+            {
+              id: 'district',
+              title: 'District',
+              type: 'item',
+              url: '/addNewDetails/district',
+              breadcrumbs: false
+            },
+            {
+              id: 'city',
+              title: 'City',
+              type: 'item',
+              url: '/addNewDetails/city',
+              breadcrumbs: false
+            },
+            ,
+            {
+              id: 'religion',
+              title: 'Religion',
+              type: 'item',
+              url: '/addNewDetails/religion',
+              breadcrumbs: false
+            },
+            {
+              id: 'caste',
+              title: 'Caste',
+              type: 'item',
+              url: '/addNewDetails/caste',
+              breadcrumbs: false
+            },
+            {
+              id: 'subcaste',
+              title: 'Subcaste',
+              type: 'item',
+              url: '/addNewDetails/subcaste',
+              breadcrumbs: false
+            },
+            {
+              id: 'occuption',
+              title: 'Occuption',
+              type: 'item',
+              url: '/addNewDetails/occuption',
+              breadcrumbs: false
+            },
+            {
+              id: 'education',
+              title: 'Education',
+              type: 'item',
+              url: '/addNewDetails/education',
+              breadcrumbs: false
+            },
+            {
+              id: 'languages',
+              title: 'Languages',
+              type: 'item',
+              url: '/addNewDetails/languages',
+              breadcrumbs: false
+            },
+            {
+              id: 'source',
+              title: 'Source',
+              type: 'item',
+              url: '/addNewDetails/source',
+              breadcrumbs: false
+            },
+            {
+              id: 'university',
+              title: 'University',
+              type: 'item',
+              url: '/addNewDetails/university',
+              breadcrumbs: false
+            },
+            
           ]
         },
         {
@@ -308,49 +380,5 @@ export const loadingMenu = [
         },
         
       ]
-      },
-    {
-    id: 'group-dashboard-loading',
-    title: <FormattedMessage id="dashboard" />,
-    type: 'group',
-    icon: null,
-    children: [
-      {
-        id: 'dashboard1',
-        title: <FormattedMessage id="dashboard" />,
-        type: 'collapse',
-        icon: null,
-        children: [
-          {
-            id: 'listUsers',
-            title: 'loading',
-            type: 'item',
-            url: '/dashboard/listUsers',
-            breadcrumbs: false
-          },
-          {
-            id: 'blockedStaff',
-            title: 'loading',
-            type: 'item',
-            url: '/dashboard/blockedStaff',
-            breadcrumbs: false
-          },
-          {
-            id: 'listUsers',
-            title: 'loading',
-            type: 'item',
-            url: '/dashboard/suspendedStaff',
-            breadcrumbs: false
-          },
-          {
-            id: 'blockedStaff',
-            title: 'loading',
-            type: 'item',
-            url: '/dashboard/createUser',
-            breadcrumbs: false
-          }
-        ]
       }
-    ]
-    }
   ];

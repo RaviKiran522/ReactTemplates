@@ -50,7 +50,7 @@ const CommonSelectField: React.FC<CommonSelectProps> = ({ inputProps, onSelectCh
             helperText={helperText}
             sx={{
               '& .MuiInputBase-root': {
-                height: '50px', // Adjust the input field height
+                height: '48px', // Adjust the input field height
               },
             }}
           />

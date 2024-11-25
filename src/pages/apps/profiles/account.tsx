@@ -84,10 +84,11 @@ export default function AccountProfile() {
           <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
             <Tab label="View Profile" component={Link} to="/apps/profiles/account/basic" icon={<Profile />} iconPosition="start" />
             <Tab label="Edit Profile" component={Link} to="/apps/profiles/account/personal" icon={<DocumentText />} iconPosition="start" />
-            {/* <Tab label="My Account" component={Link} to="/apps/profiles/account/my-account" icon={<TableDocument />} iconPosition="start" /> */}
-            {/* <Tab label="Change Password" component={Link} to="/apps/profiles/account/password" icon={<Lock />} iconPosition="start" /> */}
-            <Tab label="Role" component={Link} to="/apps/profiles/account/role" icon={<Profile2User />} iconPosition="start" />
+            <Tab label="User Files" component={Link} to="/apps/profiles/account/settings" icon={<Setting3 />} iconPosition="start" />
+            <Tab label="Change Role" component={Link} to="/apps/profiles/account/role" icon={<Profile2User />} iconPosition="start" />
             <Tab label="Permissions" component={Link} to="/apps/profiles/account/settings" icon={<Setting3 />} iconPosition="start" />
+            <Tab label="Settings" component={Link} to="/apps/profiles/account/settings" icon={<Setting3 />} iconPosition="start" />
+            <Tab label="Sales History" component={Link} to="/apps/profiles/account/settings" icon={<Setting3 />} iconPosition="start" />
           </Tabs>
         </Box>
         <Box sx={{ mt: 2.5 }}>

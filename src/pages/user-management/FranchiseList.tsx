@@ -4,10 +4,10 @@ import Chip from '@mui/material/Chip';
 import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
-import SampleForm from '../../../pages/dashboard/sampleForm'
+import SampleForm from 'pages/dashboard/sampleForm';
 
 // The UsersList component now passes actions to the ReactTable component
-export default function UsersList() {
+export default function FranchiseList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -40,7 +40,7 @@ export default function UsersList() {
 
   const handleView = (row: any) => {
     console.log('row.........',row)
-    const newUrl = '/react/userManagement/Branch';
+    const newUrl = '/react/userManagement/Franchise';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -128,7 +128,7 @@ export default function UsersList() {
 
   return (
     <ReactTable
-      title={"Users"}
+      title={"Franchises"}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}
@@ -145,7 +145,7 @@ export default function UsersList() {
       setRowsPerPage={setRowsPerPage}
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
-      totalPageCount={60}
+      totalPageCount={10}
     />
   );
 } 

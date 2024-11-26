@@ -19,12 +19,18 @@ import Subcaste from 'pages/Addnewdetails/Subcaste';
 import Occuption from 'pages/Addnewdetails/Occuption';
 import Education from 'pages/Addnewdetails/Education';
 import Languages from 'pages/Addnewdetails/Languages';
-import ViewUser from 'pages/user-management/branches/ViewUser';
+// import ViewUser from 'pages/user-management/branches/ViewUser';
+import BranchProfile from 'pages/user-management/branches/BranchProfile'
 import EditUser from 'pages/user-management/branches/EditUser';
 import CreateStaff from 'pages/user-management/agents/CreateAgent';
 import CreateBranch from 'pages/user-management/branches/CreateBranch';
 import CreateFranchise from 'pages/user-management/franchise/CreateFranchise';
 import EditProfile from 'pages/user-management/EditProfile';
+import FranchiseProfile from 'pages/user-management/FranchiseProfile';
+import AgentProfile from 'pages/user-management/agents/AgentsProfile';
+import BranchesList from 'pages/user-management/branches/BranchesList';
+import FranchiseList from 'pages/user-management/FranchiseList';
+import AgentsList from 'pages/user-management/agents/AgentsList';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -193,7 +199,7 @@ const MainRoutes = {
           children: [
             {
               path: 'listBranch',
-              element: <UsersList />
+              element: <BranchesList />
             },
             {
               path: 'createBranch',
@@ -206,7 +212,7 @@ const MainRoutes = {
           children: [
             {
               path: 'listFranchise',
-              element: <UsersList />
+              element: <FranchiseList />
             },
             {
               path: 'createFranchise',
@@ -222,9 +228,17 @@ const MainRoutes = {
               element: <EditUser />
             },
             {
-              path: 'viewUser',
-              element: <ViewUser />
-            }
+              path: 'Branch',
+              element: <BranchProfile />
+            },
+            {
+              path: 'Franchise',
+              element: <FranchiseProfile />
+            },
+            {
+              path: 'Agent',
+              element: <AgentProfile />
+            },
           ]
         },
         {
@@ -656,7 +670,7 @@ const MainRoutes = {
             },
             {
               path: 'listAgents',
-              element: <UsersList />
+              element: <AgentsList />
             }
           ]
         }

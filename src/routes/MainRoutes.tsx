@@ -21,11 +21,14 @@ import Education from 'pages/Addnewdetails/Education';
 import Languages from 'pages/Addnewdetails/Languages';
 import ViewUser from 'pages/user-management/branches/ViewUser';
 import EditUser from 'pages/user-management/branches/EditUser';
-import CreateStaff from 'pages/user-management/CreateStaff';
+import CreateStaff from 'pages/user-management/agents/CreateAgent';
+import CreateBranch from 'pages/user-management/branches/CreateBranch';
+import CreateFranchise from 'pages/user-management/franchise/CreateFranchise';
+import EditProfile from 'pages/user-management/EditProfile';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
-const SampleForm = Loadable(lazy(()=> import('pages/dashboard/sampleForm')));
+const SampleForm = Loadable(lazy(() => import('pages/dashboard/sampleForm')));
 
 // render - widget
 const WidgetStatistics = Loadable(lazy(() => import('pages/widget/statistics')));
@@ -170,7 +173,7 @@ const MainRoutes = {
             {
               path: 'blockedStaff',
               element: <UsersList />
-            }, 
+            },
             {
               path: 'suspendedStaff',
               element: <UsersList />
@@ -182,7 +185,7 @@ const MainRoutes = {
             {
               path: 'createUser',
               element: <SampleForm />
-            },
+            }
           ]
         },
         {
@@ -191,6 +194,23 @@ const MainRoutes = {
             {
               path: 'listBranch',
               element: <UsersList />
+            },
+            {
+              path: 'createBranch',
+              element: <CreateBranch />
+            }
+          ]
+        },
+        {
+          path: 'franchise',
+          children: [
+            {
+              path: 'listFranchise',
+              element: <UsersList />
+            },
+            {
+              path: 'createFranchise',
+              element: <CreateFranchise />
             }
           ]
         },
@@ -204,7 +224,7 @@ const MainRoutes = {
             {
               path: 'viewUser',
               element: <ViewUser />
-            },
+            }
           ]
         },
         {
@@ -220,7 +240,7 @@ const MainRoutes = {
             },
             {
               path: 'district',
-              element: <District/>
+              element: <District />
             },
             {
               path: 'city',
@@ -228,7 +248,7 @@ const MainRoutes = {
             },
             {
               path: 'religion',
-              element: <Religion/>
+              element: <Religion />
             },
             {
               path: 'caste',
@@ -240,19 +260,18 @@ const MainRoutes = {
             },
             {
               path: 'occuption',
-              element: <Occuption/>
+              element: <Occuption />
             },
             {
               path: 'education',
-              element: <Education/>
+              element: <Education />
             },
             {
               path: 'languages',
-              element: <Languages/>
-            },
+              element: <Languages />
+            }
           ]
         },
-       
 
         {
           path: 'widget',
@@ -346,8 +365,8 @@ const MainRoutes = {
                       element: <AccountTabProfile />
                     },
                     {
-                      path: 'personal',
-                      element: <AccountTabPersonal />
+                      path: 'edit',
+                      element: <EditProfile />
                     },
                     {
                       path: 'my-account',
@@ -364,6 +383,10 @@ const MainRoutes = {
                     {
                       path: 'settings',
                       element: <AccountTabSettings />
+                    },
+                    {
+                      path: 'history',
+                      element: <UsersList />
                     }
                   ]
                 },
@@ -645,7 +668,7 @@ const MainRoutes = {
       children: [
         {
           path: 'landing',
-          element: <DashboardDefault />          
+          element: <DashboardDefault />
         }
       ]
     },

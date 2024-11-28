@@ -58,6 +58,10 @@ import { TableDataProps } from 'types/table';
 import { LabelKeyObject } from 'react-csv/lib/core';
 import { compareItems, rankItem, RankingInfo } from '@tanstack/match-sorter-utils';
 
+import { InputBase } from '@mui/material';
+import { styled } from '@mui/system';
+import { forEach } from 'lodash';
+
 interface ReactTableProps {
   columns: ColumnDef<TableDataProps>[];
   data: TableDataProps[];
@@ -103,6 +107,19 @@ const style1 = {
   borderRadius: '8px'
 };
 
+function formatToINR(amount: any, decimals: any = 2) {
+  if (isNaN(amount)) {
+    throw new Error('Invalid number provided for conversion.');
+  }
+
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  }).format(amount);
+}
+
 export default function ReactTable({
   title,
   columns,
@@ -121,7 +138,8 @@ export default function ReactTable({
   setRowsPerPage,
   setPageNumber,
   pageNumber,
-  totalPageCount
+  totalPageCount,
+  needTotalCount
 }: any) {
   const [globalFilter, setGlobalFilter] = useState('');
   //const [open, setOpen] = useState({ flag: false, action: '' });
@@ -130,6 +148,7 @@ export default function ReactTable({
   const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [sorting, setSorting] = useState<SortingState>([{ id: 'age', desc: false }]);
   const [rowSelection, setRowSelection] = useState({});
+  const [totalAmount, setTotalAmount] = useState<any>(10000);
 
   const checkBoxOnTable = {
     id: 'select',
@@ -202,6 +221,47 @@ export default function ReactTable({
     setOpen({ flag: false, action: '' });
   };
 
+  const StyledBox = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    overflow: 'hidden',
+    width: '300px', // Adjust width as needed
+    height: '41px',
+    boxSizing: 'border-box'
+  }));
+
+  const LabelBox = styled(Box)(({ theme }) => ({
+    backgroundColor: '#f0f0f0', // Adjust background color
+    width: '25%', // One-fourth of the box
+    height: '100%',
+    fontSize: 45,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold'
+  }));
+
+  const InputField = styled(InputBase)(({ theme }) => ({
+    flexGrow: 1,
+    padding: theme.spacing(1),
+    outline: 'none',
+    border: 'none',
+    color: 'black', // Different color for the amount value
+    fontWeight: 'bold'
+  }));
+
+  useEffect(()=>{
+    console.log("data: ", table.getSelectedRowModel().flatRows.map((row) => row.original))
+    let amount = 0;
+    table.getSelectedRowModel().flatRows.map((row) => row.original).forEach((item: any)=>{
+      amount += item?.amount
+    })
+    console.log("amount: ", amount)
+    setTotalAmount(amount);
+  }, [table.getSelectedRowModel().flatRows.map((row) => row.original)])
+  console.log("totalAmount: ", totalAmount)
   return (
     <>
       <MainCard
@@ -210,6 +270,16 @@ export default function ReactTable({
         secondary={
           includeSearch || needCSV || columnVisibility ? (
             <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ padding: 2 }}>
+              {needTotalCount && (
+                <StyledBox>
+                  <LabelBox>
+                    <Typography>
+                      Total
+                    </Typography>
+                  </LabelBox>
+                  <InputField placeholder="Enter amount" value={formatToINR(totalAmount)}/>
+                </StyledBox>
+              )}
               {includeSearch && (
                 <DebouncedInput
                   value={globalFilter ?? ''}
@@ -258,7 +328,7 @@ export default function ReactTable({
                     setRowsPerPage: setRowsPerPage,
                     setPageNumber: setPageNumber,
                     pageNumber: pageNumber,
-                    totalPageCount: totalPageCount,
+                    totalPageCount: totalPageCount
                   }}
                 />
               </Box>
@@ -334,7 +404,7 @@ export default function ReactTable({
                     setRowsPerPage: setRowsPerPage,
                     setPageNumber: setPageNumber,
                     pageNumber: pageNumber,
-                    totalPageCount: totalPageCount,
+                    totalPageCount: totalPageCount
                   }}
                 />
               </Box>

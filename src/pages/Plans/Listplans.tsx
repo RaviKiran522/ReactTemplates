@@ -7,67 +7,66 @@ import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
 
 // The UsersList component now passes actions to the ReactTable component
-export default function BranchesList() {
+export default function ListPlans() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
-    { empId: "4321", name: "vamsi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "1234", name: "ravi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Complicated" },
-    { empId: "3432", name: "kiran", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Relationship" },
-    { empId: "123", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "121", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "122", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "124", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "125", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
+    { sno: "1", name: "FREE", plantype: "FREE", duration: "UNLIMITED", contacts: "2", amount: "300", status: "Active" },
+    { sno: "2", name: "VIP", plantype: "PAID", duration: "1 YEAR", contacts: "6", amount: "800", status: "IN-Active" },
+    { sno: "3", name: "PREMIUM", plantype: "PAID", duration: "2 YEARS", contacts: "99", amount: "900", status: "IN-Active" },
+    { sno: "4", name: "BEST OFFER", plantype: "PAID", duration: "8 MONTHS", contacts: "140", amount: "200", status: "Active" },
+    { sno: "5", name: "PLTINUM", plantype: "PAID", duration: "3 YEARS", contacts: "70", amount: "400", status: "Active" },
+    { sno: "6", name: "SILVER", plantype: "PAID", duration: "UNLIMITED", contacts: "10", amount: "100", status: "Active" },
+    { sno: "7", name: "BEST OFFER+", plantype: "FREE", duration: "6 MONTHS", contacts: "17", amount: "3200", status: "Active" },
+    { sno: "8", name: "ENTRY", plantype: "PAID", duration: "1 YEAR", contacts: "60", amount: "00", status: "Active" },
   ];
-  const data2 = [    { empId: "126", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "127", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "128", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "129", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
-    { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }]
+  const data2 = [{ sno: "126", name: "vinay", plantype: "PAID", duration: "2 YEARS", contacts: "55", amount: "800", status: "Active" },
+  { sno: "9", name: "SILVER", plantype: "PAID", duration: "UNLIMITED", contacts: "0", amount: "3000", status: "Active" },
+  { sno: "10", name: "PREMIUM", plantype: "PAID", duration: "2 MONTHS", contacts: "33", amount: "700", status: "Active" },
+  { sno: "11", name: "LD SILVER", plantype: "PAID", duration: "UNLIMITED", contacts: "25", amount: "600", status: "Active" },
+  { sno: "13", name: "VIP", plantype: "PAID", duration: "5 MONTHS", contacts: "88", amount: "1000", status: "Active" }]
 
   const handleEdit = (row: any) => {
     const newUrl = '/react/userManagement/editUser';
-    sessionStorage.setItem('branchUser',JSON.stringify(row))
+    sessionStorage.setItem('editData', JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
 
   const handleDelete = (row: any) => {
-    console.log('delete row.........',row)
+    console.log('delete row.........', row)
   };
 
   const handleView = (row: any) => {
-    console.log('row.........',row)
-    const newUrl = '/react/userManagement/Branch';
-    sessionStorage.setItem('branchUser',JSON.stringify(row))
+    console.log('row.........', row)
+    const newUrl = '/react/userManagement/contacts';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
 
   const handleBlock = (row: any) => {
-    console.log('block row.........',row)
+    console.log('block row.........', row)
   };
 
   const handleLeave = (row: any) => {
-    console.log('leave row.........',row)
+    console.log('leave row.........', row)
   };
-  
+
   const buttonHandler = (action: string, users: any) => {
-    if(action === "delete") {
+    if (action === "delete") {
       handleDelete(users)
     }
-    else if(action === "block") {
+    else if (action === "block") {
       handleBlock(users)
     }
-    else if(action === "leave") {
+    else if (action === "leave") {
       handleLeave(users)
     }
-    else if(action ==="suspend") {
+    else if (action === "suspend") {
       console.log("action: ", action, "users: ", users)
     }
-    else if(action ==="activate") {
+    else if (action === "activate") {
       console.log("action: ", action, "users: ", users)
     }
   }
@@ -79,7 +78,7 @@ export default function BranchesList() {
       setAnchorEl(event.currentTarget);
     };
 
-    useEffect(()=>{
+    useEffect(() => {
       console.log("page size: ", rowsPerPage, "pageNumber: ", pageNumber)
     }, [rowsPerPage, pageNumber])
     const handleClose = () => {
@@ -101,11 +100,12 @@ export default function BranchesList() {
 
   const columns = useMemo(
     () => [
-      { header: 'Employee ID', accessorKey: 'empId' },
-      { header: 'Name', accessorKey: 'name' },
-      { header: 'Office Number', accessorKey: 'officeNumber' },
-      { header: 'Role', accessorKey: 'role' },
-      { header: 'Branch', accessorKey: 'branch' },
+      { header: 'S.NO', accessorKey: 'sno' },
+      { header: 'plan Name', accessorKey: 'name' },
+      { header: 'Plan Type', accessorKey: 'plantype' },
+      { header: 'Duration', accessorKey: 'duration' },
+      { header: 'NO.OF Contacts', accessorKey: 'contacts' },
+      { header: 'Amount', accessorKey: 'amount' },
       {
         header: 'Status',
         accessorKey: 'status',
@@ -114,12 +114,12 @@ export default function BranchesList() {
           const status = props.getValue();  // Use getValue() to get the cell value
 
           switch (status) {
-            case 'Complicated':
-              return <Chip color="error" label="Complicated" size="small" variant="light" />;
-            case 'Relationship':
-              return <Chip color="success" label="Relationship" size="small" variant="light" />;
+            case 'IN-ACTIVE':
+              return <Chip color="error" label="IN-ACTIVE" size="small" variant="light" />;
+            case 'IN-ACTIVE':
+              return <Chip color="success" label="IN-ACTIVE" size="small" variant="light" />;
             default:
-              return <Chip color="info" label="Single" size="small" variant="light" />;
+              return <Chip color="info" label="Active" size="small" variant="light" />;
           }
         }
       }
@@ -129,10 +129,10 @@ export default function BranchesList() {
 
   return (
     <ReactTable
-      title={"Branches"}
+      title={"MEMBERSHIP PLANS"}
       data={data}
       columns={columns}
-      actions={(row: any) => <ActionMenu row={row} />}
+      //   actions={(row: any) => <ActionMenu row={row} />}
       includeSearch={true}
       needCSV={true}
       pagination={'top'}
@@ -140,8 +140,8 @@ export default function BranchesList() {
       needCheckBoxes={true}
       needActivateAndSuspendButtons={true}
       buttonHandler={buttonHandler}
-      open = {open}
-      setOpen = {setOpen}
+      open={open}
+      setOpen={setOpen}
       HandleFormInPopup={SampleForm}
       setRowsPerPage={setRowsPerPage}
       setPageNumber={setPageNumber}

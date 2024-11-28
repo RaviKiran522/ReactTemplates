@@ -50,7 +50,7 @@ function TabPanel({ children, value, index, ...other }: any) {
   );
 }
 
-const CreateBranch: React.FC = () => {
+const CreateBranch = ({needTitle=true, userData={}}): any => {
   // Define the structure of form data for type safety
   interface FormField {
     label: any;
@@ -77,245 +77,7 @@ const CreateBranch: React.FC = () => {
     setValue(newValue);
   };
 
-  const formFields: FormData = {
-    email: {
-      label: 'Enter Your Email ID',
-      id: 'email',
-      name: 'email',
-      type: 'email',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    personalemail: {
-      label: 'Enter Your Personal Email ID',
-      id: 'personalemail',
-      name: 'personalemail',
-      type: 'email',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    name: {
-      label: 'Enter Your Name',
-      id: 'name',
-      name: 'name',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    surname: {
-      label: 'Enter Your SurName',
-      id: 'surname',
-      name: 'surname',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    state: {
-      label: 'Select State',
-      id: 'selectState',
-      name: 'state',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Select Your State' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    branch: {
-      label: 'Select Branch',
-      id: 'selectbranch',
-      name: 'branch',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Odisha' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    religion: {
-      label: 'Select Religion',
-      id: 'selectreligion',
-      name: 'religion',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Hindu' },
-        { id: 2, label: 'Shik' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    gender: {
-      label: 'Select Gender',
-      id: 'gender',
-      name: 'gender',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    maritalstatus: {
-      label: 'Select Marital Status',
-      id: 'maritalstatus',
-      name: 'maritalstatus',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Married' },
-        { id: 2, label: 'Unmarried' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    caste: {
-      label: 'Select Caste',
-      id: 'selectcaste',
-      name: 'caste',
-      type: 'select',
-      options: [
-        { id: 1, label: 'cats' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    role: {
-      label: 'Select Role',
-      id: 'selectrole',
-      name: 'role',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Workers' },
-        { id: 2, label: 'Manager' },
-        { id: 3, label: 'BPO' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    city: {
-      label: 'Select City',
-      id: 'selectCity',
-      name: 'city',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Madhapur' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    number: {
-      label: ' Enter Mobile Number',
-      id: 'number',
-      name: 'number',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    officenumber: {
-      label: ' Enter office Number',
-      id: 'officenumber',
-      name: 'officenumber',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    pincode: {
-      label: ' Enter Pin Code',
-      id: 'pincode',
-      name: 'pincode',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    address: {
-      label: ' Enter Your Address',
-      id: 'adress',
-      name: 'address',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    education: {
-      label: 'Select Education Level ',
-      id: 'education',
-      name: 'education',
-      type: 'select',
-      options: [
-        { id: 'regular', label: 'Regular' },
-        { id: 'distance', label: 'Distance' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    dateofbirth: {
-      label: ' Date of Birth',
-      id: 'dateofbirth',
-      name: 'dateofbirth',
-      value: '',
-      error: false,
-      helperText: 'Please select date',
-      mandatory: true,
-      options: []
-    },
+  const contactDetailsFormData: FormData = {
     qualification: {
       label: 'Select  Qualification',
       id: 'selectqualification',
@@ -332,10 +94,10 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       isMulti: false
     },
-    temporaryaddress: {
-      label: 'Enter Your Address',
-      id: 'temporaryaddress',
-      name: 'temporaryaddress',
+    address: {
+      label: ' Enter Your Address',
+      id: 'adress',
+      name: 'address',
       type: 'text',
       value: '',
       error: false,
@@ -459,12 +221,26 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       options: []
     },
+    temporaryaddress: {
+      label: 'Enter Your Address',
+      id: 'temporaryaddress',
+      name: 'temporaryaddress',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+  }
+
+  const uploadCertificatesFormData: FormData = {
     ssccertificate: {
       label: 'Upload Your Ssc Certificate',
       id: 'ssccertificate',
       name: 'ssccertificate',
       type: 'file',
-      value: '',
+      value: [],
       error: false,
       mandatory: true,
       options: []
@@ -474,7 +250,7 @@ const CreateBranch: React.FC = () => {
       id: 'highercertificate',
       name: 'highercertificate',
       type: 'file',
-      value: '',
+      value: [],
       error: false,
       mandatory: true,
       options: []
@@ -484,7 +260,7 @@ const CreateBranch: React.FC = () => {
       id: 'aadharcardphoto',
       name: 'aadharcardphoto',
       type: 'file',
-      value: '',
+      value: [],
       error: false,
       mandatory: true,
       options: []
@@ -494,11 +270,24 @@ const CreateBranch: React.FC = () => {
       id: 'pancard',
       name: 'pancard',
       type: 'file',
-      value: '',
+      value: [],
       error: false,
       mandatory: true,
       options: []
     },
+    passbook: {
+      label: 'Upload Your Bank PassBook',
+      id: 'passbook',
+      name: 'passbook',
+      type: 'file',
+      value: [],
+      error: false,
+      mandatory: true,
+      options: []
+    }
+  }
+
+  const formFields: FormData = {
     profile: {
       label: 'Upload Your Profile',
       id: 'profile',
@@ -509,15 +298,243 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       options: []
     },
-    passbook: {
-      label: 'Upload Your Bank PassBook',
-      id: 'passbook',
-      name: 'passbook',
-      type: 'file',
+    role: {
+      label: 'Select Role',
+      id: 'selectrole',
+      name: 'role',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Workers' },
+        { id: 2, label: 'Manager' },
+        { id: 3, label: 'BPO' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    name: {
+      label: 'Enter Your Name',
+      id: 'name',
+      name: 'name',
+      type: 'text',
       value: '',
       error: false,
+      helperText: '',
       mandatory: true,
       options: []
+    },
+    surname: {
+      label: 'Enter Your SurName',
+      id: 'surname',
+      name: 'surname',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    number: {
+      label: ' Enter Mobile Number',
+      id: 'number',
+      name: 'number',
+      type: 'number',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    email: {
+      label: 'Enter Your Email ID',
+      id: 'email',
+      name: 'email',
+      type: 'email',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    gender: {
+      label: 'Select Gender',
+      id: 'gender',
+      name: 'gender',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Male' },
+        { id: 2, label: 'Female' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    maritalstatus: {
+      label: 'Select Marital Status',
+      id: 'maritalstatus',
+      name: 'maritalstatus',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Married' },
+        { id: 2, label: 'Unmarried' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    officenumber: {
+      label: ' Enter office Number',
+      id: 'officenumber',
+      name: 'officenumber',
+      type: 'number',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    personalemail: {
+      label: 'Enter Your Personal Email ID',
+      id: 'personalemail',
+      name: 'personalemail',
+      type: 'email',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    state: {
+      label: 'Select State',
+      id: 'selectState',
+      name: 'state',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Select Your State' },
+        { id: 2, label: 'Mumbi' },
+        { id: 3, label: 'Hyderabad' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    city: {
+      label: 'Select City',
+      id: 'selectCity',
+      name: 'city',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Madhapur' },
+        { id: 2, label: 'Mumbi' },
+        { id: 3, label: 'Hyderabad' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    branch: {
+      label: 'Select Branch',
+      id: 'selectbranch',
+      name: 'branch',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Odisha' },
+        { id: 2, label: 'Mumbi' },
+        { id: 3, label: 'Hyderabad' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    religion: {
+      label: 'Select Religion',
+      id: 'selectreligion',
+      name: 'religion',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Hindu' },
+        { id: 2, label: 'Shik' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    caste: {
+      label: 'Select Caste',
+      id: 'selectcaste',
+      name: 'caste',
+      type: 'select',
+      options: [
+        { id: 1, label: 'cats' },
+        { id: 2, label: 'Mumbi' },
+        { id: 3, label: 'Hyderabad' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    dateofbirth: {
+      label: ' Date of Birth',
+      id: 'dateofbirth',
+      name: 'dateofbirth',
+      value: '',
+      error: false,
+      helperText: 'Please select date',
+      mandatory: true,
+      options: []
+    },
+    pincode: {
+      label: ' Enter Pin Code',
+      id: 'pincode',
+      name: 'pincode',
+      type: 'number',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    address: {
+      label: ' Enter Your Address',
+      id: 'adress',
+      name: 'address',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    education: {
+      label: 'Select Education Level ',
+      id: 'education',
+      name: 'education',
+      type: 'select',
+      options: [
+        { id: 'regular', label: 'Regular' },
+        { id: 'distance', label: 'Distance' }
+      ],
+      value: { id: null, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
     }
   };
 
@@ -526,11 +543,13 @@ const CreateBranch: React.FC = () => {
   // const days = [1, 2, 3];
 
   const [formData, setFormData] = useState<FormData>(formFields);
+  const [formDataForContactDetails, setFormDataForContactDetails] = useState<FormData>(contactDetailsFormData);
+  const [certificatesUploadFormData, setCertificatesUploadFormData] = useState<FormData>(uploadCertificatesFormData);
   const [list, setList] = useState(false);
 
   type FormDataKeys = keyof typeof formData;
 
-  const validate = (): boolean => {
+  const validate = (formData: any) => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
     for (const key in formData) {
@@ -576,9 +595,7 @@ const CreateBranch: React.FC = () => {
         }
       }
     }
-
-    setFormData(newFormData);
-    return isValid;
+    return {newFormData: newFormData, isValid: isValid};
   };
 
   const handleChange = (name: FormDataKeys, value: any) => {
@@ -608,6 +625,32 @@ const CreateBranch: React.FC = () => {
     newFormData[name].error = false;
     newFormData[name].helperText = '';
     setFormData(newFormData);
+  };
+
+  const handleChangeForContact = (name: FormDataKeys, value: any) => {
+    const newFormData = _.cloneDeep(formDataForContactDetails);
+    newFormData[name].value = value;
+    if (newFormData[name].error) {
+      newFormData[name].error = false;
+      newFormData[name].helperText = ''; // Reset error message
+    }
+    setFormDataForContactDetails(newFormData);
+  };
+
+  const handleSelectChangeForContact = (name: FormDataKeys, value: any) => {
+    const newFormData = _.cloneDeep(formDataForContactDetails);
+    newFormData[name].value = value;
+    newFormData[name].error = false;
+    newFormData[name].helperText = '';
+    setFormDataForContactDetails(newFormData);
+  };
+
+  const handleDateChangeForContact = (name: keyof FormData, value: Date | null) => {
+    const newFormData = _.cloneDeep(formDataForContactDetails);
+    newFormData[name].value = value;
+    newFormData[name].error = false;
+    newFormData[name].helperText = '';
+    setFormDataForContactDetails(newFormData);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -657,24 +700,111 @@ const CreateBranch: React.FC = () => {
     };
 
     console.log('Form Submitted:', sampleObject);
-    if (!validate()) {
+    const validation = validate(formData)
+    if (!validation?.isValid) {
+      setFormData(validation?.newFormData)
       console.log('Validation failed. Please check all fields.');
       return;
     }
   };
 
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log('formDataForContactDetails', formDataForContactDetails);
+
+    const expDate = formDataForContactDetails.expereincedate?.value ? moment(formDataForContactDetails.expereincedate.value) : null;
+
+    const experienceYear = expDate ? expDate.year() : null;
+    const experienceMonth = expDate ? expDate.month() + 1 : null;
+
+    const sampleObject = {
+      name: formDataForContactDetails.name?.value || '',
+      surname: formDataForContactDetails.surname?.value || '',
+      email: formDataForContactDetails.email?.value || '',
+      personalEmail: formDataForContactDetails.personalemail?.value || '',
+      address: formDataForContactDetails.address?.value || '',
+      state: formDataForContactDetails.state?.value?.label || '',
+      branch: formDataForContactDetails.branch?.value?.label || '',
+      religion: formDataForContactDetails.religion?.value?.label || '',
+      caste: formDataForContactDetails.caste?.value?.label || '',
+      role: formDataForContactDetails.role?.value?.label || '',
+      city: formDataForContactDetails.city?.value?.label || '',
+      qualification: formDataForContactDetails.qualification?.value?.label || '',
+      source: formDataForContactDetails.source?.value?.label || '',
+      gender: formDataForContactDetails.gender?.value?.label || '',
+      education: formDataForContactDetails.education?.value?.label || '',
+      maritalstatus: formDataForContactDetails.maritalstatus?.value?.label || '',
+      number: formDataForContactDetails.number?.value || '',
+      aadharcard: formDataForContactDetails.aadharcard?.value || '',
+      officenumber: formDataForContactDetails.officenumber?.value || '',
+      fathernumber: formDataForContactDetails.fatherno?.value || '',
+      fathername: formDataForContactDetails.fathername?.value || '',
+      referenceno: formDataForContactDetails.referenceno?.value || '',
+      referencename: formDataForContactDetails.referencename?.value || '',
+      referenceaddress: formDataForContactDetails.referenceaddress?.value || '',
+      fatheraddress: formDataForContactDetails.fatheraddress?.value || '',
+      ssccertificate: formDataForContactDetails.ssccertificate?.value || '',
+      aadharcardphoto: formDataForContactDetails.aadharcardphoto?.value || '',
+      pancard: formDataForContactDetails.pancard?.value || '',
+      highercertificate: formDataForContactDetails.highercertificate?.value || '',
+      profile: formDataForContactDetails.profile?.value || '',
+      dateofbirth: formDataForContactDetails.dateofbirth?.value ? moment(formDataForContactDetails.dateofbirth.value).format('YYYY/MM/DD') : '',
+      joiningdate: formDataForContactDetails.joiningdate?.value ? moment(formDataForContactDetails.joiningdate.value).format('YYYY/MM/DD') : '',
+      expereincedate: experienceYear && experienceMonth ? `${experienceYear}-${String(experienceMonth).padStart(2, '0')}` : ''
+    };
+
+    console.log('Form Submitted:', sampleObject);
+    const validation = validate(formDataForContactDetails)
+    if (!validation?.isValid) {
+      setFormDataForContactDetails(validation?.newFormData)
+      console.log('Validation failed. Please check all fields.');
+      return;
+    }
+  };
+
+  const handleUploadCertificatesSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log('passbook', certificatesUploadFormData);
+    const sampleObject = {
+      ssccertificate: certificatesUploadFormData.ssccertificate?.value || '',
+      aadharcardphoto: certificatesUploadFormData.aadharcardphoto?.value || '',
+      pancard: certificatesUploadFormData.pancard?.value || '',
+      highercertificate: certificatesUploadFormData.highercertificate?.value || '',
+      passbook: certificatesUploadFormData?.passbook?.value || '' 
+    };
+
+    console.log('Form Submitted:', sampleObject);
+    // const validation = validate(formData)
+    // if (!validation?.isValid) {
+    //   setFormData(validation?.newFormData)
+    //   console.log('Validation failed. Please check all fields.');
+    //   return;
+    // }
+  };
+
   return (
     <Create
-      title={"Create New Branch"}
+      title={needTitle ? "Create New Branch" : ""}
       formData={formData}
       setFormData={setFormData}
+      formDataForContactDetails={formDataForContactDetails}
+      setFormDataForContactDetails={setFormDataForContactDetails}
+      certificatesUploadFormData={certificatesUploadFormData}
+      setCertificatesUploadFormData={setCertificatesUploadFormData}
       list={list}
       setList={setList}
       validate={validate}
       handleChange={handleChange}
       handleSelectChange={handleSelectChange}
       handleDateChange={handleDateChange}
+      handleChangeForContact={handleChangeForContact}
+      handleSelectChangeForContact={handleSelectChangeForContact}
+      handleDateChangeForContact={handleDateChangeForContact}
       handleSubmit={handleSubmit}
+      handleContactSubmit={handleContactSubmit}
+      handleUploadCertificatesSubmit={handleUploadCertificatesSubmit}
     />
   );
 };

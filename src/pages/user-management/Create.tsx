@@ -1,4 +1,4 @@
-import React, { useState, SyntheticEvent } from 'react';
+import React, { useState, SyntheticEvent, useEffect } from 'react';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import {
@@ -53,13 +53,22 @@ const Create = ({
   title,
   formData,
   setFormData,
+  formDataForContactDetails,
+  setFormDataForContactDetails,
+  certificatesUploadFormData,
+  setCertificatesUploadFormData,
   list,
   setList,
   validate,
   handleChange,
   handleSelectChange,
   handleDateChange,
-  handleSubmit
+  handleChangeForContact,
+  handleSelectChangeForContact,
+  handleDateChangeForContact,
+  handleSubmit,
+  handleContactSubmit,
+  handleUploadCertificatesSubmit
 }: any) => {
   // Define the structure of form data for type safety
   interface FormField {
@@ -85,450 +94,6 @@ const Create = ({
 
   const handleTabsChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
-  };
-
-  const formFields: FormData = {
-    email: {
-      label: 'Enter Your Email ID',
-      id: 'email',
-      name: 'email',
-      type: 'email',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    personalemail: {
-      label: 'Enter Your Personal Email ID',
-      id: 'personalemail',
-      name: 'personalemail',
-      type: 'email',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    name: {
-      label: 'Enter Your Name',
-      id: 'name',
-      name: 'name',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    surname: {
-      label: 'Enter Your SurName',
-      id: 'surname',
-      name: 'surname',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    state: {
-      label: 'Select State',
-      id: 'selectState',
-      name: 'state',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Select Your State' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    branch: {
-      label: 'Select Branch',
-      id: 'selectbranch',
-      name: 'branch',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Odisha' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    religion: {
-      label: 'Select Religion',
-      id: 'selectreligion',
-      name: 'religion',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Hindu' },
-        { id: 2, label: 'Shik' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    gender: {
-      label: 'Select Gender',
-      id: 'gender',
-      name: 'gender',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    maritalstatus: {
-      label: 'Select Marital Status',
-      id: 'maritalstatus',
-      name: 'maritalstatus',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Married' },
-        { id: 2, label: 'Unmarried' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    caste: {
-      label: 'Select Caste',
-      id: 'selectcaste',
-      name: 'caste',
-      type: 'select',
-      options: [
-        { id: 1, label: 'cats' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    role: {
-      label: 'Select Role',
-      id: 'selectrole',
-      name: 'role',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Workers' },
-        { id: 2, label: 'Manager' },
-        { id: 3, label: 'BPO' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    city: {
-      label: 'Select City',
-      id: 'selectCity',
-      name: 'city',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Madhapur' },
-        { id: 2, label: 'Mumbi' },
-        { id: 3, label: 'Hyderabad' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    number: {
-      label: ' Enter Mobile Number',
-      id: 'number',
-      name: 'number',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    officenumber: {
-      label: ' Enter office Number',
-      id: 'officenumber',
-      name: 'officenumber',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    pincode: {
-      label: ' Enter Pin Code',
-      id: 'pincode',
-      name: 'pincode',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    address: {
-      label: ' Enter Your Address',
-      id: 'adress',
-      name: 'address',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    education: {
-      label: 'Select Education Level ',
-      id: 'education',
-      name: 'education',
-      type: 'select',
-      options: [
-        { id: 'regular', label: 'Regular' },
-        { id: 'distance', label: 'Distance' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    dateofbirth: {
-      label: ' Date of Birth',
-      id: 'dateofbirth',
-      name: 'dateofbirth',
-      value: '',
-      error: false,
-      helperText: 'Please select date',
-      mandatory: true,
-      options: []
-    },
-    qualification: {
-      label: 'Select  Qualification',
-      id: 'selectqualification',
-      name: 'qualification',
-      type: 'select',
-      options: [
-        { id: 1, label: 'BSc' },
-        { id: 2, label: 'B.tech' },
-        { id: 3, label: 'B.com' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    temporaryaddress: {
-      label: 'Enter Your Address',
-      id: 'temporaryaddress',
-      name: 'temporaryaddress',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    aadharcard: {
-      label: ' Enter Your AAdhar No',
-      id: 'aadharcard',
-      name: 'aadharcard',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    fathername: {
-      label: 'Enter Your Father Name',
-      id: 'fathername',
-      name: 'fathername',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    fatherno: {
-      label: ' Enter Your Father Mobie No',
-      id: 'fatherno',
-      name: 'fatherno',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    fatheraddress: {
-      label: 'Enter Your Father Address',
-      id: 'fatheraddress',
-      name: 'fatheraddress',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    referenceno: {
-      label: 'Enter refrence Number',
-      id: 'referenceno',
-      name: 'referenceno',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    referenceaddress: {
-      label: 'Enter refrence Address',
-      id: 'referenceaddress',
-      name: 'referenceaddress',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    referencename: {
-      label: 'Enter refrence Name',
-      id: 'referenceaddress',
-      name: 'referencename',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    source: {
-      label: 'Select Source',
-      id: 'source',
-      name: 'source',
-      type: 'select',
-      options: [
-        { id: 1, label: 'Source' },
-        { id: 2, label: 'Website' },
-        { id: 3, label: 'Self' },
-        { id: 4, label: 'Tv 9' },
-        { id: 5, label: 'Tv 9' },
-        { id: 6, label: 'Etv Telangana' }
-      ],
-      value: { id: null, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    joiningdate: {
-      label: 'Joining Date',
-      id: 'joiningdate',
-      name: 'joiningdate',
-      value: '',
-      error: false,
-      helperText: 'Please select date',
-      mandatory: true,
-      options: []
-    },
-    expereince: {
-      label: 'Your Past Expereince',
-      id: 'expereince',
-      name: 'expereince',
-      value: '',
-      error: false,
-      helperText: 'Please select date',
-      mandatory: true,
-      options: []
-    },
-    ssccertificate: {
-      label: 'Upload Your Ssc Certificate',
-      id: 'ssccertificate',
-      name: 'ssccertificate',
-      type: 'file',
-      value: '',
-      error: false,
-      mandatory: true,
-      options: []
-    },
-    highercertificate: {
-      label: 'Upload Your Higher Certificate',
-      id: 'highercertificate',
-      name: 'highercertificate',
-      type: 'file',
-      value: '',
-      error: false,
-      mandatory: true,
-      options: []
-    },
-    aadharcardphoto: {
-      label: 'Upload Your Aadhar Card',
-      id: 'aadharcardphoto',
-      name: 'aadharcardphoto',
-      type: 'file',
-      value: '',
-      error: false,
-      mandatory: true,
-      options: []
-    },
-    pancard: {
-      label: ' Upload Your Pan card',
-      id: 'pancard',
-      name: 'pancard',
-      type: 'file',
-      value: '',
-      error: false,
-      mandatory: true,
-      options: []
-    },
-    profile: {
-      label: 'Upload Your Profile',
-      id: 'profile',
-      name: 'profile',
-      type: 'file',
-      value: '',
-      error: false,
-      mandatory: true,
-      options: []
-    },
-    passbook: {
-      label: 'Upload Your Bank PassBook',
-      id: 'passbook',
-      name: 'passbook',
-      type: 'file',
-      value: '',
-      error: false,
-      mandatory: true,
-      options: []
-    }
   };
 
   const months = ['January', 'February', 'March'];
@@ -672,7 +237,9 @@ const Create = ({
   //       return;
   //     }
   //   };
-
+console.log("formDataForContactDetails: ", formDataForContactDetails)
+console.log("formData: ", formData)
+console.log("uploadcertificates: ", certificatesUploadFormData)
   return (
     <Container
       style={{
@@ -836,50 +403,50 @@ const Create = ({
             </form>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleContactSubmit} noValidate>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonSelectField inputProps={formData.qualification} onSelectChange={handleSelectChange} />
+                  <CommonSelectField inputProps={formDataForContactDetails.qualification} onSelectChange={handleSelectChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.temporaryaddress} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.temporaryaddress} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.aadharcard} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.aadharcard} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.fathername} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.fathername} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.fatherno} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.fatherno} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.fatheraddress} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.fatheraddress} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.referencename} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.referencename} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.referenceno} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.referenceno} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.referenceaddress} onChange={handleChange} />
+                  <CommonInputField inputProps={formDataForContactDetails.referenceaddress} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonSelectField inputProps={formData.source} onSelectChange={handleSelectChange} />
+                  <CommonSelectField inputProps={formDataForContactDetails.source} onSelectChange={handleSelectChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} marginTop={2}>
-                  <CommonDatePicker inputProps={formData.joiningdate} onDateChange={handleDateChange} />
+                  <CommonDatePicker inputProps={formDataForContactDetails.joiningdate} onDateChange={handleDateChangeForContact} />
                 </Grid>
                 <Grid container item xs={12} sm={6} md={6} marginBottom={1} textAlign={'center'}>
-                  <InputLabel>{formData.expereince.label}</InputLabel>
+                  <InputLabel>{formDataForContactDetails.expereince.label}</InputLabel>
                   <Grid container spacing={1}>
                     <Grid item xs={6}>
-                      <FormControl fullWidth error={formData.expereince.error}>
+                      <FormControl fullWidth error={formDataForContactDetails.expereince.error}>
                         <InputLabel>Month</InputLabel>
                         <Select
-                          value={formData.expereince.value.month || ''}
-                          onChange={(e) => handleSelectChange('expereince', { ...formData.expereince.value, month: e.target.value })}
+                          value={formDataForContactDetails.expereince.value.month || ''}
+                          onChange={(e) => handleSelectChangeForContact('expereince', { ...formDataForContactDetails.expereince.value, month: e.target.value })}
                         >
                           {months.map((month, index) => (
                             <MenuItem key={index + 1} value={index + 1}>
@@ -890,11 +457,11 @@ const Create = ({
                       </FormControl>
                     </Grid>
                     <Grid item xs={6}>
-                      <FormControl fullWidth error={formData.expereince.error}>
+                      <FormControl fullWidth error={formDataForContactDetails.expereince.error}>
                         <InputLabel>Year</InputLabel>
                         <Select
-                          value={formData.expereince.value.year || ''}
-                          onChange={(e) => handleSelectChange('expereince', { ...formData.expereince.value, year: e.target.value })}
+                          value={formDataForContactDetails.expereince.value.year || ''}
+                          onChange={(e) => handleSelectChangeForContact('expereince', { ...formDataForContactDetails.expereince.value, year: e.target.value })}
                         >
                           {years.map((year) => (
                             <MenuItem key={year} value={year}>
@@ -915,10 +482,10 @@ const Create = ({
             </form>
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleUploadCertificatesSubmit} noValidate>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={4}>
-                  <MainCard title={formData.ssccertificate.label}>
+                  <MainCard title={certificatesUploadFormData.ssccertificate.label}>
                     <Formik
                       initialValues={{ files: null }}
                       onSubmit={() => {
@@ -928,8 +495,11 @@ const Create = ({
                         files: yup.mixed().required('Avatar is a required.')
                       })}
                     >
-                      {({ values, handleSubmit, setFieldValue, touched, errors }) => (
-                        <form onSubmit={handleSubmit}>
+                      {({ values, handleSubmit, setFieldValue, touched, errors }) => {
+                        useEffect(()=>{
+                          setCertificatesUploadFormData({...certificatesUploadFormData, ssccertificate: {...certificatesUploadFormData?.ssccertificate, value: values?.files}})
+                        }, [values])
+                        return <form onSubmit={handleUploadCertificatesSubmit}>
                           <Grid spacing={3}>
                             <Grid item xs={12}>
                               <Stack spacing={1.5} alignItems="center">
@@ -948,12 +518,12 @@ const Create = ({
                             </Grid>
                           </Grid>
                         </form>
-                      )}
+                      }}
                     </Formik>
                   </MainCard>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <MainCard title={formData.highercertificate.label}>
+                  <MainCard title={certificatesUploadFormData.highercertificate.label}>
                     <Formik
                       initialValues={{ files: null }}
                       onSubmit={() => {
@@ -963,8 +533,11 @@ const Create = ({
                         files: yup.mixed().required('Avatar is a required.')
                       })}
                     >
-                      {({ values, handleSubmit, setFieldValue, touched, errors }) => (
-                        <form onSubmit={handleSubmit}>
+                      {({ values, handleSubmit, setFieldValue, touched, errors }) => {
+                        useEffect(()=>{
+                          setCertificatesUploadFormData({...certificatesUploadFormData, highercertificate: {...certificatesUploadFormData?.highercertificate, value: values?.files}})
+                        }, [values])
+                        return <form onSubmit={handleUploadCertificatesSubmit}>
                           <Grid spacing={3}>
                             <Grid item xs={12}>
                               <Stack spacing={1.5} alignItems="center">
@@ -983,12 +556,12 @@ const Create = ({
                             </Grid>
                           </Grid>
                         </form>
-                      )}
+                      }}
                     </Formik>
                   </MainCard>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <MainCard title={formData.aadharcardphoto.label}>
+                  <MainCard title={certificatesUploadFormData.aadharcardphoto.label}>
                     <Formik
                       initialValues={{ files: null }}
                       onSubmit={() => {
@@ -998,8 +571,11 @@ const Create = ({
                         files: yup.mixed().required('Avatar is a required.')
                       })}
                     >
-                      {({ values, handleSubmit, setFieldValue, touched, errors }) => (
-                        <form onSubmit={handleSubmit}>
+                      {({ values, handleSubmit, setFieldValue, touched, errors }) => {
+                        useEffect(()=>{
+                          setCertificatesUploadFormData({...certificatesUploadFormData, aadharcardphoto: {...certificatesUploadFormData?.aadharcardphoto, value: values?.files}})
+                        }, [values])
+                        return <form onSubmit={handleUploadCertificatesSubmit}>
                           <Grid container spacing={3}>
                             <Grid item xs={12}>
                               <Stack spacing={1.5} alignItems="center">
@@ -1018,12 +594,12 @@ const Create = ({
                             </Grid>
                           </Grid>
                         </form>
-                      )}
+                      }}
                     </Formik>
                   </MainCard>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <MainCard title={formData.pancard.label}>
+                  <MainCard title={certificatesUploadFormData.pancard.label}>
                     <Formik
                       initialValues={{ files: null }}
                       onSubmit={() => {
@@ -1033,8 +609,11 @@ const Create = ({
                         files: yup.mixed().required('Avatar is a required.')
                       })}
                     >
-                      {({ values, handleSubmit, setFieldValue, touched, errors }) => (
-                        <form onSubmit={handleSubmit}>
+                      {({ values, handleSubmit, setFieldValue, touched, errors }) => {
+                        useEffect(()=>{
+                          setCertificatesUploadFormData({...certificatesUploadFormData, pancard: {...certificatesUploadFormData?.pancard, value: values?.files}})
+                        }, [values])
+                        return <form onSubmit={handleUploadCertificatesSubmit}>
                           <Grid container spacing={3}>
                             <Grid item xs={12}>
                               <Stack spacing={1.5} alignItems="center">
@@ -1053,13 +632,13 @@ const Create = ({
                             </Grid>
                           </Grid>
                         </form>
-                      )}
+                      }}
                     </Formik>
                   </MainCard>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                   <MainCard
-                    title={formData.passbook.label}
+                    title={certificatesUploadFormData.passbook.label}
                     sx={{
                       width: '100%',
                       height: '100%'
@@ -1074,8 +653,11 @@ const Create = ({
                         files: yup.array().min(1, 'At least one file is required.').required('Files are required.')
                       })}
                     >
-                      {({ values, handleSubmit, setFieldValue, touched, errors }) => (
-                        <form onSubmit={handleSubmit}>
+                      {({ values, handleSubmit, setFieldValue, touched, errors }) => {
+                        useEffect(()=>{
+                          setCertificatesUploadFormData({...certificatesUploadFormData, passbook: {...certificatesUploadFormData?.passbook, value: values?.files}})
+                        }, [values])
+                        return <form onSubmit={handleUploadCertificatesSubmit}>
                           <Grid container spacing={3}>
                             <Grid item xs={12}>
                               <Stack spacing={0} alignItems="center">
@@ -1103,7 +685,7 @@ const Create = ({
                             </Grid>
                           </Grid>
                         </form>
-                      )}
+                      }}
                     </Formik>
                   </MainCard>
                 </Grid>

@@ -20,17 +20,30 @@ import Occuption from 'pages/Addnewdetails/Occuption';
 import Education from 'pages/Addnewdetails/Education';
 import Languages from 'pages/Addnewdetails/Languages';
 // import ViewUser from 'pages/user-management/branches/ViewUser';
-import BranchProfile from 'pages/user-management/branches/BranchProfile';
+import BranchProfile from 'pages/user-management/branches/BranchStaffProfile'
 import EditUser from 'pages/user-management/branches/EditUser';
 import CreateStaff from 'pages/user-management/agents/CreateAgent';
 import CreateBranch from 'pages/user-management/branches/CreateBranch';
 import CreateFranchise from 'pages/user-management/franchise/CreateFranchise';
 import EditProfile from 'pages/user-management/EditProfile';
-import FranchiseProfile from 'pages/user-management/FranchiseProfile';
+import FranchiseProfile from 'pages/user-management/franchise/FranchiseProfile';
 import AgentProfile from 'pages/user-management/agents/AgentsProfile';
 import BranchesList from 'pages/user-management/branches/BranchesList';
-import FranchiseList from 'pages/user-management/FranchiseList';
+import FranchiseList from 'pages/user-management/franchise/FranchiseList';
 import AgentsList from 'pages/user-management/agents/AgentsList';
+import ProductDetails from 'pages/apps/e-commerce/product-details';
+import Professions from 'pages/Addnewdetails/Professions';
+import Designations from 'pages/Addnewdetails/Designations';
+import University from 'pages/Addnewdetails/University';
+import Source from 'pages/Addnewdetails/Source';
+import Hobbies from 'pages/Addnewdetails/Hobbies';
+import Interests from 'pages/Addnewdetails/Interests';
+import Blockedreasons from 'pages/Addnewdetails/Blockedreasons';
+import Propertydetails from 'pages/Addnewdetails/Propertydetails';
+import ListPlans from 'pages/Plans/Listplans';
+import PlanCategory from 'pages/Plans/PlanCategory';
+import Create from 'pages/apps/invoice/create';
+import CreatePlans from 'pages/Plans/Createplans';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -242,6 +255,27 @@ const MainRoutes = {
           ]
         },
         {
+          path: 'plans',
+          children: [
+            {
+              path: 'listplans',
+              element: <ListPlans />
+            },
+            {
+              path: 'createplans',
+              element: <CreatePlans />
+            },
+            {
+              path: 'plancategory',
+              element: <PlanCategory />
+            },
+            // {
+            //   path: 'addcontacts',
+            //   element: <AgentProfile />
+            // },
+          ]
+        },
+        {
           path: 'addNewDetails',
           children: [
             {
@@ -254,7 +288,7 @@ const MainRoutes = {
             },
             {
               path: 'district',
-              element: <District />
+              element: <District/>
             },
             {
               path: 'city',
@@ -262,7 +296,7 @@ const MainRoutes = {
             },
             {
               path: 'religion',
-              element: <Religion />
+              element: <Religion/>
             },
             {
               path: 'caste',
@@ -274,16 +308,45 @@ const MainRoutes = {
             },
             {
               path: 'occuption',
-              element: <Occuption />
+              element: <Occuption/>
             },
             {
               path: 'education',
-              element: <Education />
+              element: <Education/>
+            },
+          
+            {
+              path: 'source',
+              element: <Source/>
             },
             {
-              path: 'languages',
-              element: <Languages />
-            }
+              path: 'university',
+              element: <University/>
+            },
+            {
+              path: 'designations',
+              element: <Designations/>
+            },
+            {
+              path: 'professions',
+              element: <Professions/>
+            },
+            {
+              path: 'propertydetails',
+              element: <Propertydetails/>
+            },
+            {
+              path: 'hobbies',
+              element: <Hobbies/>
+            },
+            {
+              path: 'interests',
+              element: <Interests/>
+            },
+            {
+              path: 'blockedreason',
+              element: <Blockedreasons/>
+            },
           ]
         },
 

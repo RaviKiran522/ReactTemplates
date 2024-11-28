@@ -7,17 +7,13 @@ import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 
-export default function Caste() {
+export default function University() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
 
-  // const [formData, setFormData] = useState({
-
-  //   casteName: '',
-  //   status: true, // Toggle for "Enable"
-  // });
+  
   interface FormField {
     label: any;
     id: any;
@@ -37,10 +33,10 @@ export default function Caste() {
   }
 
   const formFields: FormData = {
-    casteName: {
-      label: 'Enter Caste Name',
-      id: 'casteName',
-      name: 'casteName',
+    universityName: {
+      label: 'Enter University Name',
+      id: 'universityName',
+      name: 'universityName',
       type: 'text',
       value: '',
       error: false,
@@ -116,7 +112,7 @@ export default function Caste() {
     const newRecord = {
       sno: (data.length + 1).toString(), // Generate a new serial number based on the length of the array
 
-      caste: formData.casteName.value, // Defaulting caste to B.tech
+      university: formData.universityName.value, // Defaulting university to B.tech
       status: formData.status.value ? "Enable" : "Disabled", // Defaulting status to Enable
     };
 
@@ -128,22 +124,22 @@ export default function Caste() {
   };
 
   const initailData: any = [
-    { sno: "1", caste: "REDDY", status: "Enable" },
-    { sno: "2", caste: "SETTYBALIJA", status: "Disable" },
-    { sno: "3", caste: "CHOUDARY", status: "Enable" },
-    { sno: "4", caste: "MADHIGA", status: "Disable" },
-    { sno: "5", caste: "MALA", status: "Enable" },
-    { sno: "6", caste: "BRAHMIN", status: "Enable" },
-    { sno: "7", caste: "KAAPU", status: "Enable" },
-    { sno: "8", caste: "BRAHMIN", status: "Enable" },
-    { sno: "9", caste: "CHOUDARY", status: "Enable" }
+    { sno: "1", university: "JNTU,HYDERABAD", status: "Enable" },
+    { sno: "2", university: "ANDHRA,VIZAG", status: "Disable" },
+    { sno: "3", university: "AKNU,RAJAMANDRY", status: "Enable" },
+    { sno: "4", university: "SSC", status: "Disable" },
+    { sno: "5", university: "INTERMEDIATE", status: "Enable" },
+    { sno: "6", university: "DEGREE", status: "Enable" },
+    { sno: "7", university: "IIIT", status: "Enable" },
+    { sno: "8", university: "AKNU,RAJAMANDRY", status: "Enable" },
+    { sno: "9", university: "AKNU,RAJAMANDRY", status: "Enable" }
   ];
   const [data, setData] = useState(initailData);
 
   const columns = useMemo(
     () => [
       { header: "S.NO", accessorKey: "sno" },
-      { header: "Caste Name", accessorKey: "caste" },
+      { header: "University Name", accessorKey: "university" },
       {
         header: "Status",
         accessorKey: "status",
@@ -205,13 +201,13 @@ export default function Caste() {
       {/* Button to Open Popup */}
       <div style={{ marginBottom: '20px', textAlign: 'end' }}>
         <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
-          Create Caste
+          Create University
         </Button>
       </div>
 
       {/* React Table */}
       <ReactTable
-        title={"Caste Management"}
+        title={"University Management"}
         data={data}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
@@ -227,15 +223,16 @@ export default function Caste() {
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
         totalPageCount={60}
+
       />
 
       {/* Dialog for Create Form */}
       <Dialog open={openPopup} onClose={() => setOpenPopup(false)} maxWidth="sm" fullWidth>
-        <DialogTitle> Create Caste</DialogTitle>
+        <DialogTitle> Create University</DialogTitle>
         <DialogContent>
 
           <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.casteName} onChange={handleChange} />
+            <CommonInputField inputProps={formData.universityName} onChange={handleChange} />
           </Grid>
 
           <FormControl component="fieldset">

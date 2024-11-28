@@ -16,6 +16,9 @@ import { DocumentText, Lock, Profile, Profile2User, Setting3, TableDocument } fr
 import TabPanel from 'pages/common-components/common-tab-panel';
 import TabProfile from 'sections/apps/profiles/account/TabProfile';
 import Typography from '@mui/material/Typography';
+import BranchViewProfile from './ViewBranchProfile';
+import ChnageBranchRole from './ChangeBranchRole';
+import PermissionsTable from 'pages/common-components/common-permissions-table';
 
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //
@@ -29,13 +32,41 @@ export default function BranchProfile() {
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const actions = [
+    { action: "View" },
+    { action: "Create" },
+    { action: "Edit" },
+    { action: "Delete" },
+  ];
 
+  const [roles, setRoles] = useState([
+    {
+      id: 1,
+      name: "Administrator",
+      permissions: { view: true, create: true, edit: false, delete: false },
+    },
+    {
+      id: 2,
+      name: "Branch Admin",
+      permissions: { view: true, create: false, edit: false, delete: false },
+    },
+    {
+      id: 3,
+      name: "Staff",
+      permissions: { view: false, create: false, edit: false, delete: false },
+    },
+  ]);
+
+  const handleCheckboxChange = (updatedRoles:any) => {
+    console.log("Updated roles:", updatedRoles);
+    setRoles(updatedRoles);
+  };
 
 
 
   return (
     <>
-      <Typography>Branch Details</Typography>
+      <Typography style={{margin:'5px'}}>Branch Details</Typography>
       <MainCard border={false}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
           <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
@@ -50,16 +81,19 @@ export default function BranchProfile() {
         </Box>
         <Box>
         <TabPanel value={value} index={0}>
-<TabProfile/>
+<BranchViewProfile/>
             </TabPanel> 
             <TabPanel value={value} index={1}>
             <div>Edit</div>
 </TabPanel> 
 <TabPanel value={value} index = {2}>
-
+<ChnageBranchRole/>
 </TabPanel> 
 <TabPanel value={value} index = {3}>
-<div>reason</div>
+<div>
+      {/* <h2>Permissions</h2> */}
+      <PermissionsTable actions={actions} roles={roles} checkboxhandler={handleCheckboxChange} />
+    </div>
 </TabPanel> 
 <TabPanel value={value} index = {4}>
 <div>Edit</div>

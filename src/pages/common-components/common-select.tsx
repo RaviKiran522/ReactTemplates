@@ -47,7 +47,7 @@ const CommonSelectField: React.FC<CommonSelectProps> = ({ inputProps, onSelectCh
             label={label}
             placeholder="Search..."
             error={error}
-            helperText={helperText}
+            // helperText={helperText}
             sx={{
               '& .MuiInputBase-root': {
                 height: '48px', // Adjust the input field height

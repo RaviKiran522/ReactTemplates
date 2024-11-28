@@ -171,15 +171,14 @@ const SampleForm: React.FC = () => {
             <CommonInputField inputProps={formData.email} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonSelectField inputProps={formData.address} onSelectChange={handleSelectChange} />
-          </Grid>
-          <Grid item xs={6}>
             <CommonInputField inputProps={formData.name} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
             <CommonSelectField inputProps={formData.selectName} onSelectChange={handleSelectChange} />
           </Grid>
-          
+          <Grid item xs={6}>
+            <CommonSelectField inputProps={formData.address} onSelectChange={handleSelectChange} />
+          </Grid>
           <Grid item xs={6}>
             <CommonDatePicker inputProps={formData.date} onDateChange={handleDateChange} />
           </Grid>

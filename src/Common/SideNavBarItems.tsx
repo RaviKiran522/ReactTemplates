@@ -181,9 +181,18 @@ export const loadingMenu = [
         {
           id: 'search',
           title: 'Search',
-          type: 'item',
-          url: '/search',
-          breadcrumbs: false
+          type: 'collapse',
+          // url: '/search',
+          breadcrumbs: false,
+          children: [
+            {
+              id: 'advancesearch',
+              title: 'Advance Search',
+              type: 'item',
+              url: '/plans/advancesearch',
+              breadcrumbs: false,
+                },
+          ]
         },
         {
           id: 'sales',
@@ -195,9 +204,40 @@ export const loadingMenu = [
         {
           id: 'plans',
           title: 'Plans',
-          type: 'item',
-          url: '/plans',
-          breadcrumbs: false
+          type: 'collapse',
+          // url: '/plans',
+          breadcrumbs: false,
+          children: [
+            {
+              id: 'listplans',
+              title: 'List Plans',
+              type: 'item',
+              url: '/plans/listplans',
+              breadcrumbs: false,
+                },
+            {
+              id: 'createplans',
+              title: 'Create Plans',
+              type: 'item',
+              url: '/plans/createplans',
+              breadcrumbs: false,
+                },
+                {
+                  id: 'plancategory',
+                  title: 'Plan Category',
+                  type: 'item',
+                  url: '/plans/plancategory',
+                  breadcrumbs: false,
+                    },
+                {
+                  id: 'addcontacts',
+                  title: 'Add Contacts',
+                  type: 'item',
+                  url: '/plans/addcontacts',
+                  breadcrumbs: false,
+                    }
+
+          ]
         },
         {
           id: 'addNewDetails',
@@ -288,6 +328,48 @@ export const loadingMenu = [
               title: 'University',
               type: 'item',
               url: '/addNewDetails/university',
+              breadcrumbs: false
+            },
+            {
+              id: 'designations',
+              title: 'Designations',
+              type: 'item',
+              url: '/addNewDetails/designations',
+              breadcrumbs: false
+            },
+            {
+              id: 'professions',
+              title: 'Professions',
+              type: 'item',
+              url: '/addNewDetails/professions',
+              breadcrumbs: false
+            },
+            {
+              id: 'propertydetails',
+              title: 'Propertry Details',
+              type: 'item',
+              url: '/addNewDetails/propertydetails',
+              breadcrumbs: false
+            },
+            {
+              id: 'hobbies',
+              title: 'Hobbies',
+              type: 'item',
+              url: '/addNewDetails/hobbies',
+              breadcrumbs: false
+            },
+            {
+              id: 'interests',
+              title: 'Interests',
+              type: 'item',
+              url: '/addNewDetails/interests',
+              breadcrumbs: false
+            },
+            {
+              id: 'blockedreason',
+              title: 'Blocked Reason',
+              type: 'item',
+              url: '/addNewDetails/blockedreason',
               breadcrumbs: false
             },
             

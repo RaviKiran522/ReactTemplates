@@ -50,7 +50,7 @@ function TabPanel({ children, value, index, ...other }: any) {
   );
 }
 
-const CreateAgent = ({ needTitle = true, userData = {} }): any => {
+const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
   // Define the structure of form data for type safety
   interface FormField {
     label: any;
@@ -790,7 +790,7 @@ const CreateAgent = ({ needTitle = true, userData = {} }): any => {
 
   return (
     <Create
-      title={needTitle ? 'Create New Agent' : ''}
+      title={needTitle ? 'Create New Franchise Staff' : ''}
       formData={formData}
       setFormData={setFormData}
       formDataForContactDetails={formDataForContactDetails}
@@ -813,4 +813,4 @@ const CreateAgent = ({ needTitle = true, userData = {} }): any => {
   );
 };
 
-export default CreateAgent;
+export default CreateBranchStaff;

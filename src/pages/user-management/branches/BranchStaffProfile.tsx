@@ -19,7 +19,7 @@ import Typography from '@mui/material/Typography';
 import BranchViewProfile from './ViewBranchProfile';
 import ChnageBranchRole from './ChangeBranchRole';
 import PermissionsTable from 'pages/common-components/common-permissions-table';
-import CreateBranch from './CreateBranch';
+import CreateBranch from './CreateBranchStaff';
 import UserHistory from '../UserHistory';
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //

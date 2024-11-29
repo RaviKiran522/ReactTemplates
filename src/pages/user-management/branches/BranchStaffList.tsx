@@ -7,7 +7,7 @@ import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
 
 // The UsersList component now passes actions to the ReactTable component
-export default function AgentsList() {
+export default function BranchStaffList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -30,8 +30,8 @@ export default function AgentsList() {
   ];
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/Agent';
-    sessionStorage.setItem('editData', JSON.stringify(row));
+    const newUrl = '/react/userManagement/editUser';
+    sessionStorage.setItem('branchUser', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -42,7 +42,8 @@ export default function AgentsList() {
 
   const handleView = (row: any) => {
     console.log('row.........', row);
-    const newUrl = '/react/userManagement/Agent';
+    const newUrl = '/react/userManagement/Branch';
+    sessionStorage.setItem('branchUser', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -161,7 +162,7 @@ export default function AgentsList() {
 
   return (
     <ReactTable
-      title={'Agents'}
+      title={'Branch Staff List'}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}

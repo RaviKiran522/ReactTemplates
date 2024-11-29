@@ -16,21 +16,22 @@ import { DocumentText, Lock, Profile, Profile2User, Setting3, TableDocument } fr
 import TabPanel from 'pages/common-components/common-tab-panel';
 import TabProfile from 'sections/apps/profiles/account/TabProfile';
 import Typography from '@mui/material/Typography';
-import CreateAgent from './CreateAgent';
-import ChnageBranchRole from '../branches/ChangeBranchRole';
 import PermissionsTable from 'pages/common-components/common-permissions-table';
 import UserHistory from '../UserHistory';
+import CreateFranchiseStaff from './CreateFranchiseStaff';
+import BranchViewProfile from '../branches/ViewBranchProfile';
+import ChnageBranchRole from '../branches/ChangeBranchRole';
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
-export default function AgentProfile() {
-  let { pathname } = useLocation();
-
+export default function FranchiseStaffProfile({ tabInd }: any) {
   const [value, setValue] = useState(0);
-
+  var user = sessionStorage.getItem('franchiseUser');
+  console.log('usr: ', user);
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  console.log(tabInd);
   const actions = [{ action: 'View' }, { action: 'Create' }, { action: 'Edit' }, { action: 'Delete' }];
 
   const [roles, setRoles] = useState([
@@ -50,6 +51,12 @@ export default function AgentProfile() {
       permissions: { view: false, create: false, edit: false, delete: false }
     }
   ]);
+
+  useEffect(() => {
+    if (tabInd) {
+      setValue(tabInd);
+    }
+  }, [tabInd]);
   const handleCheckboxChange = (updatedRoles: any) => {
     console.log('Updated roles:', updatedRoles);
     setRoles(updatedRoles);
@@ -57,36 +64,38 @@ export default function AgentProfile() {
 
   return (
     <>
-      <Typography>Agents Details</Typography>
+      <Typography style={{ margin: '5px' }}>Franchise Details</Typography>
       <MainCard border={false}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
           <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
             <Tab label="View Profile" icon={<Profile />} iconPosition="start" />
             <Tab label="Edit Profile" icon={<DocumentText />} iconPosition="start" />
-            {/* <Tab label="User Files" icon={<Setting3 />} iconPosition="start" /> */}
             <Tab label="Change Role" icon={<Profile2User />} iconPosition="start" />
             <Tab label="Permissions" icon={<Setting3 />} iconPosition="start" />
-            <Tab label="Settings" icon={<Setting3 />} iconPosition="start" />
+            {/* <Tab label="Settings" icon={<Setting3 />} iconPosition="start" /> */}
             <Tab label="Sales History" icon={<Setting3 />} iconPosition="start" />
           </Tabs>
         </Box>
         <Box>
           <TabPanel value={value} index={0}>
-            <TabProfile />
+            <BranchViewProfile />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <CreateAgent needTitle={false} />
+            <CreateFranchiseStaff needTitle={false} />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <ChnageBranchRole />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <PermissionsTable actions={actions} roles={roles} checkboxhandler={handleCheckboxChange} />
+            <div>
+              {/* <h2>Permissions</h2> */}
+              <PermissionsTable actions={actions} roles={roles} checkboxhandler={handleCheckboxChange} />
+            </div>
           </TabPanel>
+          {/* <TabPanel value={value} index={4}>
+            <div>Settings</div>
+          </TabPanel> */}
           <TabPanel value={value} index={4}>
-            <div>Edit</div>
-          </TabPanel>
-          <TabPanel value={value} index={5}>
             <UserHistory />
           </TabPanel>
         </Box>

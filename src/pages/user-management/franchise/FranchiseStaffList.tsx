@@ -7,7 +7,7 @@ import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
 
 // The UsersList component now passes actions to the ReactTable component
-export default function AgentsList() {
+export default function FranchiseStaffList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -30,7 +30,7 @@ export default function AgentsList() {
   ];
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/Agent';
+    const newUrl = '/react/userManagement/Franchise';
     sessionStorage.setItem('editData', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -42,7 +42,7 @@ export default function AgentsList() {
 
   const handleView = (row: any) => {
     console.log('row.........', row);
-    const newUrl = '/react/userManagement/Agent';
+    const newUrl = '/react/userManagement/Franchise';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -161,7 +161,7 @@ export default function AgentsList() {
 
   return (
     <ReactTable
-      title={'Agents'}
+      title={'Franchises Staff List'}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}
@@ -178,7 +178,7 @@ export default function AgentsList() {
       setRowsPerPage={setRowsPerPage}
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
-      totalPageCount={60}
+      totalPageCount={10}
     />
   );
 }

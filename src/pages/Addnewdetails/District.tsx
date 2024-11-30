@@ -238,11 +238,11 @@ export default function District() {
   return (
     <>
       {/* Button to Open Popup */}
-      <div style={{ marginBottom: '20px', textAlign: 'end' }}>
+      <Grid style={{ marginBottom: '20px', textAlign: 'end' }}>
         <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
           Create District
         </Button>
-      </div>
+        </Grid>
 
       {/* React Table */}
       <ReactTable
@@ -265,7 +265,7 @@ export default function District() {
       />
 
       {/* Dialog for Create Form */}
-      <Dialog open={openPopup} onClose={() => setOpenPopup(false)} maxWidth="sm" fullWidth>
+      <Dialog open={openPopup} maxWidth="sm" fullWidth>
         <DialogTitle> Create District</DialogTitle>
         <DialogContent>
         <Grid item xs={12} padding={2} >
@@ -279,7 +279,7 @@ export default function District() {
           </Grid>
           
 
-          <FormControl component="fieldset">
+          <FormControl component="fieldset" sx={{margin:"1rem"}}>
             <FormLabel component="legend">Status</FormLabel>
             <RadioGroup
               row
@@ -307,8 +307,8 @@ export default function District() {
 
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" onClick={handleFormSubmit}>
+          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup(false)}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={handleFormSubmit}>
             Create
           </Button>
         </DialogActions>

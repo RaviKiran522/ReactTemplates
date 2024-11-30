@@ -265,7 +265,7 @@ const CreatePlans: React.FC = () => {
           </Grid>
 
           <Grid item xs={12} textAlign={"end"}>
-            <Button type="submit" variant="contained" color="primary">
+            <Button type="submit" variant="contained" color="primary" sx={{margin:"1rem"}}>
               SAVE PLAN
             </Button>
           </Grid>

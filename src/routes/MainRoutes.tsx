@@ -49,6 +49,7 @@ import BranchStaffList from 'pages/user-management/branches/BranchStaffList';
 import FranchiseStaffList from 'pages/user-management/franchise/FranchiseStaffList';
 import CreateFranchise from 'pages/user-management/franchise/CreateFranchise';
 import CreateAgent from 'pages/user-management/agents/CreateAgent';
+import AdvanceSearch from 'pages/Search/AdvanceSearch';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -276,6 +277,16 @@ const MainRoutes = {
           ]
         },
         {
+          path: 'search',
+          children: [
+            {
+              path: 'advancesearch',
+              element: <AdvanceSearch />
+            },
+          ]
+      },
+
+        {
           path: 'plans',
           children: [
             {
@@ -292,7 +303,7 @@ const MainRoutes = {
             }
             // {
             //   path: 'addcontacts',
-            //   element: <AgentProfile />
+            //   element: < />
             // },
           ]
         },
@@ -335,7 +346,10 @@ const MainRoutes = {
               path: 'education',
               element: <Education />
             },
-
+  {
+              path: 'languages',
+              element: <Languages/>
+            },
             {
               path: 'source',
               element: <Source />

@@ -199,9 +199,28 @@ export const loadingMenu = [
       {
         id: 'staffCalling',
         title: 'Staff Calling',
-        type: 'item',
-        url: '/staffCalling',
-        breadcrumbs: false
+          type: 'collapse',
+          // url: '/staffCalling',
+          breadcrumbs: false,
+          children: [
+            {
+              id: 'inbound',
+              title: 'Inbound',
+              type: 'collapse',
+              // url: '/staffCalling/inbound',
+              breadcrumbs: false,
+              children: [
+                {
+                  id: 'addinbound',
+                  title: 'Add Inbound',
+                type: 'item',
+                url: '/staffCalling/inbound/addinbound',
+                breadcrumbs: false,
+                    },
+              ]
+
+                },
+          ]
       },
       {
         id: 'search',
@@ -214,7 +233,7 @@ export const loadingMenu = [
             id: 'advancesearch',
             title: 'Advance Search',
             type: 'item',
-            url: '/plans/advancesearch',
+            url: '/search/advancesearch',
             breadcrumbs: false
           }
         ]

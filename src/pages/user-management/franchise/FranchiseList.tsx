@@ -28,7 +28,7 @@ export default function FranchiseList() {
     { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }]
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/editUser';
+    const newUrl = '/admin/userManagement/editUser';
     sessionStorage.setItem('editData',JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -40,7 +40,7 @@ export default function FranchiseList() {
 
   const handleView = (row: any) => {
     console.log('row.........',row)
-    const newUrl = '/react/userManagement/Franchise';
+    const newUrl = '/admin/userManagement/Franchise';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };

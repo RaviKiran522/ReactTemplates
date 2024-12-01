@@ -176,7 +176,7 @@ export default function Subcaste() {
   
   const handleEdit = (row: any) => {
     console.log('row.........', row)
-    const newUrl = '/react/userManagement/editUser';
+    const newUrl = '/admin/userManagement/editUser';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };

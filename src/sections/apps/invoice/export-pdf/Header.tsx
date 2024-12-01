@@ -6,12 +6,12 @@ import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 
 // assets
-import Logo from 'assets/images/logo.png';
+import Logo from 'assets/images/annapurnalogo.png';
 
 // types
 import { InvoiceList } from 'types/invoice';
 
-const textPrimary = '#262626';
+const textPrimary = '#262626'
 const textSecondary = '#8c8c8c';
 
 const styles = StyleSheet.create({

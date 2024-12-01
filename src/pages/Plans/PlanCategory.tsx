@@ -28,7 +28,7 @@ export default function PlanCategory() {
     { sno: "13", planname: "VIP", plantype: "PAID",            duration: "5 MONTHS", contacts: "88", amount:"1000",  status: "Active" }]
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/editUser';
+    const newUrl = '/admin/userManagement/editUser';
     sessionStorage.setItem('editData',JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -40,7 +40,7 @@ export default function PlanCategory() {
 
   const handleView = (row: any) => {
     console.log('row.........',row)
-    const newUrl = '/react/userManagement/contacts';
+    const newUrl = '/admin/userManagement/contacts';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };

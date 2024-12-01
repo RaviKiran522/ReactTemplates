@@ -30,7 +30,7 @@ export default function AgentsList() {
   ];
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/Agent';
+    const newUrl = '/admin/userManagement/Agent';
     sessionStorage.setItem('editData', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -42,7 +42,7 @@ export default function AgentsList() {
 
   const handleView = (row: any) => {
     console.log('row.........', row);
-    const newUrl = '/react/userManagement/Agent';
+    const newUrl = '/admin/userManagement/Agent';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };

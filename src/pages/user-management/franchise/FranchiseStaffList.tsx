@@ -30,7 +30,7 @@ export default function FranchiseStaffList() {
   ];
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/Franchise';
+    const newUrl = '/admin/userManagement/Franchise';
     sessionStorage.setItem('editData', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -42,7 +42,7 @@ export default function FranchiseStaffList() {
 
   const handleView = (row: any) => {
     console.log('row.........', row);
-    const newUrl = '/react/userManagement/Franchise';
+    const newUrl = '/admin/userManagement/Franchise';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };

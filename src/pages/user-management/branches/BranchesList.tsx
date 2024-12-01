@@ -28,7 +28,7 @@ export default function BranchesList() {
     { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }]
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/editUser';
+    const newUrl = '/admin/userManagement/editUser';
     sessionStorage.setItem('branchUser',JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -40,7 +40,7 @@ export default function BranchesList() {
 
   const handleView = (row: any) => {
     console.log('row.........',row)
-    const newUrl = '/react/userManagement/Branch';
+    const newUrl = '/admin/userManagement/Branch';
     sessionStorage.setItem('branchUser',JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');

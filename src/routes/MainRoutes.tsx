@@ -20,13 +20,13 @@ import Occuption from 'pages/Addnewdetails/Occuption';
 import Education from 'pages/Addnewdetails/Education';
 import Languages from 'pages/Addnewdetails/Languages';
 // import ViewUser from 'pages/user-management/branches/ViewUser';
-import BranchProfile from 'pages/user-management/branches/BranchStaffProfile';
+import BranchProfile from 'pages/user-management/branches/BranchStaffProfile'
 import EditUser from 'pages/user-management/branches/EditUser';
 import CreateStaff from 'pages/user-management/agents/CreateAgent';
-import CreateBranchStaff from 'pages/user-management/branches/CreateBranchStaff';
-import CreateFranchiseStaff from 'pages/user-management/franchise/CreateFranchiseStaff';
+import CreateBranch from 'pages/user-management/branches/CreateBranch';
+import CreateFranchise from 'pages/user-management/franchise/CreateFranchise';
 import EditProfile from 'pages/user-management/EditProfile';
-import FranchiseProfile from 'pages/user-management/franchise/FranchiseStaffProfile';
+import FranchiseStaffProfile from 'pages/user-management/franchise/FranchiseStaffProfile';
 import AgentProfile from 'pages/user-management/agents/AgentsProfile';
 import BranchesList from 'pages/user-management/branches/BranchesList';
 import FranchiseList from 'pages/user-management/franchise/FranchiseList';
@@ -44,11 +44,6 @@ import ListPlans from 'pages/Plans/Listplans';
 import PlanCategory from 'pages/Plans/PlanCategory';
 import Create from 'pages/apps/invoice/create';
 import CreatePlans from 'pages/Plans/Createplans';
-import CreateBranch from 'pages/user-management/branches/CreateBranch';
-import BranchStaffList from 'pages/user-management/branches/BranchStaffList';
-import FranchiseStaffList from 'pages/user-management/franchise/FranchiseStaffList';
-import CreateFranchise from 'pages/user-management/franchise/CreateFranchise';
-import CreateAgent from 'pages/user-management/agents/CreateAgent';
 import AdvanceSearch from 'pages/Search/AdvanceSearch';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -177,6 +172,9 @@ const PricingPage2 = Loadable(lazy(() => import('pages/extra-pages/price/price2'
 
 // ==============================|| MAIN ROUTES ||============================== //
 
+//customer 
+const ListCustomer = Loadable(lazy(() => import('pages/Customer/list-customer')));
+
 const MainRoutes = {
   path: '/',
   children: [
@@ -221,14 +219,6 @@ const MainRoutes = {
               element: <BranchesList />
             },
             {
-              path: 'createStaff',
-              element: <CreateBranchStaff />
-            },
-            {
-              path: 'listStaff',
-              element: <BranchStaffList />
-            },
-            {
               path: 'createBranch',
               element: <CreateBranch />
             }
@@ -240,14 +230,6 @@ const MainRoutes = {
             {
               path: 'listFranchise',
               element: <FranchiseList />
-            },
-            {
-              path: 'createStaff',
-              element: <CreateFranchiseStaff />
-            },
-            {
-              path: 'listStaff',
-              element: <FranchiseStaffList />
             },
             {
               path: 'createFranchise',
@@ -268,12 +250,33 @@ const MainRoutes = {
             },
             {
               path: 'Franchise',
-              element: <FranchiseProfile />
+              element: <FranchiseStaffProfile />
             },
             {
               path: 'Agent',
               element: <AgentProfile />
-            }
+            },
+          ]
+        },
+        {
+          path: 'customerManagement',
+          children: [
+            {
+              path: 'listCustomers',
+              element: <ListCustomer />
+            },
+            {
+              path: 'createplans',
+              element: <CreatePlans />
+            },
+            {
+              path: 'plancategory',
+              element: <PlanCategory />
+            },
+            // {
+            //   path: 'addcontacts',
+            //   element: <AgentProfile />
+            // },
           ]
         },
         {
@@ -285,7 +288,6 @@ const MainRoutes = {
             },
           ]
       },
-
         {
           path: 'plans',
           children: [
@@ -300,10 +302,10 @@ const MainRoutes = {
             {
               path: 'plancategory',
               element: <PlanCategory />
-            }
+            },
             // {
             //   path: 'addcontacts',
-            //   element: < />
+            //   element: <AgentProfile />
             // },
           ]
         },
@@ -320,7 +322,7 @@ const MainRoutes = {
             },
             {
               path: 'district',
-              element: <District />
+              element: <District/>
             },
             {
               path: 'city',
@@ -328,7 +330,7 @@ const MainRoutes = {
             },
             {
               path: 'religion',
-              element: <Religion />
+              element: <Religion/>
             },
             {
               path: 'caste',
@@ -340,11 +342,11 @@ const MainRoutes = {
             },
             {
               path: 'occuption',
-              element: <Occuption />
+              element: <Occuption/>
             },
             {
               path: 'education',
-              element: <Education />
+              element: <Education/>
             },
   {
               path: 'languages',
@@ -352,36 +354,36 @@ const MainRoutes = {
             },
             {
               path: 'source',
-              element: <Source />
+              element: <Source/>
             },
             {
               path: 'university',
-              element: <University />
+              element: <University/>
             },
             {
               path: 'designations',
-              element: <Designations />
+              element: <Designations/>
             },
             {
               path: 'professions',
-              element: <Professions />
+              element: <Professions/>
             },
             {
               path: 'propertydetails',
-              element: <Propertydetails />
+              element: <Propertydetails/>
             },
             {
               path: 'hobbies',
-              element: <Hobbies />
+              element: <Hobbies/>
             },
             {
               path: 'interests',
-              element: <Interests />
+              element: <Interests/>
             },
             {
               path: 'blockedreason',
-              element: <Blockedreasons />
-            }
+              element: <Blockedreasons/>
+            },
           ]
         },
 
@@ -764,7 +766,7 @@ const MainRoutes = {
           children: [
             {
               path: 'createAgents',
-              element: <CreateAgent />
+              element: <CreateStaff />
             },
             {
               path: 'listAgents',

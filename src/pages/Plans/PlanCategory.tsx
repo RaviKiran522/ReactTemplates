@@ -114,8 +114,8 @@ export default function PlanCategory() {
           switch (status) {
             case 'IN-ACTIVE':
               return <Chip color="error" label="IN-ACTIVE" size="small" variant="light" />;
-            case 'IN-ACTIVE':
-              return <Chip color="success" label="IN-ACTIVE" size="small" variant="light" />;
+            // case 'IN-ACTIVE':
+            //   return <Chip color="success" label="IN-ACTIVE" size="small" variant="light" />;
             default:
               return <Chip color="info" label="Active" size="small" variant="light" />;
           }

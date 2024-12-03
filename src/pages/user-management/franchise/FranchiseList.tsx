@@ -28,7 +28,7 @@ export default function FranchiseList() {
     { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }]
 
   const handleEdit = (row: any) => {
-    const newUrl = '/admin/userManagement/editUser';
+    const newUrl = '/react/userManagement/Franchise';
     sessionStorage.setItem('editData',JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');

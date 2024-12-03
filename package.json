@@ -25,6 +25,8 @@
     "@fullcalendar/timeline": "^6.1.11",
     "@hello-pangea/dnd": "^16.6.0",
     "@mui/base": "5.0.0-beta.40",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/lab": "^5.0.0-alpha.129",
     "@mui/system": "^5.15.15",
     "@mui/x-date-pickers": "^7.22.2",
     "@mui/x-tree-view": "^7.1.1",

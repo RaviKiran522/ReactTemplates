@@ -66,7 +66,7 @@ export default function AgentProfile() {
             {/* <Tab label="User Files" icon={<Setting3 />} iconPosition="start" /> */}
             <Tab label="Change Role" icon={<Profile2User />} iconPosition="start" />
             <Tab label="Permissions" icon={<Setting3 />} iconPosition="start" />
-            <Tab label="Settings" icon={<Setting3 />} iconPosition="start" />
+            {/* <Tab label="Settings" icon={<Setting3 />} iconPosition="start" /> */}
             <Tab label="Sales History" icon={<Setting3 />} iconPosition="start" />
           </Tabs>
         </Box>
@@ -83,9 +83,9 @@ export default function AgentProfile() {
           <TabPanel value={value} index={3}>
             <PermissionsTable actions={actions} roles={roles} checkboxhandler={handleCheckboxChange} />
           </TabPanel>
-          <TabPanel value={value} index={4}>
+          {/* <TabPanel value={value} index={4}>
             <div>Edit</div>
-          </TabPanel>
+          </TabPanel> */}
           <TabPanel value={value} index={5}>
             <UserHistory />
           </TabPanel>

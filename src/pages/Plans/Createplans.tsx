@@ -235,7 +235,7 @@ const CreatePlans: React.FC = () => {
       <form onSubmit={handleSubmit} noValidate>
 
         <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6} md={6}>
             <CommonSelectField inputProps={formData.selectcategory} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12} sm={6} md={6}>

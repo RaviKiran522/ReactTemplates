@@ -6,6 +6,7 @@ import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Butt
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
+import CommonSelectField from 'pages/common-components/common-select';
 
 export default function Caste() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
@@ -48,16 +49,20 @@ export default function Caste() {
       mandatory: true,
       options: []
     },
-    status: {
+    statusName: {
       label: "Status",
-      id: "status",
-      name: "status",
-      type: "radio",
-      value: true, 
+      id: "statusName",
+      name: "statusName",
+      type: "select",
+      options: [
+        { id: 1, label: 'ENABLE' },
+        { id: 2, label: 'DISABLE' },
+      ],
+      value: {id:null,label:''},
       error: false,
       helperText: "",
       mandatory: true,
-      options: [], 
+      isMulti: false,
     },
 
   }
@@ -76,56 +81,56 @@ export default function Caste() {
       },
     }));
   };
-  
   const validate = (): boolean => {
-    let newFormData = _.cloneDeep(formData);
+    let newFormData = _.cloneDeep(formData); // Clone the current form data
     let isValid = true;
-
+  
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
-
-        if (field.mandatory && !field.value && field.value == "") {
+  
+        // Validate mandatory fields
+        if (field.mandatory && (!field.value || field.value === "")) {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else if (field.type = "select") {
-          if (!field.value || field.value.id === null) {
-            newFormData[key].error = true;
-            newFormData[key].helperText = `${field.label} is required`
-          } else {
-            newFormData[key].error = false;
-            newFormData[key].helperText = ""
-          }
-        }
-        else {
+        } else if (field.type === "select" && (!field.value || field.value.id === null)) {
+          newFormData[key].error = true;
+          newFormData[key].helperText = `${field.label} is required`;
+          isValid = false;
+        } else {
+          newFormData[key].error = false;
           newFormData[key].helperText = '';
         }
       }
     }
-
-    setFormData(newFormData);
+  
+    setFormData(newFormData); // Update the form data with validation errors
     return isValid;
   };
-
+  
+  
+  
   const handleFormSubmit = () => {
-    if (validate()) {
-      setOpenPopup(false);
+    if (!validate()) {
+      // Stop the function execution if validation fails
+      return;
     }
-    console.log("Form Data: ", formData);
+  
+    // Create a new record only if validation passes
     const newRecord = {
-      sno: (data.length + 1).toString(), // Generate a new serial number based on the length of the array
-
-      caste: formData.casteName.value, // Defaulting caste to B.tech
-      status: formData.status.value ? "Enable" : "Disabled", // Defaulting status to Enable
+      sno: (data.length + 1).toString(), // Generate a new serial number
+      caste: formData.casteName.value, // Use the caste name value from the form
+      status: formData.statusName.value.label// Use the status label from the form
     };
-
+  
     setData([...data, newRecord]); // Add the new record to the data array
     console.log("Updated Data: ", data); // Log the updated array
-
-    // Perform API call or state update
-    // Close the dialog after submission
+  
+    setOpenPopup(false); // Close the dialog
   };
+  
+  
 
   const initailData: any = [
     { sno: "1", caste: "REDDY", status: "Enable" },
@@ -151,10 +156,10 @@ export default function Caste() {
           const status = props.getValue(); // Get the value of the "status" field
           return (
             <Chip
-              color={status === "Enable" ? "success" : "error"}
+              color={status === "Enable" ? "success" : "error"} // Use success for "Enable"
               label={status}
               size="small"
-              variant="outlined" // Changed to "outlined" for better visual distinction
+              variant="outlined" // Optionally change to "filled" for stronger color
             />
           );
         },
@@ -163,11 +168,25 @@ export default function Caste() {
     []
   );
   
+  const handleSelectChange = (name: FormDataKeys, value: any) => {
+    const newFormData = _.cloneDeep(formData);
+    newFormData[name].value = value;
+    newFormData[name].error = false;
+    newFormData[name].helperText = '';
+    setFormData(newFormData);
+  };
   const handleEdit = (row: any) => {
-    console.log('row.........', row)
-    const newUrl = '/admin/userManagement/editUser';
-    const fullPath = `${window.location.origin}${newUrl}`;
-    window.open(fullPath, '_blank');
+    // Pre-fill formData with the selected row's data
+    const newFormData = _.cloneDeep(formData);
+  
+    // Map row values to formData fields
+    newFormData.casteName.value = row.caste; // Map "country" to "countryName"
+    newFormData.statusName.value = newFormData.statusName.options.find(
+      (option) => option.label.toUpperCase() === row.status.toUpperCase()
+    ) || { id: null, label: '' };
+  
+    setFormData(newFormData); // Update formData state
+    setOpenPopup(true); // Open dialog
   };
 
   const ActionMenu = ({ row }: { row: any }) => {
@@ -238,29 +257,9 @@ export default function Caste() {
             <CommonInputField inputProps={formData.casteName} onChange={handleChange} />
           </Grid>
 
-          <FormControl component="fieldset" sx={{margin:"1rem"}}>
-            <FormLabel component="legend">Status</FormLabel>
-            <RadioGroup
-              row
-              name="status"
-              value={formData.status.value ? "Enable" : "Disable"} // Correctly accessing formData.status.value
-              onChange={(e) =>
-                handleChange("status", e.target.value === "Enable") // Use a consistent update handler
-              }
-            >
-              <FormControlLabel
-                value="Enable"
-                control={<Radio color="success" />}
-                label="Enable"
-              />
-              <FormControlLabel
-                value="Disable"
-                control={<Radio color="error" />}
-                label="Disable"
-              />
-            </RadioGroup>
-
-          </FormControl>
+          <Grid item xs={12} padding={2} >
+            <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
+          </Grid>
 
 
 

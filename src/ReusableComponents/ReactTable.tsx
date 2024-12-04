@@ -85,11 +85,23 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 700,
+  width: '80%', // Increase the width
+  maxWidth: '800px', // Set a maximum width
   bgcolor: 'background.paper',
   boxShadow: 24,
-  borderRadius: '8px',
-  p: 8
+  maxHeight: '80vh',
+  overflowY: 'auto',
+  p: 4,
+  borderRadius: '8px'
+  // position: 'absolute',
+  // top: '50%',
+  // left: '50%',
+  // transform: 'translate(-50%, -50%)',
+  // width: 700,
+  // bgcolor: 'background.paper',
+  // boxShadow: 24,
+  // borderRadius: '8px',
+  // p: 8
 };
 
 const style1 = {
@@ -469,8 +481,8 @@ export default function ReactTable({
             </>
           ) : (
             <Stack direction="row" justifyContent="space-around" spacing={3}>
-              <Typography id="modal-description" sx={{ mt: 2 }}>
-                Are you sure, you want to {open.action} users?
+              <Typography id="modal-description" sx={{ mt: 2,fontSize:19 }}>
+                Are you sure, you want to {open.action} this row?
               </Typography>
             </Stack>
           )}
@@ -481,11 +493,11 @@ export default function ReactTable({
                   <Button
                     sx={{
                       mt: 3,
-                      backgroundColor: 'darkgray',
-                      color: 'black',
+                      backgroundColor: '#f03f32',
+                      color: 'white',
                       '&:hover': {
-                        backgroundColor: 'gray',
-                        color: 'black'
+                        backgroundColor: 'darkred',
+                        color: 'white'
                       }
                     }}
                     onClick={handleClose}
@@ -503,7 +515,8 @@ export default function ReactTable({
                       }
                     }}
                     onClick={() => {
-                      if (open.action === 'delete' || open.action === 'block' || open.action === 'leave') {
+                      console.log(open,"open")
+                      if (open.action === 'delete' || open.action === 'block' || open.action === 'leave' || open.action === 'disable') {
                         console.log('rowdata: ', rowdata.original);
                         buttonHandler(open.action, rowdata.original);
                         setOpen(false);

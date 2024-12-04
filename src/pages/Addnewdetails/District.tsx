@@ -78,16 +78,20 @@ export default function District() {
       mandatory: true,
       isMulti: false,
     },
-    status: {
+    statusName: {
       label: "Status",
-      id: "status",
-      name: "status",
-      type: "radio",
-      value: true, 
+      id: "statusName",
+      name: "statusName",
+      type: "select",
+      options: [
+        { id: 1, label: 'ENABLE' },
+        { id: 2, label: 'DISABLE' },
+      ],
+      value: {id:null,label:''},
       error: false,
       helperText: "",
       mandatory: true,
-      options: [], 
+      isMulti: false,
     },
 
   }
@@ -143,7 +147,7 @@ export default function District() {
         counrty: formData.selectName.value.label,
         state: formData.stateName.value.label,
         district:formData.districtName.value,
-        status: formData.status.value ? "Enable" : "Disable",
+        status: formData.statusName.value.label 
       };
   
       setData((prevData: any) => [...prevData, newRecord]);
@@ -192,10 +196,23 @@ export default function District() {
   );
   
   const handleEdit = (row: any) => {
-    console.log('row.........', row)
-    const newUrl = '/admin/userManagement/editUser';
-    const fullPath = `${window.location.origin}${newUrl}`;
-    window.open(fullPath, '_blank');
+    // Pre-fill formData with the selected row's data
+    const newFormData = _.cloneDeep(formData);
+  
+    // Map row values to formData
+    newFormData.selectName.value = newFormData.selectName.options.find(
+      (option) => option.label === row.counrty
+    ) || { id: null, label: '' };
+    newFormData.stateName.value = newFormData.stateName.options.find(
+      (option) => option.label === row.state
+    ) || { id: null, label: '' };
+    newFormData.districtName.value = row.district;
+    newFormData.statusName.value = newFormData.statusName.options.find(
+      (option) => option.label.toUpperCase() === row.status.toUpperCase()
+    ) || { id: null, label: '' };
+  
+    setFormData(newFormData); // Update formData state
+    setOpenPopup(true); // Open dialog
   };
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
@@ -277,8 +294,11 @@ export default function District() {
           <Grid item xs={12} padding={2}>
             <CommonInputField inputProps={formData.districtName} onChange={handleChange} />
           </Grid>
+          <Grid item xs={12} padding={2} >
+            <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
+          </Grid>
           
-
+{/* 
           <FormControl component="fieldset" sx={{margin:"1rem"}}>
             <FormLabel component="legend">Status</FormLabel>
             <RadioGroup
@@ -301,7 +321,7 @@ export default function District() {
               />
             </RadioGroup>
 
-          </FormControl>
+          </FormControl> */}
 
 
 

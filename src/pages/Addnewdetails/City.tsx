@@ -95,16 +95,20 @@ export default function District() {
       mandatory: true,
       isMulti: false,
     },
-    status: {
+    statusName: {
       label: "Status",
-      id: "status",
-      name: "status",
-      type: "radio",
-      value: true, 
+      id: "statusName",
+      name: "statusName",
+      type: "select",
+      options: [
+        { id: 1, label: 'ENABLE' },
+        { id: 2, label: 'DISABLE' },
+      ],
+      value: {id:null,label:''},
       error: false,
       helperText: "",
       mandatory: true,
-      options: [], 
+      isMulti: false,
     },
 
   }
@@ -162,7 +166,7 @@ export default function District() {
         district:formData.districtName.value.label,
         city: formData.cityName.value,
        
-        status: formData.status.value ? "Enable" : "Disable",
+        status: formData.statusName.value ? "Enable" : "Disabled",
       };
   
       setData((prevData: any) => [...prevData, newRecord]);
@@ -184,7 +188,7 @@ export default function District() {
     { sno: "9",city:"NARSAPUR",district:"HYDERABADH", counrty:"INDIA",state:"GUJARAT", status: "Enable" }
   ];
   const [data, setData] = useState(initailData);
-
+ 
   const columns = useMemo(
     () => [
       { header: "S.NO", accessorKey: "sno" },
@@ -211,12 +215,31 @@ export default function District() {
     []
   );
   
+ 
+
   const handleEdit = (row: any) => {
-    console.log('row.........', row)
-    const newUrl = '/admin/userManagement/editUser';
-    const fullPath = `${window.location.origin}${newUrl}`;
-    window.open(fullPath, '_blank');
+    // Pre-fill formData with the selected row's data
+    const newFormData = _.cloneDeep(formData);
+  
+    // Map row values to formData
+    newFormData.selectName.value = newFormData.selectName.options.find(
+      (option) => option.label === row.counrty
+    ) || { id: null, label: '' };
+    newFormData.stateName.value = newFormData.stateName.options.find(
+      (option) => option.label === row.state
+    ) || { id: null, label: '' };
+    newFormData.districtName.value = newFormData.districtName.options.find(
+      (option) => option.label === row.district
+    ) || { id: null, label: '' };
+    newFormData.cityName.value = row.city;
+    newFormData.statusName.value = newFormData.statusName.options.find(
+      (option) => option.label.toUpperCase() === row.status.toUpperCase()
+    ) || { id: null, label: '' };
+  
+    setFormData(newFormData); // Update formData state
+    setOpenPopup(true); // Open dialog
   };
+  
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -224,7 +247,10 @@ export default function District() {
     newFormData[name].helperText = '';
     setFormData(newFormData);
   };
-
+  useEffect(() => {
+    console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
+  }, [rowsPerPage, pageNumber]);
+  
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -232,22 +258,22 @@ export default function District() {
       setAnchorEl(event.currentTarget);
     };
 
-    useEffect(() => {
-      console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
-    }, [rowsPerPage, pageNumber]);
+    
 
     const handleClose = () => {
       setAnchorEl(null);
     };
 
-    
+  
 
 
     return (
       <>
         <Button onClick={handleClick}>...</Button>
+
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+          {/* <MenuItem onClick={() => handleDelete(row)}>Delete</MenuItem> */}
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem>
         </Menu>
@@ -263,7 +289,7 @@ export default function District() {
           Create City
         </Button>
       </Grid>
-
+   
       {/* React Table */}
       <ReactTable
         title={"City Management"}
@@ -301,9 +327,12 @@ export default function District() {
           <Grid item xs={12} padding={2}>
             <CommonInputField inputProps={formData.cityName} onChange={handleChange} />
           </Grid>
+          <Grid item xs={12} padding={2} >
+            <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
+          </Grid>
           
 
-          <FormControl component="fieldset" sx={{margin:"1rem"}}>
+          {/* <FormControl component="fieldset" sx={{margin:"1rem"}}>
             <FormLabel component="legend">Status</FormLabel>
             <RadioGroup
               row
@@ -325,7 +354,7 @@ export default function District() {
               />
             </RadioGroup>
 
-          </FormControl>
+          </FormControl> */}
 
 
 
@@ -340,3 +369,15 @@ export default function District() {
     </>
   );
 }
+function setSelectedRowForDeletion(row: any) {
+  throw new Error('Function not implemented.');
+}
+
+function setDeleteDialogOpen(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
+function setSnackbarOpen(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+

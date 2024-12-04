@@ -45,6 +45,7 @@ import PlanCategory from 'pages/Plans/PlanCategory';
 import Create from 'pages/apps/invoice/create';
 import CreatePlans from 'pages/Plans/Createplans';
 import AdvanceSearch from 'pages/Search/AdvanceSearch';
+import AddInbound from 'pages/Staffcalling/Inbound/Addinbound';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -280,6 +281,21 @@ const MainRoutes = {
           ]
         },
         {
+          path: 'staffCalling',
+          children: [
+            {
+              path: 'inbound',
+              children: [
+                {
+                  path: 'addinbound',
+                  element: <AddInbound/>,
+                },
+              ],
+            },
+          ],
+        },
+      
+        {
           path: 'search',
           children: [
             {
@@ -348,7 +364,7 @@ const MainRoutes = {
               path: 'education',
               element: <Education/>
             },
-  {
+           {
               path: 'languages',
               element: <Languages/>
             },

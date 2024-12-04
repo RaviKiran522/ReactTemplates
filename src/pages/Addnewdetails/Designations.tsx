@@ -6,6 +6,7 @@ import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Butt
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
+import CommonSelectField from 'pages/common-components/common-select';
 
 export default function Designations() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
@@ -44,16 +45,20 @@ export default function Designations() {
       mandatory: true,
       options: []
     },
-    status: {
+    statusName: {
       label: "Status",
-      id: "status",
-      name: "status",
-      type: "radio",
-      value: true, 
+      id: "statusName",
+      name: "statusName",
+      type: "select",
+      options: [
+        { id: 1, label: 'ENABLE' },
+        { id: 2, label: 'DISABLE' },
+      ],
+      value: {id:null,label:''},
       error: false,
       helperText: "",
       mandatory: true,
-      options: [], 
+      isMulti: false,
     },
 
   }
@@ -72,55 +77,53 @@ export default function Designations() {
       },
     }));
   };
-  
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
-
+  
+    // Check each form field for validity
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
-
-        if (field.mandatory && !field.value && field.value == "") {
+  
+        if (field.mandatory && (!field.value || field.value === "")) {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else if (field.type = "select") {
-          if (!field.value || field.value.id === null) {
-            newFormData[key].error = true;
-            newFormData[key].helperText = `${field.label} is required`
-          } else {
-            newFormData[key].error = false;
-            newFormData[key].helperText = ""
-          }
-        }
-        else {
-          newFormData[key].helperText = '';
+        } else if (field.type === "select" && (field.value.id === null || !field.value.id)) {
+          // Handle select validation for status field
+          newFormData[key].error = true;
+          newFormData[key].helperText = `${field.label} is required`;
+          isValid = false;
+        } else {
+          newFormData[key].error = false;
+          newFormData[key].helperText = "";
         }
       }
     }
-
+  
+    // Set the updated formData
     setFormData(newFormData);
+  
+    // Return the final validation result
     return isValid;
   };
-
   const handleFormSubmit = () => {
     if (validate()) {
+      // Only proceed if validation is successful
       setOpenPopup(false);
+  
+      console.log("Form Data: ", formData);
+  
+      const newRecord = {
+        sno: (data.length + 1).toString(),
+        designations: formData.designationsName.value, // Defaulting religion to B.tech
+        status: formData.statusName.value.label // Defaulting status to Enable
+      };
+  
+      setData([...data, newRecord]); // Add the new record to the data array
+      console.log("Updated Data: ", data); // Log the updated array
     }
-    console.log("Form Data: ", formData);
-    const newRecord = {
-      sno: (data.length + 1).toString(), // Generate a new serial number based on the length of the array
-
-      designations: formData.designationsName.value, // Defaulting designations to B.tech
-      status: formData.status.value ? "Enable" : "Disabled", // Defaulting status to Enable
-    };
-
-    setData([...data, newRecord]); // Add the new record to the data array
-    console.log("Updated Data: ", data); // Log the updated array
-
-    // Perform API call or state update
-    // Close the dialog after submission
   };
 
   const initailData: any = [
@@ -158,12 +161,26 @@ export default function Designations() {
     ],
     []
   );
-  
+  const handleSelectChange = (name: FormDataKeys, value: any) => {
+    const newFormData = _.cloneDeep(formData);
+    newFormData[name].value = value;
+    newFormData[name].error = false;
+    newFormData[name].helperText = '';
+    setFormData(newFormData);
+  };
+
   const handleEdit = (row: any) => {
-    console.log('row.........', row)
-    const newUrl = '/admin/userManagement/editUser';
-    const fullPath = `${window.location.origin}${newUrl}`;
-    window.open(fullPath, '_blank');
+    // Pre-fill formData with the selected row's data
+    const newFormData = _.cloneDeep(formData);
+  
+    // Map row values to formData fields
+    newFormData.designationsName.value = row.designations; // Map "country" to "countryName"
+    newFormData.statusName.value = newFormData.statusName.options.find(
+      (option) => option.label.toUpperCase() === row.status.toUpperCase()
+    ) || { id: null, label: '' };
+  
+    setFormData(newFormData); // Update formData state
+    setOpenPopup(true); // Open dialog
   };
 
   const ActionMenu = ({ row }: { row: any }) => {
@@ -234,8 +251,10 @@ export default function Designations() {
           <Grid item xs={12} padding={2}>
             <CommonInputField inputProps={formData.designationsName} onChange={handleChange} />
           </Grid>
-
-          <FormControl component="fieldset" sx={{margin:"1rem"}}>
+          <Grid item xs={12} padding={2} >
+            <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
+          </Grid>
+          {/* <FormControl component="fieldset" sx={{margin:"1rem"}}>
             <FormLabel component="legend">Status</FormLabel>
             <RadioGroup
               row
@@ -257,7 +276,7 @@ export default function Designations() {
               />
             </RadioGroup>
 
-          </FormControl>
+          </FormControl> */}
 
 
 

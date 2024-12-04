@@ -38,12 +38,12 @@ export default function ListPlans() {
     console.log('delete row.........', row)
   };
 
-  const handleView = (row: any) => {
-    console.log('row.........', row)
-    const newUrl = '/admin/userManagement/contacts';
-    const fullPath = `${window.location.origin}${newUrl}`;
-    window.open(fullPath, '_blank');
-  };
+  // const handleView = (row: any) => {
+  //   console.log('row.........', row)
+  //   const newUrl = '/admin/userManagement/contacts';
+  //   const fullPath = `${window.location.origin}${newUrl}`;
+  //   window.open(fullPath, '_blank');
+  // };
 
   const handleBlock = (row: any) => {
     console.log('block row.........', row)
@@ -88,11 +88,11 @@ export default function ListPlans() {
       <>
         <IconButton onClick={handleClick}>...</IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
+          {/* <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem> */}
           <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'leave' }); handleClose(); }}>Leave</MenuItem>
+          {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
+          <MenuItem onClick={() => { setOpen({ flag: true, action: 'leave' }); handleClose(); }}>Leave</MenuItem> */}
         </Menu>
       </>
     );
@@ -132,7 +132,7 @@ export default function ListPlans() {
       title={"MEMBERSHIP PLANS"}
       data={data}
       columns={columns}
-      //   actions={(row: any) => <ActionMenu row={row} />}
+        actions={(row: any) => <ActionMenu row={row} />}
       includeSearch={true}
       needCSV={true}
       pagination={'top'}

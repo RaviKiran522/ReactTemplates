@@ -120,8 +120,8 @@ const AdvanceSearch: React.FC = () => {
       },
       selectmaritalstatus: {
         label: 'Select Your Marital Status',
-        id: 'selectheight',
-        name: 'selectheight',
+        id: 'selectmaritalstatus',
+        name: 'selectmaritalstatus',
         type:'select',
         options: [
           { id: 1, label: 'Dovorced' },

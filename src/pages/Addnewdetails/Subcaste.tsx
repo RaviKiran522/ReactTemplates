@@ -62,16 +62,20 @@ export default function Subcaste() {
       mandatory: true,
       isMulti: false,
     },
-    status: {
+    statusName: {
       label: "Status",
-      id: "status",
-      name: "status",
-      type: "radio",
-      value: true, 
+      id: "statusName",
+      name: "statusName",
+      type: "select",
+      options: [
+        { id: 1, label: 'ENABLE' },
+        { id: 2, label: 'DISABLE' },
+      ],
+      value: {id:null,label:''},
       error: false,
       helperText: "",
       mandatory: true,
-      options: [], 
+      isMulti: false,
     },
 
   }
@@ -126,7 +130,7 @@ export default function Subcaste() {
         sno: (data.length + 1).toString(),
         caste: formData.selectName.value.label,
         subcaste: formData.subcasteName.value,
-        status: formData.status.value ? "Enable" : "Disable",
+        status: formData.statusName.value.label 
       };
   
       setData((prevData: any) => [...prevData, newRecord]);
@@ -175,10 +179,20 @@ export default function Subcaste() {
   );
   
   const handleEdit = (row: any) => {
-    console.log('row.........', row)
-    const newUrl = '/admin/userManagement/editUser';
-    const fullPath = `${window.location.origin}${newUrl}`;
-    window.open(fullPath, '_blank');
+    // Pre-fill formData with the selected row's data
+    const newFormData = _.cloneDeep(formData);
+  
+    // Map row values to formData
+    newFormData.selectName.value = newFormData.selectName.options.find(
+      (option) => option.label === row.caste
+    ) || { id: null, label: '' };
+    newFormData.subcasteName.value = row.subcaste;
+    newFormData.statusName.value = newFormData.statusName.options.find(
+      (option) => option.label.toUpperCase() === row.status.toUpperCase()
+    ) || { id: null, label: '' };
+  
+    setFormData(newFormData); // Update formData state
+    setOpenPopup(true); // Open dialog
   };
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
@@ -258,29 +272,9 @@ export default function Subcaste() {
             <CommonInputField inputProps={formData.subcasteName} onChange={handleChange} />
           </Grid>
         
-          <FormControl component="fieldset" sx={{margin:"1rem"}}>
-            <FormLabel component="legend">Status</FormLabel>
-            <RadioGroup
-              row
-              name="status"
-              value={formData.status.value ? "Enable" : "Disable"} // Correctly accessing formData.status.value
-              onChange={(e) =>
-                handleChange("status", e.target.value === "Enable") // Use a consistent update handler
-              }
-            >
-              <FormControlLabel
-                value="Enable"
-                control={<Radio color="success" />}
-                label="Enable"
-              />
-              <FormControlLabel
-                value="Disable"
-                control={<Radio color="error" />}
-                label="Disable"
-              />
-            </RadioGroup>
-
-          </FormControl>
+          <Grid item xs={12} padding={2} >
+            <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
+          </Grid>
 
 
 

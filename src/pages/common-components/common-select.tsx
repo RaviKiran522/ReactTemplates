@@ -41,6 +41,7 @@ const CommonSelectField: React.FC<CommonSelectProps> = ({ inputProps, onSelectCh
         onChange={handleSelectChange}
         getOptionLabel={(option: Option) => option.label}
         isOptionEqualToValue={(option: Option, value: Option) => option.id === value.id}
+        disableCloseOnSelect={isMulti}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -49,7 +50,11 @@ const CommonSelectField: React.FC<CommonSelectProps> = ({ inputProps, onSelectCh
             error={error}
             // helperText={helperText}
             sx={{
-              '& .MuiInputBase-root': {
+              '& .MuiInputBase-root': isMulti ? {
+                display: 'flex',
+                flexWrap: 'wrap', // Allows dynamic wrapping of selected items
+                padding: '5px 8px',
+              } : {
                 height: '48px', // Adjust the input field height
               },
             }}

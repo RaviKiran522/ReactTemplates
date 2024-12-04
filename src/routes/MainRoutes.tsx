@@ -46,6 +46,7 @@ import Create from 'pages/apps/invoice/create';
 import CreatePlans from 'pages/Plans/Createplans';
 import AdvanceSearch from 'pages/Search/AdvanceSearch';
 import AddInbound from 'pages/Staffcalling/Inbound/Addinbound';
+import CreateCustomer from 'pages/customer-management/CreateCustomer';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -295,6 +296,15 @@ const MainRoutes = {
           ],
         },
       
+        {
+          path: 'customerManagement',
+          children: [
+            {
+              path: 'createCustomer',
+              element: <CreateCustomer />
+            }
+          ]
+        },
         {
           path: 'search',
           children: [

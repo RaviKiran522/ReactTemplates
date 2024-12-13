@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, IconButton } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
@@ -11,7 +11,7 @@ import { height } from '@mui/system';
 import moment from 'moment';
 import CommonDatePicker from 'pages/common-components/common-date';
 
-export default function PlanCategory() {
+export default function ViewOnlinePayment() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
@@ -37,21 +37,10 @@ export default function PlanCategory() {
   }
 
   const formFields: FormData = {
-    duration: {
-      label: 'Enter Duration',
-      id: 'duration',
-      name: 'duration',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options : []
-    },
-    planname: {
-      label: 'Enter Plan Name',
-      id: 'naplannameme',
-      name: 'planname',
+    invoiceno: {
+      label: 'Enter Invoice NO',
+      id: 'invoiceno',
+      name: 'invoiceno',
       type: 'text',
       value: '',
       error: false,
@@ -59,30 +48,41 @@ export default function PlanCategory() {
       mandatory: true,
       options : []
     },
-    selectcategory: {
-      label: 'Select Category',
-      id: 'selectcategory',
-      name: 'selectcategory',
+    customerid: {
+      label: 'Enter Customer ID',
+      id: 'customerid',
+      name: 'customerid',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options : []
+    },
+    selectpackage: {
+      label: 'Select Package',
+      id: 'selectpackage',
+      name: 'selectpackage',
       type:'select',
       options: [
         { id: 1, label: 'FREE' },
         { id: 2, label: 'PLATINUM' },
-        { id: 3, label: 'PREMIUM' },
+        { id: 3, label: 'SILVER' },
       ],
-      value: {id:1,label:'PLATINUM'},
+      value: {id:1,label:''},
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false,
     },
-    numberofcontacts: {
-        label: 'Select Number OF Contacts',
-        id: 'numberofcontacts',
-        name: 'numberofcontacts',
+    marriagetype: {
+        label: 'Select Marriage Type',
+        id: 'marriagetype',
+        name: 'marriagetype',
         type:'select',
         options: [
-          { id: 1, label: 'Income Contacts' },
-          { id: 2, label: 'Outgoing Contacts' },
+          { id: 1, label: 'First' },
+          { id: 2, label: 'Second' },
         
         ],
         value: {id:1,label:''},
@@ -132,10 +132,10 @@ export default function PlanCategory() {
         mandatory: true,
         options : []
       },
-    activedate: {
-        label: 'Plan Active Date',
-        id: 'activedate',
-        name: 'activedate',
+    invoicedate: {
+        label: 'Invoice Date',
+        id: 'invoicedate',
+        name: 'invoicedate',
         value: "",
         error: false,
         helperText: 'Please select date',
@@ -151,6 +151,40 @@ export default function PlanCategory() {
         helperText: 'Please select date',
         mandatory: true,
         options : []
+      },
+      branch: {
+        label: 'Select Branch',
+        id: 'branch',
+        name: 'branch',
+        type: 'select',
+        options: [
+          { id: 1, label: 'Guntur Head Office' },
+          { id: 2, label: 'Ongole' },
+          { id: 3, label: 'Nellure' },
+          { id: 4, label: 'Hyderabad' },
+          { id: 5, label: 'Vijayawada' },
+        ],
+        value: {id:1,label:''},
+        error: false,
+        helperText: '',
+        mandatory: true,
+        isMulti: false,
+      },
+      paymentmode: {
+        label: 'Payment Mode',
+        id: 'paymentmode',
+        name: 'paymentmode',
+        type: 'select',
+        options: [
+          { id: 1, label: 'Cheque' },
+          { id: 2, label: 'Cash' },
+          { id: 3, label: 'Online' },
+        ],
+        value: {id:1,label:''},
+        error: false,
+        helperText: '',
+        mandatory: true,
+        isMulti: false,
       },
   };
 
@@ -199,68 +233,60 @@ export default function PlanCategory() {
 
   const handleFormSubmit = () => {
     if (validate()) {
+      // Close the popup immediately after validation
       setOpenPopup(false);
+  
+      // Construct the new record
       const newRecord = {
-        // sno: (data.length + 1).toString(),
-        planname : formData.planname.value,
-        duration : formData.duration.value,
-        durationtype : formData.durationtype.value,
-        numberofcontacts : formData.numberofcontacts.value,
-        selectcategory : formData.selectcategory.value,
-        planamount : formData.planamount.value,
-        plandiscount : formData.plandiscount.value,
-        activedate : moment(formData.activedate.value).format('YYYY/MM/DD'),
-        enddate : moment(formData.enddate.value).format('YYYY/MM/DD')
-       
-        // status: formData.statusName.value ? "Enable" : "Disabled",
+        customerid: formData.customerid.value,
+        invoiceno: formData.invoiceno.value,
+        durationtype: formData.durationtype.value,
+        marriagetype: formData.marriagetype.value,
+        selectpackage: formData.selectpackage.value,
+        branch: formData.branch.value,
+        paymentmode: formData.paymentmode.value,
+        invoicedate: moment(formData.invoicedate.value).format('YYYY/MM/DD'),
       };
   
-      // setData((prevData: any) => [...prevData, newRecord]);
-  
-      console.log("Updated Data:", [...data, newRecord]); // Log updated data array
+      // Log or update data
+      console.log("New Record:", newRecord);
+      // Example: Add the new record to your data
+      setData((prevData: any) => [...prevData, newRecord]);
     }
   };
   
-
+  
   const initailData: any = [
-    { sno: "1", planname: "FREE", status: "Active" },
-    { sno: "2", planname: "VIP",  status: "IN-Active" },
-    { sno: "3", planname: "PREMIUM", status: "IN-Active" },
-    { sno: "4", planname: "BEST OFFER",  status: "Active" },
-    { sno: "5", planname: "PLTINUM", status: "Active" },
-    { sno: "6", planname: "SILVER", status: "Active" },
-    { sno: "7", planname: "BEST OFFER+", status: "Active" },
-    { sno: "8", planname: "ENTRY",status: "Active" },
-  ];
+        { sno: "1", cusid: "AM28469", name: "Mahesh",        mode: "Online", package: "Silver", transectionid: "Cd9r299r39r300", date: "13-01-2018" },
+        { sno: "2", cusid: "AM27487", name: "Dileep Kumar",  mode: "Online", package: "Silver", transectionid: "Ca34993jfe800", date: "09-07-2018" },
+        { sno: "3", cusid: "AM27597", name: "Vamsi",         mode: "Online", package: "Silver", transectionid: "Cfhdwur3r23ri900", date: "05-10-2018" },
+        ];
   const [data, setData] = useState(initailData);
  
-
- const columns = useMemo(
-  () => [
-    { header: 'S.NO', accessorKey: 'sno' },
-    { header: 'plan Category', accessorKey: 'planname' },
   
-    {
-      header: 'Status',
-      accessorKey: 'status',
-      // Typing the props parameter
-      cell: (props: Cell<any, any>) => {
-        const status = props.getValue();  // Use getValue() to get the cell value
-
-        switch (status) {
-          case 'IN-ACTIVE':
-            return <Chip color="error" label="IN-ACTIVE" size="small" variant="light" />;
-          // case 'IN-ACTIVE':
-          //   return <Chip color="success" label="IN-ACTIVE" size="small" variant="light" />;
-          default:
-            return <Chip color="info" label="Active" size="small" variant="light" />;
-        }
-      }
-    }
-  ],
-  []
-);
+     const columns = useMemo(
+        () => [
+          { header: 'S.NO', accessorKey: 'sno' },
+          { header: 'Cust ID', accessorKey: 'cusid' },
+          { header: 'Name', accessorKey: 'name' },
+          { header: 'Mode', accessorKey: 'mode' },
+          { header: 'Package', accessorKey: 'package' },
+          { header: 'Transection ID', accessorKey: 'transectionid' },
+          {
+            header: 'Date',accessorKey:'date'
+           
+          }
+        ],
+        []
+      );
   
+      
+      const handleView = (row: any) => {
+        console.log('row.........', row)
+        const newUrl = '/admin/sales/addsales';
+        const fullPath = `${window.location.origin}${newUrl}`;
+        window.open(fullPath, '_blank');
+      };
 
   const handleEdit = (row: any) => {
     setOpenPopup(true); // Open dialog
@@ -273,6 +299,7 @@ export default function PlanCategory() {
     newFormData[name].helperText = '';
     setFormData(newFormData);
   };
+
   const handleDateChange = (name: string, value: Date | null) => {  // Change to Date | null
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -295,25 +322,23 @@ export default function PlanCategory() {
       setAnchorEl(null);
     };
     return (
-      <>
-        <Button onClick={handleClick}>...</Button>
+            <>
+              <IconButton onClick={handleClick}>...</IconButton>
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+               <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
+                <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+              </Menu>
+            </>
+          );
+        };
 
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          {/* <MenuItem onClick={() => handleDelete(row)}>Delete</MenuItem> */}
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
-          {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem> */}
-        </Menu>
-      </>
-    );
-  };
 return (
   <>
     {/* Removed Button to Open Popup */}
 
     {/* React Table */}
     <ReactTable
-      title={"Plan Category"}
+      title={"ONLINE PAYMENT DETAILS "}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}
@@ -333,49 +358,45 @@ return (
 
     {/* Dialog for Create Form */}
     <Dialog open={openPopup} maxWidth="sm" fullWidth>
-      <DialogTitle>Update Plan</DialogTitle>
+      <DialogTitle>Customer Details</DialogTitle>
       <DialogContent>
       
       {/* <Grid container spacing={2}> */}
-        <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.selectcategory} onSelectChange={handleSelectChange} />
+         <Grid item xs={12} padding={2}>
+            <CommonInputField inputProps={formData.customerid} onChange={handleChange} />
           </Grid>
           <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.planname} onChange={handleChange} />
+            <CommonInputField inputProps={formData.invoiceno} onChange={handleChange} />
           </Grid>
           <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.duration} onChange={handleChange} />
+            <CommonDatePicker inputProps={formData.invoicedate} onDateChange={handleDateChange} />
+          </Grid>
+         <Grid item xs={12} padding={2}>
+            <CommonSelectField inputProps={formData.selectpackage} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.durationtype} onSelectChange={handleSelectChange} />
+            <CommonSelectField inputProps={formData.marriagetype} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.numberofcontacts} onSelectChange={handleSelectChange} />
-          </Grid>
+              <CommonSelectField inputProps={formData.branch} onSelectChange={handleSelectChange} />
+            </Grid>
+         
           <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.planamount} onChange={handleChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.plandiscount} onChange={handleChange} />
-          </Grid>
+              <CommonSelectField inputProps={formData.paymentmode} onSelectChange={handleSelectChange} />
+            </Grid>
           
-          <Grid item xs={12} padding={2}>
-            <CommonDatePicker inputProps={formData.activedate} onDateChange={handleDateChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonDatePicker inputProps={formData.enddate} onDateChange={handleDateChange} />
-          </Grid>
-          {/* </Grid> */}
+
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
         <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={handleFormSubmit}>
-          Submit
+          Save Changes
         </Button>
       </DialogActions>
     </Dialog>
   </>
 );
 }
+
 
 

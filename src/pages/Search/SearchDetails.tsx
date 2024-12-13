@@ -1,0 +1,127 @@
+import Grid from "@mui/material/Grid";
+import MainCard from "components/MainCard";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import React, { useState } from "react";
+import PaginationButtons from "./Paginations"; // Import the new pagination component
+
+export default function SearchDetails(props: any) {
+  const { data = [] } = props;
+  const rowsPerPage = 10; // Define rows per page
+  const [pageNumber, setPageNumber] = useState(1);
+
+  // Calculate the displayed data based on the page number
+  const paginatedData = data.slice((pageNumber - 1) * rowsPerPage, pageNumber * rowsPerPage);
+
+  // Handle page change
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPageNumber(value);
+  };
+
+  return (
+    <Grid container spacing={3} style={{ width: "100%" }}>
+      <Typography variant="h3" marginBottom={1} sx={{ padding: "10px 0px" }}>
+        SEARCH RESULTS
+      </Typography>
+
+      {/* Top Pagination */}
+      <Grid item xs={12} display="flex" justifyContent="flex-end">
+        <PaginationButtons
+          count={Math.ceil(data.length / rowsPerPage)}
+          page={pageNumber}
+          onChange={handlePageChange}
+        />
+      </Grid>
+
+      {/* Search Results */}
+      <Grid item xs={12}>
+        {paginatedData.length > 0 &&
+          paginatedData.map((each: any, index: number) => (
+            <MainCard key={index} style={{ marginBottom: "16px",borderColor: '#878683' }}>
+              <Grid container spacing={4}>
+                <Grid item xs={12} sm={5} md={4} xl={2}>
+                  <MainCard>
+                    <div style={{ textAlign: "center" }}>
+                      <img
+                        src="https://via.placeholder.com/150"
+                        alt="Sample"
+                        style={{
+                          width: "100%",
+                          maxWidth: "70px",
+                          borderRadius: "8px",
+                          marginBottom: "10px",
+                        }}
+                      />
+                      <Typography variant="h6" color="error">
+                        John Doe
+                      </Typography>
+                      <Card style={{ marginTop: "2px", padding: "2px", }}>
+                        AM101060
+                      </Card>
+                    </div>
+                  </MainCard>
+                </Grid>
+                <Grid item xs={12} sm={5} md={4} xl={4}>
+                  <Card style={{ padding: "15px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Age :</Typography>
+                      <Typography>{each.age}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Height :</Typography>
+                      <Typography>{each.height}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Religion :</Typography>
+                      <Typography>{each.religion}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Caste :</Typography>
+                      <Typography>{each.caste}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Marital Status :</Typography>
+                      <Typography>{each.maritalStatus}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">User Type :</Typography>
+                      <Typography>{each.usertype}</Typography>
+                    </div>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} sm={5} md={4} xl={4}>
+                  <Card style={{ padding: "15px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Mother Tongue :</Typography>
+                      <Typography>{each.mothertongue}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Profession :</Typography>
+                      <Typography>{each.profession}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Date Of Birth :</Typography>
+                      <Typography>{each.dateOfBirth}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Education :</Typography>
+                      <Typography>{each.education}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Annual Income :</Typography>
+                      <Typography>{each.annualincome}</Typography>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Typography color="secondary">Branch :</Typography>
+                      <Typography>{each.branch}</Typography>
+                    </div>
+                  </Card>
+                </Grid>
+              </Grid>
+            </MainCard>
+          ))}
+      </Grid>
+
+    </Grid>
+  );
+}

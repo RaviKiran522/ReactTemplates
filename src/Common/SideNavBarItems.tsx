@@ -174,7 +174,7 @@ export const loadingMenu = [
             breadcrumbs: false
           },
           {
-            id: 'planExpiredCutomers',
+            id: 'planExpiredCustomers',
             title: 'Plan Expired Customers',
             type: 'item',
             url: '/customerManagement/planExpiredCustomers',
@@ -199,28 +199,55 @@ export const loadingMenu = [
       {
         id: 'staffCalling',
         title: 'Staff Calling',
-          type: 'collapse',
-          // url: '/staffCalling',
-          breadcrumbs: false,
-          children: [
-            {
-              id: 'inbound',
-              title: 'Inbound',
-              type: 'collapse',
-              // url: '/staffCalling/inbound',
-              breadcrumbs: false,
-              children: [
-                {
-                  id: 'addinbound',
-                  title: 'Add Inbound',
-                type: 'item',
-                url: '/staffCalling/inbound/addinbound',
-                breadcrumbs: false,
-                    },
-              ]
-
-                },
-          ]
+        type: 'collapse',
+        // url: '/staffCalling',
+        breadcrumbs: false,
+        children: [
+          {
+            id: 'inbound',
+            title: 'Inbound',
+            type: 'collapse',
+            breadcrumbs: false,
+            children: [
+         
+                  {
+                    id: 'createinbound',
+                    title: 'Create Inbound',
+                    type: 'item',
+                    url: '/staffCalling/inbound/createinbound',
+                    breadcrumbs: false,
+                  },
+                  {
+                    id: 'listinbound',
+                    title: 'List Inbound',
+                    type: 'item',
+                    url: '/staffCalling/inbound/listinbound',
+                    breadcrumbs: false,
+                  },
+                  {
+                    id: 'freeinbound',
+                    title: 'Free InBound',
+                    type: 'item',
+                    url: '/staffCalling/inbound/freeinbound',
+                    breadcrumbs: false,
+                  },
+                  {
+                    id: 'paidinbound',
+                    title: 'Paid InBound',
+                    type: 'item',
+                    url: '/staffCalling/inbound/paidinbound',
+                    breadcrumbs: false,
+                  },
+                  {
+                    id: 'blockedinbound',
+                    title: 'Blocked InBound',
+                    type: 'item',
+                    url: '/staffCalling/inbound/blockedinbound',
+                    breadcrumbs: false,
+                  },
+                ]
+              }
+        ]
       },
       {
         id: 'search',
@@ -241,9 +268,39 @@ export const loadingMenu = [
       {
         id: 'sales',
         title: 'Sales',
-        type: 'item',
-        url: '/sales',
-        breadcrumbs: false
+        type: 'collapse',
+        breadcrumbs: false,
+        children: [
+          {
+            id: 'addsales',
+            title: 'Add Sales',
+            type: 'item',
+            url: '/sales/addsales',
+            breadcrumbs: false
+          },
+          {
+            id: 'viewsales',
+            title: 'View Sales',
+            type: 'item',
+            url: '/sales/viewsales',
+            breadcrumbs: false
+          },
+
+          {
+            id: 'invoiceprint',
+            title: 'Invoice Print',
+            type: 'item',
+            url: '/sales/invoiceprint',
+            breadcrumbs: false
+          },
+          {
+            id: 'viewonlinepayment',
+            title: 'View Online payment',
+            type: 'item',
+            url: '/sales/viewonlinepayment',
+            breadcrumbs: false
+          },
+        ]
       },
       {
         id: 'plans',
@@ -278,6 +335,14 @@ export const loadingMenu = [
             title: 'Add Contacts',
             type: 'item',
             url: '/plans/addcontacts',
+            breadcrumbs: false
+          }
+          ,
+          {
+            id: 'listcontacts',
+            title: 'List Contacts',
+            type: 'item',
+            url: '/plans/listcontacts',
             breadcrumbs: false
           }
         ]

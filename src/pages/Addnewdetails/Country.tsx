@@ -163,11 +163,7 @@ export default function Country() {
     []
   );
   
-  // const handleEdit = (row: any) => {
-  //   console.log('row.........', row)
-  //   const newUrl = '/admin/userManagement/editUser';
-  //   const fullPath = `${window.location.origin}${newUrl}`;
-  //   window.open(fullPath, '_blank');
+ 
 
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);

@@ -6,6 +6,9 @@ import _ from 'lodash';
 import CommonDatePicker from 'pages/common-components/common-date';
 import moment from "moment"
 import MainCard from 'components/MainCard';
+import SearchDetails from './SearchDetails';
+import { data } from 'data/org-chart';
+import CommonList from 'pages/common-components/common-list';
 
 const AdvanceSearch: React.FC = () => {
   // Define the structure of form data for type safety
@@ -441,6 +444,50 @@ const AdvanceSearch: React.FC = () => {
     return isValid;
   };
   
+  let data = [
+    {
+      age: '27',
+      height: '180Cms',
+      religion: 'Hindhu',
+      caste: 'Reddy',
+      maritalStatus: 'Unmarried',
+      usertype: 'Free',
+      mothertongue: 'Telugu',
+      profession: 'Teacher',
+      dateOfBirth: '1995-06-26',
+      education: 'MBA',
+      annualincome: '2024112',
+      branch: 'Guntur Head Office',
+    },
+    {
+      age: '30',
+      height: '180Cms',
+      religion: 'Hindhu',
+      caste: 'Chowdary',
+      maritalStatus: 'Unmarried',
+      usertype: 'Free',
+      mothertongue: 'Telugu',
+      profession: 'Software Engineer',
+      dateOfBirth: '1993-09-16',
+      education: 'B.com',
+       annualincome: '30241128',
+      branch: 'Guntur Head Office',
+    },
+    {
+      age: '33',
+      height: '180Cms',
+      religion: 'Hindhu',
+      caste: 'Kaapu/Naidu',
+      maritalStatus: 'Unmarried',
+      usertype: 'Free',
+      mothertongue: 'Telugu',
+      profession: 'Doctor',
+      dateOfBirth: '1996-10-11',
+      education: 'B.tech',
+     annualincome: '541241138',
+      branch: 'Guntur Head Office',
+    }
+  ];
   const handleReset = () => {
     setFormData(_.cloneDeep(formFields)); // Reset form data to initial state
   };
@@ -489,7 +536,8 @@ const AdvanceSearch: React.FC = () => {
   };
 
   return (
-    <div  
+    <Grid >
+    <Grid  
     style={{ backgroundColor: '#FFF',
       padding: '10px 20px',
       boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px ,rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
@@ -575,16 +623,26 @@ const AdvanceSearch: React.FC = () => {
             <Button type="submit" variant="contained" color="primary" sx={{margin:"1rem"}}>
               SEARCH
             </Button>
-            <Button type="submit" variant="contained" color="info" onClick={handleReset} sx={{margin:"1rem"}}>
+            <Button type="submit" variant="contained" color="secondary" onClick={handleReset} sx={{margin:"1rem"}}>
               RESET
             </Button>
           </Grid>
         </Grid>
+        
       </form>
+      </Grid>
       {/* </MainCard> */}
-    {/* 
-     */}
-     </div>
+      <MainCard   
+         style={{ backgroundColor: '#FFF',
+        padding: '10px 20px',
+       boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px ,rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+       borderRadius: '10px', marginTop:'20px'}}
+      >
+      <SearchDetails data={data}/>
+     </MainCard> 
+     </Grid>
+     
+     
   );
 };
 

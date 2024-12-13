@@ -45,8 +45,30 @@ import PlanCategory from 'pages/Plans/PlanCategory';
 import Create from 'pages/apps/invoice/create';
 import CreatePlans from 'pages/Plans/Createplans';
 import AdvanceSearch from 'pages/Search/AdvanceSearch';
-import AddInbound from 'pages/Staffcalling/Inbound/Addinbound';
+import AddInbound from 'pages/Staffcalling/CreateInbound/CreateInbound';
 import CreateCustomer from 'pages/customer-management/CreateCustomer';
+// import ViewINBound from 'pages/Staffcalling/CreateInbound/Viewbound';
+// import BlockedInBound from 'pages/Staffcalling/CreateInbound/BlockedInBound';
+import AddSales from 'pages/Sales/Addsales';
+import InvoicePrint from 'pages/Sales/Invoiceprint';
+import InVoicePrint from 'pages/Sales/Invoiceprint';
+import ViewOnlinePayment from 'pages/Sales/Viewonlinepayment';
+import ViewSlaes from 'pages/Sales/Viewsales';
+import CreateInbound from 'pages/Staffcalling/CreateInbound/CreateInbound';
+import ListInBound from 'pages/Staffcalling/ListInbound/ListInBound';
+import FreeInBound from 'pages/Staffcalling/FreeInbound/FreeInBound';
+import PaidInBound from 'pages/Staffcalling/PaidInbound/PaidInBound';
+import BlockedInBound from 'pages/Staffcalling/BlockedInbound/BlockedInBound';
+import FreeCustomers from 'pages/CustomersFolder/Freecustomer/FreeCustomers';
+import PaidCustomers from 'pages/CustomersFolder/Paidcustomer/PaidCustomers';
+import BlockedCustomers from 'pages/CustomersFolder/Blockedcustomers/BlockedCustomers';
+import ConvertedCustomers from 'pages/CustomersFolder/Convertedcustomers/ConvertedeCustomers';
+import PlanExpiredCustomers from 'pages/CustomersFolder/Planexpiredcustomers/PlanExpiredCustomers';
+import PlanExpiredCustomer from 'pages/CustomersFolder/Planexpiredcustomers/PlanExpiredCustomers';
+import BlockedRequests from 'pages/CustomersFolder/Blockedrequests/BlockedRequests';
+import AddContacts from 'pages/Plans/Addcontacts';
+import ListContacts from 'pages/Plans/Listcontacts';
+
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -268,17 +290,29 @@ const MainRoutes = {
               element: <ListCustomer />
             },
             {
-              path: 'createplans',
-              element: <CreatePlans />
+              path: 'freeCustomers',
+              element: <FreeCustomers />
             },
             {
-              path: 'plancategory',
-              element: <PlanCategory />
+              path: 'paidCustomers',
+              element: <PaidCustomers />
             },
-            // {
-            //   path: 'addcontacts',
-            //   element: <AgentProfile />
-            // },
+             {
+              path: 'blockedCustomers',
+              element: <BlockedCustomers />
+             },
+             {
+              path: 'convertedCustomers',
+              element: <ConvertedCustomers />
+            },
+             {
+              path: 'planExpiredCustomers',
+              element: <ConvertedCustomers />
+             },
+             {
+              path: 'blockedRequests',
+              element: <BlockedRequests />
+             },
           ]
         },
         {
@@ -288,14 +322,30 @@ const MainRoutes = {
               path: 'inbound',
               children: [
                 {
-                  path: 'addinbound',
-                  element: <AddInbound/>,
+                  path: 'createinbound',
+                  element: <CreateInbound />,
                 },
-              ],
-            },
+                {
+                  path: 'listinbound',
+                  element: <ListInBound />,
+                },
+                {
+                  path: 'freeinbound',
+                  element: <FreeInBound />,
+                },
+                {
+                  path: 'paidinbound',
+                  element: <PaidInBound />,
+                },
+                {
+                  path: 'blockedinbound',
+                  element: <BlockedInBound />,
+                },
+              ]
+            }
           ],
         },
-      
+
         {
           path: 'customerManagement',
           children: [
@@ -313,7 +363,30 @@ const MainRoutes = {
               element: <AdvanceSearch />
             },
           ]
-      },
+        },
+        {
+          path: 'sales',
+          children: [
+            {
+              path: 'addsales',
+              element: <AddSales />
+            },
+            {
+              path: 'viewsales',
+              element: <ViewSlaes />
+            },
+            {
+              path: 'invoiceprint',
+              element: <InVoicePrint />
+            },
+            {
+              path: 'viewonlinepayment',
+              element: <ViewOnlinePayment />
+            },
+
+
+          ]
+        },
         {
           path: 'plans',
           children: [
@@ -329,10 +402,14 @@ const MainRoutes = {
               path: 'plancategory',
               element: <PlanCategory />
             },
-            // {
-            //   path: 'addcontacts',
-            //   element: <AgentProfile />
-            // },
+            {
+              path: 'addcontacts',
+              element: <AddContacts />
+            },
+            {
+              path: 'listcontacts',
+              element: <ListContacts/>
+            },
           ]
         },
         {
@@ -348,7 +425,7 @@ const MainRoutes = {
             },
             {
               path: 'district',
-              element: <District/>
+              element: <District />
             },
             {
               path: 'city',
@@ -356,7 +433,7 @@ const MainRoutes = {
             },
             {
               path: 'religion',
-              element: <Religion/>
+              element: <Religion />
             },
             {
               path: 'caste',
@@ -368,47 +445,47 @@ const MainRoutes = {
             },
             {
               path: 'occuption',
-              element: <Occuption/>
+              element: <Occuption />
             },
             {
               path: 'education',
-              element: <Education/>
+              element: <Education />
             },
-           {
+            {
               path: 'languages',
-              element: <Languages/>
+              element: <Languages />
             },
             {
               path: 'source',
-              element: <Source/>
+              element: <Source />
             },
             {
               path: 'university',
-              element: <University/>
+              element: <University />
             },
             {
               path: 'designations',
-              element: <Designations/>
+              element: <Designations />
             },
             {
               path: 'professions',
-              element: <Professions/>
+              element: <Professions />
             },
             {
               path: 'propertydetails',
-              element: <Propertydetails/>
+              element: <Propertydetails />
             },
             {
               path: 'hobbies',
-              element: <Hobbies/>
+              element: <Hobbies />
             },
             {
               path: 'interests',
-              element: <Interests/>
+              element: <Interests />
             },
             {
               path: 'blockedreason',
-              element: <Blockedreasons/>
+              element: <Blockedreasons />
             },
           ]
         },

@@ -332,32 +332,6 @@ export default function District() {
           </Grid>
           
 
-          {/* <FormControl component="fieldset" sx={{margin:"1rem"}}>
-            <FormLabel component="legend">Status</FormLabel>
-            <RadioGroup
-              row
-              name="status"
-              value={formData.status.value ? "Enable" : "Disable"} // Correctly accessing formData.status.value
-              onChange={(e) =>
-                handleChange("status", e.target.value === "Enable") // Use a consistent update handler
-              }
-            >
-              <FormControlLabel
-                value="Enable"
-                control={<Radio color="success" />}
-                label="Enable"
-              />
-              <FormControlLabel
-                value="Disable"
-                control={<Radio color="error" />}
-                label="Disable"
-              />
-            </RadioGroup>
-
-          </FormControl> */}
-
-
-
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup(false)}>Cancel</Button>
@@ -369,15 +343,5 @@ export default function District() {
     </>
   );
 }
-function setSelectedRowForDeletion(row: any) {
-  throw new Error('Function not implemented.');
-}
 
-function setDeleteDialogOpen(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-
-function setSnackbarOpen(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
 

@@ -61,7 +61,7 @@ export default function CommonList(props: any) {
               <MainCard key={index} style={{ marginBottom: '16px', borderColor: '#4680FF' }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={5} md={4} xl={2}>
-                    <MainCard style={{ borderColor: '#4680FF' }}>
+                    <Card style={{ borderColor: '#4680FF',padding:'10px' }} >
                       <div style={{ textAlign: 'center' }}>
                         {/* Image */}
                         <img
@@ -80,10 +80,10 @@ export default function CommonList(props: any) {
                           AM101060
                         </Typography> */}
                       </div>
-                    </MainCard>
+                    </Card>
                   </Grid>
                   <Grid item xs={12} sm={5} md={4} xl={4}>
-                    <MainCard style={{ borderColor: '#4680FF' }}>
+                    <Card style={{ borderColor: '#4680FF',padding:'10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Email :</Typography>
                         <Typography>{each.email}</Typography>
@@ -108,10 +108,10 @@ export default function CommonList(props: any) {
                         <Typography color="secondary">Create dBy :</Typography>
                         <Typography>{each.createdBy}</Typography>
                       </div>
-                    </MainCard>
+                    </Card>
                   </Grid>
                   <Grid item xs={12} sm={5} md={4} xl={4}>
-                    <MainCard style={{ borderColor: '#4680FF' }}>
+                    <Card style={{ borderColor: '#4680FF',padding:'10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Branch :</Typography>
                         <Typography>{each.branch}</Typography>
@@ -136,10 +136,10 @@ export default function CommonList(props: any) {
                         <Typography color="secondary">Approved Date :</Typography>
                         <Typography>{each.approvedDate}</Typography>
                       </div>
-                    </MainCard>
+                    </Card>
                   </Grid>
                   <Grid item xs={12} sm={5} md={4} xl={2}>
-                    <MainCard style={{ borderColor: '#4680FF' }}>
+                    <Card style={{ borderColor: '#4680FF',padding:'10px' }}>
                       {/* Actions Button */}
                       <div style={{textAlign:'center'}}>
                       <Button variant="contained" color="primary" onClick={handleMenuOpen} >
@@ -151,7 +151,7 @@ export default function CommonList(props: any) {
                       {/* Menu for Actions */}
                       <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
                         {actions.map((action: any, index: any) => (
-                          <MenuItem key={index} onClick={() => handleActionSelect(action.label,each)}>
+                          <MenuItem key={index} onClick={() => handleActionSelect(action.id,each)}>
                             <ListItemIcon style={{ minWidth: '36px', color: '#555' }}>{action.icon}</ListItemIcon>
                             <ListItemText primary={action.label} />
                           </MenuItem>
@@ -172,7 +172,7 @@ export default function CommonList(props: any) {
             </Button>
           </DialogActions>
         </Dialog> */}
-                    </MainCard>
+                    </Card>
                   </Grid>
                 </Grid>
               </MainCard>

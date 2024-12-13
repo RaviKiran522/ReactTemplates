@@ -198,6 +198,7 @@ const PricingPage2 = Loadable(lazy(() => import('pages/extra-pages/price/price2'
 
 //customer 
 const ListCustomer = Loadable(lazy(() => import('pages/Customer/list-customer')));
+const ViewCustomerProfile = Loadable(lazy(() => import('pages/Customer/view-customer-profile')));
 
 const MainRoutes = {
   path: '/',
@@ -352,7 +353,15 @@ const MainRoutes = {
             {
               path: 'createCustomer',
               element: <CreateCustomer />
-            }
+            },
+            // {
+            //   path: 'addcontacts',
+            //   element: <AgentProfile />
+            // },
+            {
+              path: 'viewProfile',
+              element: <ViewCustomerProfile />
+            },
           ]
         },
         {

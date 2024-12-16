@@ -69,6 +69,14 @@ import BlockedRequests from 'pages/CustomersFolder/Blockedrequests/BlockedReques
 import AddContacts from 'pages/Plans/Addcontacts';
 import ListContacts from 'pages/Plans/Listcontacts';
 
+import UpdateBasicSitesetting from 'pages/siteSetup/UpdateBasicSitesetting';
+import UpdateLogoFevicon from 'pages/siteSetup/UpdateLogoFevicon';
+import SiteDefaultImage from 'pages/siteSetup/SiteDefaultImage';
+import UpdateEmailSetting from 'pages/siteSetup/UpdateEmailSetting';
+import UpdateMetricPrefix from 'pages/siteSetup/UpdateMetriPrefix';
+import SocialMediaLink from 'pages/siteSetup/SocialMediaLink';
+import GoogleAnalyticsCode from 'pages/siteSetup/GoogleAnalyticsCode';
+import AppLink from 'pages/siteSetup/AppLink';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -284,6 +292,43 @@ const MainRoutes = {
           ]
         },
         {
+          path: 'siteSetup',
+          children: [
+            {
+              path: 'updateBasicSiteSetting',
+              element: <UpdateBasicSitesetting />
+            },
+            {
+              path: 'updateLogo',
+              element: <UpdateLogoFevicon />
+            },
+            {
+              path: 'siteDefaultImage',
+              element: <SiteDefaultImage />
+            },
+            {
+              path: 'updateEmailSetting',
+              element: <UpdateEmailSetting />
+            },
+            {
+              path: 'updateMatriPrefix',
+              element: <UpdateMetricPrefix />
+            },
+            {
+              path: 'socialMediaLink',
+              element: <SocialMediaLink />
+            },
+            {
+              path: 'googleAnalyticsCode',
+              element: <GoogleAnalyticsCode />
+            },
+            {
+              path: 'appLink',
+              element: <AppLink />
+            },
+          ]
+        },
+        {
           path: 'customerManagement',
           children: [
             {
@@ -353,6 +398,10 @@ const MainRoutes = {
             {
               path: 'createCustomer',
               element: <CreateCustomer />
+            },
+            {
+              path: 'editCustomer',
+              element: <CreateCustomer edit={true}/>
             },
             // {
             //   path: 'addcontacts',

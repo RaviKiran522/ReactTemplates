@@ -236,6 +236,11 @@ export default function BlockedCustomers() {
       window.open(fullPath, '_blank');
       // history(`/customerManagement/viewProfile`)
     }
+    if(action == 'edit'){
+      sessionStorage.setItem("customer", JSON.stringify(each))
+      const fullPath = `${window.location.origin}/admin/customerManagement/editCustomer`;
+      window.open(fullPath, '_blank');
+    }
     if(action == 'block'){
       setBlockopen(true)
     }

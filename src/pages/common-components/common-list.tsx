@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
 import Typography from '@mui/material/Typography';
@@ -25,7 +26,7 @@ export default function CommonList(props: any) {
   const [dialogContent, setDialogContent] = useState<any>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<any>(null);
   const [selectedAction, setSelectedAction] = useState<any>('');
-
+  const navigation = useNavigate();
   // const handleActionClick = (action: any) => {
   //   setDialogContent(action.content); // Set the content for the dialog
   //   actionHandleClick(action);
@@ -46,10 +47,15 @@ export default function CommonList(props: any) {
   };
 
   const handleActionSelect = (actionLabel: any,each:any) => {
+    console.log("actionLabel: ", actionLabel, each)
+    
     setSelectedAction(actionLabel);
     actionHandleClick(actionLabel,each);
     setOpenDialog(true);
     handleMenuClose();
+    if(actionLabel === "Edit Item") {
+      navigation('../createCustomer', {state: {customer: each}})
+    }
   };
   return (
     <Grid container spacing={3} style={{ width: '100%' }}>

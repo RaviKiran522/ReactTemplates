@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -23,7 +24,7 @@ const steps = ['Personal Details', 'Education Details', 'Family Details', 'Partn
 
 // ==============================|| FORMS WIZARD - BASIC ||============================== //
 
-export default function CreateCustomer() {
+export default function CreateCustomer({edit}: any) {
   const personalDetails: any = {
     fullName: {
       label: 'Full Name',
@@ -1891,9 +1892,10 @@ export default function CreateCustomer() {
   const [educationDetailsFormData, setEducationDetailsFormData] = useState<any>(educationDetails);
   const [familyDetailsFormData, setFamilyDetailsFormData] = useState<any>(familyDetails);
   const [partnerDetailsFormData, setPartnerDetailsFormData] = useState<any>(partnerDetails);
-
   const [activeStep, setActiveStep] = useState(0);
-
+  const location = useLocation();
+  let locationState = sessionStorage.getItem("customer");
+  locationState = locationState ? JSON.parse(locationState) : null;
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -1922,7 +1924,7 @@ export default function CreateCustomer() {
   }
 
   return (
-    <MainCard title="Create Customer">
+    <MainCard title={ edit ? "Edit Customer" : "Create Customer"}>
       <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
         {steps.map((label) => (
           <Step key={label}>
@@ -1953,9 +1955,11 @@ export default function CreateCustomer() {
             {getStepContent(activeStep)}
             <Stack direction="row" justifyContent={activeStep !== 0 ? 'space-between' : 'flex-end'}>
               {activeStep !== 0 && (
+                <AnimateButton>
                 <Button variant="contained" onClick={handleBack} sx={{ my: 3, ml: 1 }}>
                   Back
                 </Button>
+                </AnimateButton>
               )}
               <AnimateButton>
                 <Button variant="contained" onClick={handleNext} sx={{ my: 3, ml: 1 }}>

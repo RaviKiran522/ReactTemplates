@@ -308,7 +308,7 @@ const MainRoutes = {
             },
              {
               path: 'planExpiredCustomers',
-              element: <ConvertedCustomers />
+              element: <PlanExpiredCustomers />
              },
              {
               path: 'blockedRequests',

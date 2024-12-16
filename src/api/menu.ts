@@ -24,7 +24,6 @@ export function useGetMenu() {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
-  console.log("chechi: ", data)
   data = {
     "dashboard": {
         "id": "group-dashboard",
@@ -91,7 +90,6 @@ export function useGetMenuMaster() {
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
-  console.log("data: ", data)
   const memoizedValue = useMemo(
     () => ({
       menuMaster: data as MenuProps,

@@ -55,7 +55,7 @@ export default function CommonList(props: any) {
     <Grid container spacing={3} style={{ width: '100%' }}>
       <Grid item xs={12}>
         <MainCard style={{ borderColor: '#666666' }}>
-          <h1>Customer Details</h1>
+          <h1>SEAERCH RESULTS</h1>
           {data.length > 0 &&
             data.map((each: any, index: number) => (
               <MainCard key={index} style={{ marginBottom: '16px', borderColor: '#4680FF' }}>

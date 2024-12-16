@@ -11,12 +11,9 @@ import MainCard from 'components/MainCard';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Button} from '@mui/material';
-
-// type Action = {
-//   label: string;
-//   icon: JSX.Element;
-//   content: string;
-// };
+import { useNavigate } from 'react-router';
+import BlockCustomer from 'pages/Customer/block-customer';
+import CustomerApprove from 'pages/Customer/customer-approve';
 
 export default function FreeCustomers() {
     interface FormField {
@@ -36,7 +33,29 @@ export default function FreeCustomers() {
       interface FormData {
         [key: string]: FormField;
       }
-    
+    const customerFilter : FormData = {
+      customer: {
+        label: 'Customer',
+        id: 'customer',
+        name: 'customer',
+        type:'select',
+        options: [
+          { id: 1, label: 'All' },
+          { id: 2, label: 'Free' },
+          { id: 3, label: 'Paid' },
+          { id: 4, label: 'Blocked' },
+          { id: 5, label: 'Converted' },
+          { id: 6, label: 'Plan Expired' },
+        ],
+        value: { id: 1, label: 'All' },
+        error: false,
+        helperText: '',
+        mandatory: false,
+        isMulti: false,
+      },
+    }
+
+    const [customerData,setCustomerData] = useState<FormData>(customerFilter)
       const formFields: FormData = {
         profileId: {
           label: 'Profile Id',
@@ -118,7 +137,7 @@ export default function FreeCustomers() {
     }
 
     const [formData, setFormData] = useState<FormData>(formFields);
-
+    const history = useNavigate();
     type FormDataKeys = keyof typeof formData;
     const handleChange = (name: FormDataKeys, value: any) => {
       const newFormData = _.cloneDeep(formData);
@@ -130,10 +149,17 @@ export default function FreeCustomers() {
   
     const handleSelectChange = (name: FormDataKeys, value: any) => {
       const newFormData = _.cloneDeep(formData);
-      newFormData[name].value = value;
-      newFormData[name].error = false;
-      newFormData[name].helperText = '';
-      setFormData(newFormData);
+      const newCustomerData = _.cloneDeep(customerData);
+      if(name == 'customer'){
+        newCustomerData[name].value = value;
+        setCustomerData(newCustomerData);
+      }else{
+        newFormData[name].value = value;
+        newFormData[name].error = false;
+        newFormData[name].helperText = '';
+        setFormData(newFormData);
+      }
+      
     };
   let data = [
     {
@@ -172,38 +198,63 @@ export default function FreeCustomers() {
     {
       label: 'View Profile',
       icon: <VisibilityIcon />,
-      content: 'You selected the Add Item action.'
+      content: 'You selected the Add Item action.',
+      id : 'viewProfile'
     },
     {
       label: 'Edit Item',
       icon: <EditIcon />,
-      content: 'You selected the Edit Item action.'
+      content: 'You selected the Edit Item action.',
+      id:'edit'
     },
     {
       label: 'Block',
       icon: <BlockIcon />,
-      content: 'You selected the Delete Item action.'
+      content: 'You selected the Delete Item action.',
+      id:'block'
     },
     {
       label: 'Send login-Details',
       icon: <SendIcon />,
-      content: 'You selected the Delete Item action.'
+      content: 'You selected the Delete Item action.',
+      id:'loginDetails'
     },
     {
       label: 'Approve',
       icon: <AttachMoneyIcon />,
-      content: 'You selected the Delete Item action.'
+      content: 'You selected the Delete Item action.',
+      id:'approve'
     }
   ];
-
+  const [blockOpen,setBlockopen] = useState(false)
+  const [approveOpen,setApproveOpen] = useState(false)
   const actionHandleClick = (action: any,each:any) => {
     console.log(action,each);
+    if(action == 'viewProfile'){
+      const fullPath = `${window.location.origin}/admin/customerManagement/viewProfile`;
+      window.open(fullPath, '_blank');
+      // history(`/customerManagement/viewProfile`)
+    }
+    if(action == 'block'){
+      setBlockopen(true)
+    }
+    if(action == 'approve'){
+      setApproveOpen(true)
+    }
   };
+
+  const handleClose = () =>{
+    setBlockopen(false)
+    setApproveOpen(false)
+  }
 
   return (
     <>
      <Grid container spacing={3} style={{ width: '100%' }}>
       <Grid item xs={12}>
+      <Grid item xs={3} style={{marginBottom:'10px'}}>
+            <CommonSelectField inputProps={customerData.customer} onSelectChange={handleSelectChange} />
+          </Grid>
         <MainCard style={{ borderColor: '#666666',marginBottom : '10px' }} >
             <Grid container xs = {12} spacing = {3}>
         <Grid item xs={3}>
@@ -224,9 +275,9 @@ export default function FreeCustomers() {
           <Grid item xs={3}>
             <CommonSelectField inputProps={formData.createdBy} onSelectChange={handleSelectChange} />
           </Grid>
-          <Grid item xs={3}>
+          {/* <Grid item xs={3}>
             <CommonSelectField inputProps={formData.createdBy} onSelectChange={handleSelectChange} />
-          </Grid >
+          </Grid > */}
           <Grid item xs={3} style = {{marginTop:'5px'}}>
            <Button type="submit" variant="contained" color="primary" style={{marginRight:'10px'}}>
               Search
@@ -240,6 +291,8 @@ export default function FreeCustomers() {
         </Grid>
         </Grid>
       <CommonList data={data} actions={actions} actionHandleClick={actionHandleClick} />
+      <BlockCustomer open = {blockOpen} handleClose = {handleClose}/>
+      <CustomerApprove open = {approveOpen} handleClose = {handleClose}/>
     </>
   );
 }

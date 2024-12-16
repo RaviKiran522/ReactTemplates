@@ -8,6 +8,7 @@ import {
   Typography,
   
 } from '@mui/material';
+import CommonTextAreaField from 'pages/common-components/common-textarea';
 
 const AddContacts: React.FC = () => {
   // Define the structure of form data for type safety
@@ -149,6 +150,10 @@ const AddContacts: React.FC = () => {
           <Grid item xs={6}>
             <CommonInputField inputProps={formData.addcontacts} onChange={handleChange} />
           </Grid>
+          <Grid item xs={6}>
+            <CommonTextAreaField inputProps={formData.addcontacts} onChange={handleChange} />
+          </Grid>
+          
           <Grid item xs={12} textAlign={"end"}>
             <Button type="submit" variant="contained" color="primary">
               Submit

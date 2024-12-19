@@ -1,6 +1,4 @@
 import { useMemo, useState } from 'react';
-
-// material-ui
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -35,7 +33,8 @@ import { Add, Setting2 } from 'iconsax-react';
 export default function Customization() {
   const theme = useTheme();
   const { container, mode, presetColor, miniDrawer, themeDirection, menuOrientation, menuCaption, themeContrast, fontFamily } = useConfig();
-
+  const location = window.location.pathname; 
+   console.log("location: ", location)
   // eslint-disable-next-line
   const themeLayout = useMemo(() => <ThemeLayout />, [miniDrawer, themeDirection]);
   // eslint-disable-next-line
@@ -66,6 +65,7 @@ export default function Customization() {
         size="large"
         variant="circular"
         sx={{
+          display: location === "/admin/invoice" ? 'none': 'block',
           borderRadius: 0,
           borderTopLeftRadius: '50%',
           borderBottomLeftRadius: '50%',

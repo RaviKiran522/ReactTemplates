@@ -88,6 +88,7 @@ import UpdateMetricPrefix from 'pages/siteSetup/UpdateMetriPrefix';
 import SocialMediaLink from 'pages/siteSetup/SocialMediaLink';
 import GoogleAnalyticsCode from 'pages/siteSetup/GoogleAnalyticsCode';
 import AppLink from 'pages/siteSetup/AppLink';
+import Invoice from 'pages/Sales/Invoice';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -255,6 +256,7 @@ const MainRoutes = {
             }
           ]
         },
+        
         {
           path: 'branches',
           children: [
@@ -985,6 +987,10 @@ const MainRoutes = {
           ]
         }
       ]
+    },
+    {
+      path: 'invoice',
+      element: <Invoice />
     },
     {
       path: '/',

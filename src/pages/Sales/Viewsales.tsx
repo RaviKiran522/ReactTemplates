@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { Chip, IconButton, Menu, MenuItem } from '@mui/material';
 import ReactTable from 'ReusableComponents/ReactTable';
+import Invoice from './Invoice';
 
 function createData(
   name: string,
@@ -55,6 +56,13 @@ export default function ViewSales() {
       const handleEdit = (row: any) => {
         const newUrl = '/admin/sales/addsales';
         sessionStorage.setItem('editData',JSON.stringify(row))
+        const fullPath = `${window.location.origin}${newUrl}`;
+        window.open(fullPath, '_blank');
+      };
+
+      const handleInvoice = (row: any) => {
+        const newUrl = '/admin/invoice';
+        sessionStorage.setItem('invoice',JSON.stringify(row))
         const fullPath = `${window.location.origin}${newUrl}`;
         window.open(fullPath, '_blank');
       };
@@ -152,6 +160,8 @@ export default function ViewSales() {
               <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
                 <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+                <MenuItem onClick={() => { handleInvoice(row); handleClose(); }}>Invoice</MenuItem>
+
                 {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem> */}
               </Menu>
             </>

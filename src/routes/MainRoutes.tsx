@@ -68,6 +68,17 @@ import PlanExpiredCustomer from 'pages/CustomersFolder/Planexpiredcustomers/Plan
 import BlockedRequests from 'pages/CustomersFolder/Blockedrequests/BlockedRequests';
 import AddContacts from 'pages/Plans/Addcontacts';
 import ListContacts from 'pages/Plans/Listcontacts';
+import InBoundViewProfile from 'pages/Staffcalling/CommonListInbound/Inboundview-profile';
+import CustomerInBoundViewProfile from 'pages/Staffcalling/CommonListInbound/view-InBoundcustomer-profile';
+
+import CreateBranchStaff from 'pages/user-management/branches/CreateBranchStaff';
+import BranchStaffList from 'pages/user-management/branches/BranchStaffList';
+import FranchiseStaffList from 'pages/user-management/franchise/FranchiseStaffList';
+import SuspendedFranchiseStaff from 'pages/user-management/franchise/Suspendedfranchisestaff';
+import BlockedFranchiseStaff from 'pages/user-management/franchise/Blockedfranchisestaff';
+import BlockedBranchStaff from 'pages/user-management/branches/Blockedbranchstaff';
+import SuspendedBranchStaff from 'pages/user-management/branches/Suspendedbranchstaff';
+;
 
 import UpdateBasicSitesetting from 'pages/siteSetup/UpdateBasicSitesetting';
 import UpdateLogoFevicon from 'pages/siteSetup/UpdateLogoFevicon';
@@ -254,7 +265,24 @@ const MainRoutes = {
             {
               path: 'createBranch',
               element: <CreateBranch />
-            }
+            },
+           
+              {
+                path: 'listStaff',
+                element: <BranchStaffList />,
+              },
+              {
+                path: 'blockedStaff',
+                element: <BlockedBranchStaff />,
+              },
+              {
+                path: 'suspendedStaff',
+                element: <SuspendedBranchStaff />,
+              },
+              {
+                path: 'createStaff',
+                element: <CreateBranchStaff />,
+              },
           ]
         },
         {
@@ -267,6 +295,23 @@ const MainRoutes = {
             {
               path: 'createFranchise',
               element: <CreateFranchise />
+            },
+             {
+              path: 'listStaff',
+              element: <FranchiseStaffList />
+            },
+            {
+              path: 'suspendedStaff',
+              element: <SuspendedFranchiseStaff />
+            },
+             {
+              path: 'blockedStaff',
+              element: <BlockedFranchiseStaff/>
+            },
+            
+            {
+              path: 'createStaff',
+              element: <CreateBranchStaff />
             }
           ]
         },
@@ -343,22 +388,22 @@ const MainRoutes = {
               path: 'paidCustomers',
               element: <PaidCustomers />
             },
-             {
+            {
               path: 'blockedCustomers',
               element: <BlockedCustomers />
-             },
-             {
+            },
+            {
               path: 'convertedCustomers',
               element: <ConvertedCustomers />
             },
-             {
+            {
               path: 'planExpiredCustomers',
               element: <PlanExpiredCustomers />
-             },
-             {
+            },
+            {
               path: 'blockedRequests',
               element: <BlockedRequests />
-             },
+            },
           ]
         },
         {
@@ -386,6 +431,10 @@ const MainRoutes = {
                 {
                   path: 'blockedinbound',
                   element: <BlockedInBound />,
+                },
+                {
+                  path: 'viewProfile',
+                  element: <CustomerInBoundViewProfile />
                 },
               ]
             }
@@ -466,7 +515,7 @@ const MainRoutes = {
             },
             {
               path: 'listcontacts',
-              element: <ListContacts/>
+              element: <ListContacts />
             },
           ]
         },

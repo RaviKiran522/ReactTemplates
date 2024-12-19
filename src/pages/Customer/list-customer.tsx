@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
-import { Button} from '@mui/material';
+import { Button, Typography} from '@mui/material';
 import { useNavigate } from 'react-router';
 import BlockCustomer from './block-customer';
 import CustomerApprove from './customer-approve';
@@ -40,25 +40,25 @@ export default function ListCustomer() {
         [key: string]: FormField;
       }
     const customerFilter : FormData = {
-      customer: {
-        label: 'Customer',
-        id: 'customer',
-        name: 'customer',
-        type:'select',
-        options: [
-          { id: 1, label: 'All' },
-          { id: 2, label: 'Free' },
-          { id: 3, label: 'Paid' },
-          { id: 4, label: 'Blocked' },
-          { id: 5, label: 'Converted' },
-          { id: 6, label: 'Plan Expired' },
-        ],
-        value: { id: 1, label: 'All' },
-        error: false,
-        helperText: '',
-        mandatory: false,
-        isMulti: false,
-      },
+      // customer: {
+      //   label: 'Customer',
+      //   id: 'customer',
+      //   name: 'customer',
+      //   type:'select',
+      //   options: [
+      //     { id: 1, label: 'All' },
+      //     { id: 2, label: 'Free' },
+      //     { id: 3, label: 'Paid' },
+      //     { id: 4, label: 'Blocked' },
+      //     { id: 5, label: 'Converted' },
+      //     { id: 6, label: 'Plan Expired' },
+      //   ],
+      //   value: { id: 1, label: 'All' },
+      //   error: false,
+      //   helperText: '',
+      //   mandatory: false,
+      //   isMulti: false,
+      // },
     }
 
     const [customerData,setCustomerData] = useState<FormData>(customerFilter)
@@ -263,10 +263,13 @@ export default function ListCustomer() {
     <>
      <Grid container spacing={3} style={{ width: '100%' }}>
       <Grid item xs={12}>
-      <Grid item xs={3} style={{marginBottom:'10px'}}>
+      {/* <Grid item xs={3} style={{marginBottom:'10px'}}>
             <CommonSelectField inputProps={customerData.customer} onSelectChange={handleSelectChange} />
-          </Grid>
+          </Grid> */}
         <MainCard style={{ borderColor: '#666666',marginBottom : '10px' }} >
+        <Typography variant="h3" marginBottom={1} sx={{ padding: "10px 0px" }}>
+          LIST CUSTOMERS
+        </Typography>
             <Grid container xs = {12} spacing = {3}>
         <Grid item xs={3}>
             <CommonInputField inputProps={formData.profileId} onChange={handleChange} />

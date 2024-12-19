@@ -10,10 +10,13 @@ import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
-import { Button, Container, Typography } from '@mui/material';
+import { Button, Container, Divider, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import BlockCustomer from 'pages/Customer/block-customer';
 import CustomerApprove from 'pages/Customer/customer-approve';
+import CommonInBoundList from '../CommonListInbound/CommonInbound-list';
+import BlockInBound from '../CommonListInbound/block-Inbound';
+import InBoundApprove from '../CommonListInbound/Inboub-approve';
 
 export default function BlockedInBound() {
   interface FormField {
@@ -34,25 +37,25 @@ export default function BlockedInBound() {
     [key: string]: FormField;
   }
   const customerFilter: FormData = {
-    customer: {
-      label: 'Customer',
-      id: 'customer',
-      name: 'customer',
-      type: 'select',
-      options: [
-        { id: 1, label: 'All' },
-        { id: 2, label: 'Free' },
-        { id: 3, label: 'Paid' },
-        { id: 4, label: 'Blocked' },
-        { id: 5, label: 'Converted' },
-        { id: 6, label: 'Plan Expired' },
-      ],
-      value: { id: 1, label: 'All' },
-      error: false,
-      helperText: '',
-      mandatory: false,
-      isMulti: false,
-    },
+    // customer: {
+    //   label: 'Customer',
+    //   id: 'customer',
+    //   name: 'customer',
+    //   type: 'select',
+    //   options: [
+    //     { id: 1, label: 'All' },
+    //     { id: 2, label: 'Free' },
+    //     { id: 3, label: 'Paid' },
+    //     { id: 4, label: 'Blocked' },
+    //     { id: 5, label: 'Converted' },
+    //     { id: 6, label: 'Plan Expired' },
+    //   ],
+    //   value: { id: 1, label: 'All' },
+    //   error: false,
+    //   helperText: '',
+    //   mandatory: false,
+    //   isMulti: false,
+    // },
   }
 
   const [customerData, setCustomerData] = useState<FormData>(customerFilter)
@@ -231,7 +234,7 @@ export default function BlockedInBound() {
   const actionHandleClick = (action: any, each: any) => {
     console.log(action, each);
     if (action == 'viewProfile') {
-      const fullPath = `${window.location.origin}/admin/customerManagement/viewProfile`;
+      const fullPath = `${window.location.origin}/admin/staffCalling/inbound/viewProfile`;
       window.open(fullPath, '_blank');
       // history(`/customerManagement/viewProfile`)
     }
@@ -251,24 +254,28 @@ export default function BlockedInBound() {
   return (
     <>
       <Grid
-        // style={{
-        //   backgroundColor: '#FFF',
-        //   padding: '10px 20px',
-        //   boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px ,rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
-        //   borderRadius: '10px'
-        // }}
+      // style={{
+      //   backgroundColor: '#FFF',
+      //   padding: '10px 20px',
+      //   boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px ,rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+      //   borderRadius: '10px'
+      // }}
       >
 
-        <Typography variant="h3" marginBottom={1} sx={{ padding: "10px 0px" }}>
-          BLLOCKED INBOUND
-        </Typography>
+
 
         <Grid container spacing={3} style={{ width: '100%' }}>
           <Grid item xs={12}>
-            <Grid item xs={3} style={{ marginBottom: '10px' }}>
+            {/* <Grid item xs={3} style={{ marginBottom: '10px' }}>
               <CommonSelectField inputProps={customerData.customer} onSelectChange={handleSelectChange} />
-            </Grid>
+            </Grid> */}
             <MainCard style={{ borderColor: '#666666', marginBottom: '10px' }} >
+              <Typography variant="h3" marginBottom={1} sx={{ padding: "10px 0px" }}>
+                BLOCKED INBOUND
+              </Typography>
+              <Grid item xs={12} marginBottom={3} marginTop={2}>
+                <Divider />
+              </Grid>
               <Grid container xs={12} spacing={3}>
                 <Grid item xs={3}>
                   <CommonInputField inputProps={formData.profileId} onChange={handleChange} />
@@ -312,9 +319,9 @@ export default function BlockedInBound() {
           borderRadius: '10px',marginTop: '20px'
         }}
       > */}
-      <CommonList data={data} actions={actions} actionHandleClick={actionHandleClick} />
-      <BlockCustomer open={blockOpen} handleClose={handleClose} />
-      <CustomerApprove open={approveOpen} handleClose={handleClose} />
+      <CommonInBoundList data={data} actions={actions} actionHandleClick={actionHandleClick} />
+      <BlockInBound open={blockOpen} handleClose={handleClose} />
+      <InBoundApprove open={approveOpen} handleClose={handleClose} />
       {/* </Grid> */}
     </>
   );

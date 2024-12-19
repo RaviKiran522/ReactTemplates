@@ -5,12 +5,10 @@ import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
-import Addpayment from '../franchise/Addpayment';
 
 // The UsersList component now passes actions to the ReactTable component
-export default function AgentsList() {
+export default function BlockedBranchStaff() {
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [show,setShow] = useState(false)
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
@@ -32,7 +30,7 @@ export default function AgentsList() {
   ];
 
   const handleEdit = (row: any) => {
-    const newUrl = '/admin/userManagement/Agent';
+    const newUrl = '/admin/userManagement/Franchise';
     sessionStorage.setItem('editData', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
@@ -44,7 +42,7 @@ export default function AgentsList() {
 
   const handleView = (row: any) => {
     console.log('row.........', row);
-    const newUrl = '/admin/userManagement/Agent';
+    const newUrl = '/admin/userManagement/Franchise';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -118,17 +116,16 @@ export default function AgentsList() {
               handleClose();
             }}
           >
-            Block
+            UnBlock
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'leave' });
               handleClose();
             }}
           >
             Leave
-          </MenuItem>
-          <MenuItem onClick={() => { setShow(true); handleClose(); }}>Add Payment</MenuItem>
+          </MenuItem> */}
         </Menu>
       </>
     );
@@ -161,14 +158,10 @@ export default function AgentsList() {
     ],
     []
   );
-  const handlePayementClose =() =>{
-    setShow(false)
-  }
 
   return (
-    <>
     <ReactTable
-      title={'Agents'}
+      title={'Branch Blocked Staff'}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}
@@ -185,14 +178,7 @@ export default function AgentsList() {
       setRowsPerPage={setRowsPerPage}
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
-      totalPageCount={60}
+      totalPageCount={10}
     />
-    
-    {show && (
-        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
-          <Addpayment open={show} onClose={handlePayementClose} />
-        </div>
-      )}
-    </>
   );
 }

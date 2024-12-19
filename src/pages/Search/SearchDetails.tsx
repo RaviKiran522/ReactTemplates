@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import React, { useState } from "react";
 import PaginationButtons from "./Paginations"; // Import the new pagination component
+import Button from "themes/overrides/Button";
+import { Divider } from "@mui/material";
 
 export default function SearchDetails(props: any) {
   const { data = [] } = props;
@@ -20,10 +22,12 @@ export default function SearchDetails(props: any) {
 
   return (
     <Grid container spacing={3} style={{ width: "100%" }}>
-      <Typography variant="h3" marginBottom={1} sx={{ padding: "10px 0px" }}>
+      <Typography variant="h3" sx={{padding:"10px"}}>
         SEARCH RESULTS
       </Typography>
-
+      <Grid item xs={12} marginBottom={1} >
+              <Divider />
+            </Grid>
       {/* Top Pagination */}
       <Grid item xs={12} display="flex" justifyContent="flex-end">
         <PaginationButtons
@@ -38,10 +42,12 @@ export default function SearchDetails(props: any) {
         {paginatedData.length > 0 &&
           paginatedData.map((each: any, index: number) => (
             <MainCard key={index} style={{ marginBottom: "16px",borderColor: '#878683' }}>
-              <Grid container spacing={4}>
+              <Grid container sx={{display:"flex", flexDirection:"row", justifyContent:"space-evenly"}}>
                 <Grid item xs={12} sm={5} md={4} xl={2}>
-                  <MainCard>
-                    <div style={{ textAlign: "center" }}>
+                  {/* <MainCard> */}
+                  <div style={{ textAlign: "center" }}>
+                  <Card style={{ borderColor: '#4680FF',padding:'10px' }} >
+                    
                       <img
                         src="https://via.placeholder.com/150"
                         alt="Sample"
@@ -52,14 +58,18 @@ export default function SearchDetails(props: any) {
                           marginBottom: "10px",
                         }}
                       />
+                     
                       <Typography variant="h6" color="error">
                         John Doe
                       </Typography>
-                      <Card style={{ marginTop: "2px", padding: "2px", }}>
+
+                      <button style={{ marginTop: "2px", padding: "2px", }}>
                         AM101060
+                      </button>
                       </Card>
                     </div>
-                  </MainCard>
+                    
+                  {/* </MainCard> */}
                 </Grid>
                 <Grid item xs={12} sm={5} md={4} xl={4}>
                   <Card style={{ padding: "15px" }}>

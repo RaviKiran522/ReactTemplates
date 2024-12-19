@@ -54,6 +54,20 @@ export const loadingMenu = [
                     breadcrumbs: false
                   },
                   {
+                    id: 'blockedStaff',
+                    title: 'Blocked Staff',
+                    type: 'item',
+                    url: '/branches/blockedStaff',
+                    breadcrumbs: false
+                  },
+                  {
+                    id: 'suspendedStaff',
+                    title: 'Suspended Staff',
+                    type: 'item',
+                    url: '/branches/suspendedStaff',
+                    breadcrumbs: false
+                  },
+                  {
                     id: 'createStaff',
                     title: 'Create Staff',
                     type: 'item',
@@ -95,6 +109,20 @@ export const loadingMenu = [
                     title: 'List Staff',
                     type: 'item',
                     url: '/franchise/listStaff',
+                    breadcrumbs: false
+                  },
+                  {
+                    id: 'blockedStaff',
+                    title: 'Blocked Staff',
+                    type: 'item',
+                    url: '/franchise/blockedStaff',
+                    breadcrumbs: false
+                  },
+                  {
+                    id: 'suspendedStaff',
+                    title: 'Suspended Staff',
+                    type: 'item',
+                    url: '/franchise/suspendedStaff',
                     breadcrumbs: false
                   },
                   {

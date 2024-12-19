@@ -140,7 +140,7 @@ const AddContacts: React.FC = () => {
       }}
     >
       <Typography variant="h3" marginBottom={2}>
-        Create Branch
+        Add Contacts
       </Typography>
       <form onSubmit={handleSubmit} noValidate>
         <Grid container spacing={2}>
@@ -150,9 +150,9 @@ const AddContacts: React.FC = () => {
           <Grid item xs={6}>
             <CommonInputField inputProps={formData.addcontacts} onChange={handleChange} />
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <CommonTextAreaField inputProps={formData.addcontacts} onChange={handleChange} />
-          </Grid>
+          </Grid> */}
           
           <Grid item xs={12} textAlign={"end"}>
             <Button type="submit" variant="contained" color="primary">

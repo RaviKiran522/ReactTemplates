@@ -5,10 +5,12 @@ import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
+import Addpayment from './Addpayment';
 
 // The UsersList component now passes actions to the ReactTable component
 export default function FranchiseList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
+  const [show,setShow] = useState(false)
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
@@ -78,10 +80,13 @@ export default function FranchiseList() {
       setAnchorEl(event.currentTarget);
     };
 
+   
     useEffect(()=>{
       console.log("page size: ", rowsPerPage, "pageNumber: ", pageNumber)
     }, [rowsPerPage, pageNumber])
+
     const handleClose = () => {
+      setShow(false);
       setAnchorEl(null);
     };
     return (
@@ -93,6 +98,7 @@ export default function FranchiseList() {
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'leave' }); handleClose(); }}>Leave</MenuItem>
+          <MenuItem onClick={() => { setShow(true); }}>Add Payment</MenuItem>
         </Menu>
       </>
     );
@@ -126,7 +132,12 @@ export default function FranchiseList() {
     []
   );
 
+  const handlePayementClose =() =>{
+    setShow(false)
+  }
+
   return (
+    <>
     <ReactTable
       title={"Franchises"}
       data={data}
@@ -147,5 +158,11 @@ export default function FranchiseList() {
       pageNumber={pageNumber}
       totalPageCount={10}
     />
+    {show && (
+        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+          <Addpayment open={show} onClose={handlePayementClose} />
+        </div>
+      )}
+    </>
   );
 } 

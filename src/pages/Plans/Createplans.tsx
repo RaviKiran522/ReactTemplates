@@ -41,7 +41,7 @@ const CreatePlans: React.FC = () => {
     },
     planname: {
       label: 'Enter Plan Name',
-      id: 'naplannameme',
+      id: 'planname',
       name: 'planname',
       type: 'text',
       value: '',

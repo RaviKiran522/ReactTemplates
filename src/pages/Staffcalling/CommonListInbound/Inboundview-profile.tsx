@@ -24,7 +24,7 @@ import Avatar from 'components/@extended/Avatar';
 import defaultImages from 'assets/images/users/default.png';
 
 // assets
-import { CallCalling, Gps, Link, Link1, Sms, Profile, Setting, Mobile,Verify } from 'iconsax-react';
+import { CallCalling, Gps, Link, Link1, Sms, Profile, Setting, Mobile, Verify } from 'iconsax-react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -166,7 +166,7 @@ let detailsObject = {
   },
 };
 
-export default function ViewProfile() {
+export default function InBoundViewProfile() {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const [value, setValue] = useState(0);
 
@@ -355,14 +355,14 @@ export default function ViewProfile() {
                 </Stack>
               </Stack>
             </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
 
-            <Grid item xs={12}>
-              {/* Verified Percentage */}
-              <Grid>
+          <Grid item xs={12}>
+            {/* Verified Percentage */}
+            <Grid>
               <Stack spacing={1} alignItems="center" marginTop={2}>
                 <Typography variant="subtitle1" color="primary">
                   {verifiedPercentage}% Verified
@@ -373,232 +373,232 @@ export default function ViewProfile() {
                   sx={{ width: "80%" }}
                 />
               </Stack>
-              </Grid>
-             
-              <Grid item xs={12}>
+            </Grid>
+
+            <Grid item xs={12}>
               <Stack marginBottom={2} marginTop={2} >
-                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                    <ListItem  sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                  <ListItem sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <ListItemIcon>
-                    <Sms size={20} />
+                      <Sms size={20} />
                     </ListItemIcon>
-                    <a href="/verify-email" style={{ textDecoration: "none", fontWeight:"normal" , color:"#4f4b4b",marginRight:"25px" }} >
+                    <a href="/verify-email" style={{ textDecoration: "none", fontWeight: "normal", color: "#4f4b4b", marginRight: "25px" }} >
                       Email Verified
                     </a>
-                    </ListItem>
+                  </ListItem>
                   {/* Mobile Verification */}
-                  <ListItem  sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                  <ListItemIcon>
-                    <Mobile size={20} />
+                  <ListItem sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <ListItemIcon>
+                      <Mobile size={20} />
                     </ListItemIcon>
-                    <a href="/verify-mobile"  style={{ textDecoration: "none",  fontWeight:"normal" , color:"#4f4b4b",marginRight:"25px"}}>
+                    <a href="/verify-mobile" style={{ textDecoration: "none", fontWeight: "normal", color: "#4f4b4b", marginRight: "25px" }}>
                       Mobile Verified
                     </a>
-                    </ListItem>
+                  </ListItem>
                   {/* ID Verification */}
-                  <ListItem  sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                  <ListItemIcon>
-                    <Verify size={20}/>
+                  <ListItem sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <ListItemIcon>
+                      <Verify size={20} />
                     </ListItemIcon>
-                    <a href="/verify-id" style={{ textDecoration: "none", fontWeight:"normal" , color:"#4f4b4b",marginRight:"25px" }}>
+                    <a href="/verify-id" style={{ textDecoration: "none", fontWeight: "normal", color: "#4f4b4b", marginRight: "25px" }}>
                       ID Verified
                     </a>
-                    </ListItem>
-                    </List>
-                    </Stack>
-              </Grid>
-
-
-              <Grid item xs={12}  marginBottom={2} marginTop={2}>
-                <Divider />
-              </Grid>
-              <Grid item xs={12}>
-                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Profile size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">Profile</Typography>
-
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Setting size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">Profile Settings</Typography>
-
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Gps size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">Shortlisted Profiles</Typography>
-
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Blocked Profiles</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Profiles I Viewed</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Viewed My Profile</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Interest Sent</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Interest Received</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Viewed Contacts</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">My Contacts Viewed</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">mobile Request Sent</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Mobile Requests Received</Typography>
-                  </ListItem>
-
-                </List>
-              </Grid>
-              <Grid item xs={12}  marginBottom={2} marginTop={2}>
-                <Divider />
-              </Grid>
-              <Grid item xs={12}>
-                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Sms size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">anshan.dh81@gmail.com</Typography>
-
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CallCalling size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">8654 239 581</Typography>
-
-                  </ListItem>
-                  <ListItem>
-
-
-                    <Typography align="left">Branch : Hyderabad</Typography>
-
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Date of Birth : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Inbond Date : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Registered Date : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Created By : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Blocked By : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Invoice date : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
-
-                    <Typography align="left">Approved date : 09-12-1982</Typography>
                   </ListItem>
                 </List>
-              </Grid>
-              <Grid item xs={12} marginBottom={2} marginTop={2}>
-                <Divider  />
-              </Grid>
-              <Grid item xs={12}>
-
-                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1-content"
-                      id="panel1-header"
-                      sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
-                    >
-                      Total Customers
-                    </AccordionSummary>
-
-                    <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography>
-
-                        <a href="freeCustomers" style={{ textDecoration: "none", color: "black" }}> Free Customers</a>
-                      </Typography>
-                      <Typography>
-                        908
-                      </Typography>
-                    </AccordionDetails>
-                    <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography>
-
-                        <a href="paidCustomers" style={{ textDecoration: "none", color: "black" }}> Paid Customers</a>
-                      </Typography>
-                      <Typography>
-                        724
-                      </Typography>
-                    </AccordionDetails>
-                    <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography>
-
-                        <a href="blockedCustomers" style={{ textDecoration: "none", color: "black" }}> Blocked Customers</a>
-                      </Typography>
-                      <Typography>
-                        673
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                </List>
-              </Grid>
+              </Stack>
             </Grid>
+
+
+            <Grid item xs={12} marginBottom={2} marginTop={2}>
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                <ListItem>
+                  <ListItemIcon>
+                    <Profile size={18} />
+                  </ListItemIcon>
+
+                  <Typography align="left">Profile</Typography>
+
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Setting size={18} />
+                  </ListItemIcon>
+
+                  <Typography align="left">Profile Settings</Typography>
+
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Gps size={18} />
+                  </ListItemIcon>
+
+                  <Typography align="left">Shortlisted Profiles</Typography>
+
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Blocked Profiles</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Profiles I Viewed</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Viewed My Profile</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Interest Sent</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Interest Received</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Viewed Contacts</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">My Contacts Viewed</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">mobile Request Sent</Typography>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Link1 size={18} />
+                  </ListItemIcon>
+                  <Typography align="left">Mobile Requests Received</Typography>
+                </ListItem>
+
+              </List>
+            </Grid>
+            <Grid item xs={12} marginBottom={2} marginTop={2}>
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                <ListItem>
+                  <ListItemIcon>
+                    <Sms size={18} />
+                  </ListItemIcon>
+
+                  <Typography align="left">anshan.dh81@gmail.com</Typography>
+
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <CallCalling size={18} />
+                  </ListItemIcon>
+
+                  <Typography align="left">8654 239 581</Typography>
+
+                </ListItem>
+                <ListItem>
+
+
+                  <Typography align="left">Branch : Hyderabad</Typography>
+
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Date of Birth : 09-12-1982</Typography>
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Inbond Date : 09-12-1982</Typography>
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Registered Date : 09-12-1982</Typography>
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Created By : 09-12-1982</Typography>
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Blocked By : 09-12-1982</Typography>
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Invoice date : 09-12-1982</Typography>
+                </ListItem>
+                <ListItem>
+
+                  <Typography align="left">Approved date : 09-12-1982</Typography>
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} marginBottom={2} marginTop={2}>
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+
+              <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                    sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                  >
+                    Total InBound
+                  </AccordionSummary>
+
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography>
+
+                      <a href="freeinbound" style={{ textDecoration: "none", color: "black" }}> Free InBound</a>
+                    </Typography>
+                    <Typography>
+                      908
+                    </Typography>
+                  </AccordionDetails>
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography>
+
+                      <a href="paidinbound" style={{ textDecoration: "none", color: "black" }}> Paid InBound</a>
+                    </Typography>
+                    <Typography>
+                      724
+                    </Typography>
+                  </AccordionDetails>
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography>
+
+                      <a href="blockedinbound" style={{ textDecoration: "none", color: "black" }}> Blocked Customers</a>
+                    </Typography>
+                    <Typography>
+                      673
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              </List>
+            </Grid>
+          </Grid>
 
         </MainCard>
       </Grid >

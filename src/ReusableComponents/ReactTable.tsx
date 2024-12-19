@@ -265,15 +265,15 @@ export default function ReactTable({
   }));
 
   useEffect(()=>{
-    console.log("data: ", table.getSelectedRowModel().flatRows.map((row) => row.original))
+    // console.log("data: ", table.getSelectedRowModel().flatRows.map((row) => row.original))
     let amount = 0;
     table.getSelectedRowModel().flatRows.map((row) => row.original).forEach((item: any)=>{
       amount += item?.amount
     })
-    console.log("amount: ", amount)
+    // console.log("amount: ", amount)
     setTotalAmount(amount);
   }, [table.getSelectedRowModel().flatRows.map((row) => row.original)])
-  console.log("totalAmount: ", totalAmount)
+  // console.log("totalAmount: ", totalAmount)
   return (
     <>
       <MainCard
@@ -515,9 +515,9 @@ export default function ReactTable({
                       }
                     }}
                     onClick={() => {
-                      console.log(open,"open")
+                      // console.log(open,"open")
                       if (open.action === 'delete' || open.action === 'block' || open.action === 'leave' || open.action === 'disable') {
-                        console.log('rowdata: ', rowdata.original);
+                        // console.log('rowdata: ', rowdata.original);
                         buttonHandler(open.action, rowdata.original);
                         setOpen(false);
                       } else if (open.action === 'edit') {

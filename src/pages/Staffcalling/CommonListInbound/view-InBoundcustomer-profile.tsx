@@ -16,18 +16,20 @@ import { DocumentText, Lock, Profile, Profile2User, Setting3, TableDocument } fr
 import TabPanel from 'pages/common-components/common-tab-panel';
 import TabProfile from 'sections/apps/profiles/account/TabProfile';
 import Typography from '@mui/material/Typography';
-import CreateAgent from './CreateAgent';
-import ChnageBranchRole from '../branches/ChangeBranchRole';
+import BranchViewProfile from 'pages/user-management/branches/ViewBranchProfile';
+import ChnageBranchRole from 'pages/user-management/branches/ChangeBranchRole';
 import PermissionsTable from 'pages/common-components/common-permissions-table';
-import UserHistory from '../UserHistory';
+import CreateBranch from 'pages/user-management/branches/CreateBranch';
+import UserHistory from 'pages/user-management/UserHistory';
+import InBoundViewProfile from './Inboundview-profile';
+// import InBoundViewProfile from './InBoundView-profile';
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
-export default function AgentProfile() {
-  let { pathname } = useLocation();
-
+export default function CustomerInBoundViewProfile() {
   const [value, setValue] = useState(0);
-
+  var user = sessionStorage.getItem('branchUser');
+  console.log('usr: ', user);
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -50,6 +52,7 @@ export default function AgentProfile() {
       permissions: { view: false, create: false, edit: false, delete: false }
     }
   ]);
+
   const handleCheckboxChange = (updatedRoles: any) => {
     console.log('Updated roles:', updatedRoles);
     setRoles(updatedRoles);
@@ -57,37 +60,17 @@ export default function AgentProfile() {
 
   return (
     <>
-      <Typography>Agents Details</Typography>
+      {/* <Typography style={{ margin: '5px' }}>Branch Details</Typography> */}
       <MainCard border={false}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
           <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
-            <Tab label="View Profile" icon={<Profile />} iconPosition="start" />
-            <Tab label="Edit Profile" icon={<DocumentText />} iconPosition="start" />
-            {/* <Tab label="User Files" icon={<Setting3 />} iconPosition="start" /> */}
-            <Tab label="Change Role" icon={<Profile2User />} iconPosition="start" />
-            <Tab label="Permissions" icon={<Setting3 />} iconPosition="start" />
-            {/* <Tab label="Settings" icon={<Setting3 />} iconPosition="start" /> */}
-            <Tab label="Sales History" icon={<Setting3 />} iconPosition="start" />
+            <Tab label="Profile Details" icon={<Profile />} iconPosition="start" />
+
           </Tabs>
         </Box>
         <Box>
           <TabPanel value={value} index={0}>
-            <TabProfile />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <CreateAgent needTitle={false} />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <ChnageBranchRole />
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            <PermissionsTable actions={actions} roles={roles} checkboxhandler={handleCheckboxChange} />
-          </TabPanel>
-          {/* <TabPanel value={value} index={4}>
-            <div>Edit</div>
-          </TabPanel> */}
-          <TabPanel value={value} index={4}>
-            <UserHistory />
+            <InBoundViewProfile />
           </TabPanel>
         </Box>
         <Box sx={{ mt: 2.5 }}>

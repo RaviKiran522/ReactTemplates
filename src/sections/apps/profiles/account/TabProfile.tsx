@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // third-party
 import { PatternFormat } from 'react-number-format';
 
@@ -23,7 +23,8 @@ import LinearWithLabel from 'components/@extended/progress/LinearWithLabel';
 import defaultImages from 'assets/images/users/default.png';
 
 // assets
-import { CallCalling, Gps, Link1, Sms } from 'iconsax-react';
+import { CallCalling, Gps, Link1, Profile, Setting, Sms } from 'iconsax-react';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 
@@ -112,8 +113,158 @@ export default function TabProfile() {
                   </List>
                 </Grid>
               </Grid>
+
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12} marginTop={2} marginBottom={2}>
+                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Profile size={18} />
+                    </ListItemIcon>
+
+                    <Typography align="left">Profile</Typography>
+
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Setting size={18} />
+                    </ListItemIcon>
+
+                    <Typography align="left">Profile Settings</Typography>
+
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Gps size={18} />
+                    </ListItemIcon>
+
+                    <Typography align="left">Shortlisted Profiles</Typography>
+
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Blocked Profiles</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Profiles I Viewed</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Viewed My Profile</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Interest Sent</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Interest Received</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Viewed Contacts</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">My Contacts Viewed</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">mobile Request Sent</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Link1 size={18} />
+                    </ListItemIcon>
+                    <Typography align="left">Mobile Requests Received</Typography>
+                  </ListItem>
+
+                </List>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12} marginTop={2} >
+                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Sms size={18} />
+                    </ListItemIcon>
+
+                    <Typography align="left">anshan.dh81@gmail.com</Typography>
+
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CallCalling size={18} />
+                    </ListItemIcon>
+
+                    <Typography align="left">8654 239 581</Typography>
+
+                  </ListItem>
+                  <ListItem>
+
+
+                    <Typography align="left">Branch : Hyderabad</Typography>
+
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Date of Birth : 09-12-1982</Typography>
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Inbond Date : 09-12-1982</Typography>
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Registered Date : 09-12-1982</Typography>
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Created By : 09-12-1982</Typography>
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Blocked By : 09-12-1982</Typography>
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Invoice date : 09-12-1982</Typography>
+                  </ListItem>
+                  <ListItem>
+
+                    <Typography align="left">Approved date : 09-12-1982</Typography>
+                  </ListItem>
+                </List>
+              </Grid>
+
+
             </MainCard>
           </Grid>
+          {/* <MainCard> */}
+
+
+
           <Grid item xs={12}>
             <MainCard title="Skills">
               <Grid container spacing={1.25}>

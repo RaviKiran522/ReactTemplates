@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router';
 import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
 import Typography from '@mui/material/Typography';
@@ -22,13 +21,13 @@ import Card from '@mui/material/Card';
 import React, { useState } from 'react';
 import PaginationButtons from 'pages/Search/Paginations';
 
-export default function CommonList(props: any) {
+export default function CommonInBoundList(props: any) {
   const { data = [], actions = [], actionHandleClick } = props;
   const [openDialog, setOpenDialog] = useState<any>(false);
   const [dialogContent, setDialogContent] = useState<any>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<any>(null);
   const [selectedAction, setSelectedAction] = useState<any>('');
-  const navigation = useNavigate();
+
   // const handleActionClick = (action: any) => {
   //   setDialogContent(action.content); // Set the content for the dialog
   //   actionHandleClick(action);
@@ -39,6 +38,7 @@ export default function CommonList(props: any) {
   //   setOpenDialog(false); // Close the dialog
   //   setDialogContent(null); // Clear the content
   // };
+
   const rowsPerPage = 10; // Define rows per page
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -58,16 +58,11 @@ export default function CommonList(props: any) {
     setMenuAnchorEl(null);
   };
 
-  const handleActionSelect = (actionLabel: any,each:any) => {
-    console.log("actionLabel: ", actionLabel, each)
-    
+  const handleActionSelect = (actionLabel: any, each: any) => {
     setSelectedAction(actionLabel);
     actionHandleClick(actionLabel, each);
     setOpenDialog(true);
     handleMenuClose();
-    if(actionLabel === "Edit Item") {
-      navigation('../createCustomer', {state: {customer: each}})
-    }
   };
   return (
     <Grid container spacing={3} style={{ width: '100%' }}>
@@ -77,13 +72,11 @@ export default function CommonList(props: any) {
             <Typography variant="h3" >
               SEARCH RESULTS
             </Typography>
-
-
             <Card style={{ backgroundColor: "#e3e291", width: '40%', height: '30px', marginLeft: "17%", padding: "5px" }} >
               Total Profiles Based on Your Filter's is
               <Button sx={{ color: "white", backgroundColor: "#e3526c", width: '40px', height: '20px', marginLeft: "26px" }}>51123</Button>
             </Card>
-            <Grid item xs={12} marginBottom={2} marginTop={2}>
+            <Grid item xs={12} marginBottom={2} marginTop={3}>
               <Divider />
             </Grid>
             {/* Top Pagination */}
@@ -94,6 +87,7 @@ export default function CommonList(props: any) {
                 onChange={handlePageChange}
               />
             </Grid>
+
           </Grid>
           {paginatedData.length > 0 &&
             paginatedData.map((each: any, index: number) => (

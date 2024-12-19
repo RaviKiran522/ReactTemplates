@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
-import { Button} from '@mui/material';
+import { Button, Typography} from '@mui/material';
 import { useNavigate } from 'react-router';
 import BlockCustomer from 'pages/Customer/block-customer';
 import CustomerApprove from 'pages/Customer/customer-approve';
@@ -34,25 +34,25 @@ export default function ConvertedCustomers() {
         [key: string]: FormField;
       }
     const customerFilter : FormData = {
-      customer: {
-        label: 'Customer',
-        id: 'customer',
-        name: 'customer',
-        type:'select',
-        options: [
-          { id: 1, label: 'All' },
-          { id: 2, label: 'Free' },
-          { id: 3, label: 'Paid' },
-          { id: 4, label: 'Blocked' },
-          { id: 5, label: 'Converted' },
-          { id: 6, label: 'Plan Expired' },
-        ],
-        value: { id: 1, label: 'All' },
-        error: false,
-        helperText: '',
-        mandatory: false,
-        isMulti: false,
-      },
+      // customer: {
+      //   label: 'Customer',
+      //   id: 'customer',
+      //   name: 'customer',
+      //   type:'select',
+      //   options: [
+      //     { id: 1, label: 'All' },
+      //     { id: 2, label: 'Free' },
+      //     { id: 3, label: 'Paid' },
+      //     { id: 4, label: 'Blocked' },
+      //     { id: 5, label: 'Converted' },
+      //     { id: 6, label: 'Plan Expired' },
+      //   ],
+      //   value: { id: 1, label: 'All' },
+      //   error: false,
+      //   helperText: '',
+      //   mandatory: false,
+      //   isMulti: false,
+      // },
     }
 
     const [customerData,setCustomerData] = useState<FormData>(customerFilter)
@@ -100,6 +100,76 @@ export default function ConvertedCustomers() {
           helperText: '',
           mandatory: true,
           options : []
+        },
+        selectgender: {
+          label: 'Select Gender',
+          id: 'selectgender',
+          name: 'selectgender',
+          type:'select',
+          options: [
+            { id: 1, label: 'Male' },
+            { id: 2, label: 'Female' },
+          ],
+          value: {id:1,label:''},
+          error: false,
+          helperText: '',
+          mandatory: false,
+          isMulti: false,
+        },
+        selectage: {
+          label: 'Select Your Age',
+          id: 'selectage',
+          name: 'selectage',
+          type:'select',
+          options: [
+            { id: 1, label: '18 Yeras' },
+            { id: 2, label: '20 Yeras ' },
+            { id: 3, label: '23 Yeras' },
+            { id: 4, label: '25 Yeras' },
+            { id: 5, label: '30 Years' },
+          ],
+          // value: [{ id: 1, label: 'WEEKS' },{ id: 2, label: 'YEARS' },],
+          value: {id:1,label:''},
+          error: false,
+          helperText: '',
+          mandatory: false,
+          isMulti: false,
+        },
+        selectcaste: {
+          label: 'Select Your Caste',
+          id: 'selectcaste',
+          name: 'selectcaste',
+          type:'select',
+          options: [
+            { id: 1, label: 'Kaapu/Naidu' },
+            { id: 2, label: 'Brahmin' },
+            { id: 3, label: 'Reddys' },
+            { id: 4, label: 'Settys' },
+            { id: 5, label: 'Aghnikula Kshathriyulu' },
+          ],
+          value: {id:1,label:''},
+          error: false,
+          helperText: '',
+          mandatory: false,
+          isMulti: false,
+        },
+        selectsubcaste: {
+          label: 'Select Your Subcaste',
+          id: 'selectsubcaste',
+          name: 'selectsubcaste',
+          type:'select',
+          options: [
+            { id: 1, label: 'OC' },
+            { id: 2, label: 'BC' },
+            { id: 3, label: 'ST' },
+            { id: 4, label: 'SC' },
+            { id: 5, label: 'BC-B' },
+          ],
+          value: {id:1,label:''},
+          error: false,
+          helperText: '',
+          mandatory: false,
+          isMulti: false,
         },
         maritalStatus: {
           label: 'Marital Status',
@@ -255,12 +325,18 @@ export default function ConvertedCustomers() {
 
   return (
     <>
+     <Grid>
+    
+        
      <Grid container spacing={3} style={{ width: '100%' }}>
       <Grid item xs={12}>
-      <Grid item xs={3} style={{marginBottom:'10px'}}>
+      {/* <Grid item xs={3} style={{marginBottom:'10px'}}>
             <CommonSelectField inputProps={customerData.customer} onSelectChange={handleSelectChange} />
-          </Grid>
+          </Grid> */}
         <MainCard style={{ borderColor: '#666666',marginBottom : '10px' }} >
+        <Typography variant="h3" marginBottom={1} sx={{ padding: "10px 0px" }}>
+        CONVERTED CUSTOMERS
+        </Typography>
             <Grid container xs = {12} spacing = {3}>
         <Grid item xs={3}>
             <CommonInputField inputProps={formData.profileId} onChange={handleChange} />
@@ -280,6 +356,19 @@ export default function ConvertedCustomers() {
           <Grid item xs={3}>
             <CommonSelectField inputProps={formData.createdBy} onSelectChange={handleSelectChange} />
           </Grid>
+          <Grid item xs={3} >
+            <CommonSelectField inputProps={formData.selectgender} onSelectChange={handleSelectChange} />
+          </Grid>
+          <Grid item xs={3}>
+            <CommonSelectField inputProps={formData.selectage} onSelectChange={handleSelectChange} />
+          </Grid>
+          <Grid item xs={3}>
+            
+            <CommonSelectField inputProps={formData.selectcaste} onSelectChange={handleSelectChange} />
+          </Grid>
+          <Grid item xs={3} >
+            <CommonSelectField inputProps={formData.selectsubcaste} onSelectChange={handleSelectChange} />
+          </Grid>
           {/* <Grid item xs={3}>
             <CommonSelectField inputProps={formData.createdBy} onSelectChange={handleSelectChange} />
           </Grid > */}
@@ -293,6 +382,7 @@ export default function ConvertedCustomers() {
             </Grid>
           </Grid>
         </MainCard >
+        </Grid>
         </Grid>
         </Grid>
       <CommonList data={data} actions={actions} actionHandleClick={actionHandleClick} />

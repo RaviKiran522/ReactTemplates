@@ -11,6 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // third-party
 import { PatternFormat } from 'react-number-format';
@@ -23,42 +24,43 @@ import LinearWithLabel from 'components/@extended/progress/LinearWithLabel';
 import defaultImages from 'assets/images/users/default.png';
 
 // assets
-import { CallCalling, Gps, Link1, Sms } from 'iconsax-react';
+import { CallCalling, Gps, Link1, Profile, Setting, Sms } from 'iconsax-react';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button } from '@mui/material';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 let detailsObject = {
-    personalDetails : {
-        name : 'saraswathi',
-    gender:'Male',
-    maritalStatus : 'Married',
-    status : 'Active',
-    educationalQualification : 'MCA',
-    state : 'AP',
-    city : 'Visakhapatnam',
-    branch : "Vizag",
-    religion : "Hindu",
-    cast : "kamma",
-    dob : '16-03-1995',
-    adharNumber : '49689579133',
-    joiningDate : '27-01-2018',
-    experienceInyears : 4,
-    tempAddress : 'guntur',
-    },
-    fatherDetails : {
-        fathername : 'anjaneyulu',
-        number : '9963838871',
-        address : 'pedhakancharla vinukonda(m) guntur(d)'
-    },
-    husbandDetails : {
-        name : 'movva umesh',
-        number : '8367055588',
-        address : 'pedhakancharla vinukonda(m) guntur(d)'
-    },
-    referDetails : {
-        name : 'ashok',
-        number : '9642670464',
-        address : 'anjaneyulu,9963838871,pedhakancharla,vinukomda(m),guntur(d)'
-    }
+  personalDetails: {
+    name: 'saraswathi',
+    gender: 'Male',
+    maritalStatus: 'Married',
+    status: 'Active',
+    educationalQualification: 'MCA',
+    state: 'AP',
+    city: 'Visakhapatnam',
+    branch: "Vizag",
+    religion: "Hindu",
+    cast: "kamma",
+    dob: '16-03-1995',
+    adharNumber: '49689579133',
+    joiningDate: '27-01-2018',
+    experienceInyears: 4,
+    tempAddress: 'guntur',
+  },
+  fatherDetails: {
+    fathername: 'anjaneyulu',
+    number: '9963838871',
+    address: 'pedhakancharla vinukonda(m) guntur(d)'
+  },
+  husbandDetails: {
+    name: 'movva umesh',
+    number: '8367055588',
+    address: 'pedhakancharla vinukonda(m) guntur(d)'
+  },
+  referDetails: {
+    name: 'ashok',
+    number: '9642670464',
+    address: 'anjaneyulu,9963838871,pedhakancharla,vinukomda(m),guntur(d)'
+  }
 }
 
 export default function BranchViewProfile() {
@@ -85,27 +87,6 @@ export default function BranchViewProfile() {
                     </Stack>
                   </Stack>
                 </Grid>
-                <Grid item xs={12}>
-                  <Divider />
-                </Grid>
-                {/* <Grid item xs={12}>
-                  <Stack direction="row" justifyContent="space-around" alignItems="center">
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">86</Typography>
-                      <Typography color="secondary">Post</Typography>
-                    </Stack>
-                    <Divider orientation="vertical" flexItem />
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">40</Typography>
-                      <Typography color="secondary">Project</Typography>
-                    </Stack>
-                    <Divider orientation="vertical" flexItem />
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">4.5K</Typography>
-                      <Typography color="secondary">Members</Typography>
-                    </Stack>
-                  </Stack>
-                </Grid> */}
                 <Grid item xs={12}>
                   <Divider />
                 </Grid>
@@ -145,8 +126,216 @@ export default function BranchViewProfile() {
                         </Link>
                       </ListItemSecondaryAction>
                     </ListItem>
+
                   </List>
                 </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12} >
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Profile size={18} />
+                      </ListItemIcon>
+
+                      <Typography align="left">Profile</Typography>
+
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Setting size={18} />
+                      </ListItemIcon>
+
+                      <Typography align="left">Profile Settings</Typography>
+
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Gps size={18} />
+                      </ListItemIcon>
+
+                      <Typography align="left">Shortlisted Profiles</Typography>
+
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Blocked Profiles</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Profiles I Viewed</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Viewed My Profile</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Interest Sent</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Interest Received</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Viewed Contacts</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">My Contacts Viewed</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">mobile Request Sent</Typography>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <Typography align="left">Mobile Requests Received</Typography>
+                    </ListItem>
+
+                  </List>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12} >
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Sms size={18} />
+                      </ListItemIcon>
+
+                      <Typography align="left">anshan.dh81@gmail.com</Typography>
+
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CallCalling size={18} />
+                      </ListItemIcon>
+
+                      <Typography align="left">8654 239 581</Typography>
+
+                    </ListItem>
+                    <ListItem>
+
+
+                      <Typography align="left">Branch : Hyderabad</Typography>
+
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Date of Birth : 09-12-1982</Typography>
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Inbond Date : 09-12-1982</Typography>
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Registered Date : 09-12-1982</Typography>
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Created By : 09-12-1982</Typography>
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Blocked By : 09-12-1982</Typography>
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Invoice date : 09-12-1982</Typography>
+                    </ListItem>
+                    <ListItem>
+
+                      <Typography align="left">Approved date : 09-12-1982</Typography>
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+                {/* <Grid item xs={12}>
+                  <Stack direction="row" justifyContent="space-around" alignItems="center">
+                    <Stack spacing={0.5} alignItems="center">
+                      <Typography variant="h5">86</Typography>
+                      <Typography color="secondary">Post</Typography>
+                    </Stack>
+                    <Divider orientation="vertical" flexItem />
+                    <Stack spacing={0.5} alignItems="center">
+                      <Typography variant="h5">40</Typography>
+                      <Typography color="secondary">Project</Typography>
+                    </Stack>
+                    <Divider orientation="vertical" flexItem />
+                    <Stack spacing={0.5} alignItems="center">
+                      <Typography variant="h5">4.5K</Typography>
+                      <Typography color="secondary">Members</Typography>
+                    </Stack>
+                  </Stack>
+                </Grid> */}
+
+
+                <Grid item xs={12}>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                      >
+                        Total Staff
+                      </AccordionSummary>
+
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography>
+                          Active Staff
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography>
+                          InActive Staff
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography>
+                          Blocked Staff
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
+
+
               </Grid>
             </MainCard>
           </Grid>
@@ -210,7 +399,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Full Name</Typography>
                         <Typography>{detailsObject.personalDetails.name}</Typography>
@@ -227,7 +416,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Status</Typography>
                         <Typography>{detailsObject.personalDetails.status}</Typography>
@@ -244,7 +433,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">State</Typography>
                         <Typography>{detailsObject.personalDetails.state}</Typography>
@@ -261,7 +450,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Branch</Typography>
                         <Typography>{detailsObject.personalDetails.branch}</Typography>
@@ -278,7 +467,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Cast</Typography>
                         <Typography>{detailsObject.personalDetails.cast}</Typography>
@@ -295,7 +484,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Aadhar Number</Typography>
                         <Typography>{detailsObject.personalDetails.adharNumber}</Typography>
@@ -312,7 +501,7 @@ export default function BranchViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    
+
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Experience (in years)</Typography>
                         <Typography>{detailsObject.personalDetails.experienceInyears}</Typography>
@@ -326,17 +515,17 @@ export default function BranchViewProfile() {
                     </Grid>
                   </Grid>
                 </ListItem>
-                
-                
-               
+
+
+
               </List>
             </MainCard>
           </Grid>
           <Grid item xs={12}>
             <MainCard title="FATHER DETAILS">
               <List sx={{ py: 0 }}>
-              <ListItem divider>
-              <Grid container spacing={3}>
+                <ListItem divider>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Father Name</Typography>
@@ -352,25 +541,25 @@ export default function BranchViewProfile() {
                   </Grid>
                 </ListItem>
                 <ListItem divider>
-              <Grid container spacing={3}>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Father Address</Typography>
                         <Typography>{detailsObject.fatherDetails.address}</Typography>
                       </Stack>
                     </Grid>
-                    
+
                   </Grid>
                 </ListItem>
-                
+
               </List>
             </MainCard>
           </Grid>
           <Grid item xs={12}>
             <MainCard title="HUSBAND DETAILS">
               <List sx={{ py: 0 }}>
-              <ListItem divider>
-              <Grid container spacing={3}>
+                <ListItem divider>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Husband Name</Typography>
@@ -386,25 +575,25 @@ export default function BranchViewProfile() {
                   </Grid>
                 </ListItem>
                 <ListItem divider>
-              <Grid container spacing={3}>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Husband Address</Typography>
                         <Typography>{detailsObject.husbandDetails.address}</Typography>
                       </Stack>
                     </Grid>
-                    
+
                   </Grid>
                 </ListItem>
-                
+
               </List>
             </MainCard>
           </Grid>
           <Grid item xs={12}>
             <MainCard title="REFERER DETAILS">
               <List sx={{ py: 0 }}>
-              <ListItem divider>
-              <Grid container spacing={3}>
+                <ListItem divider>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Reference Name</Typography>
@@ -420,17 +609,17 @@ export default function BranchViewProfile() {
                   </Grid>
                 </ListItem>
                 <ListItem divider>
-              <Grid container spacing={3}>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Reference Address</Typography>
                         <Typography>{detailsObject.referDetails.address}</Typography>
                       </Stack>
                     </Grid>
-                    
+
                   </Grid>
                 </ListItem>
-                
+
               </List>
             </MainCard>
           </Grid>

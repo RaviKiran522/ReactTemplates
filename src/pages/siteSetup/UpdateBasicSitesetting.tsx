@@ -29,10 +29,10 @@ export default function UpdateBasicSitesetting() {
   }
 
   const formFields: FormData = {
-    title: {
-      label: 'Title',
-      id: 'title',
-      name: 'title',
+    webName: {
+      label: 'Web Name',
+      id: 'webName',
+      name: 'webName',
       type: 'text',
       value: '',
       error: false,
@@ -40,21 +40,21 @@ export default function UpdateBasicSitesetting() {
       mandatory: true,
       options: []
     },
-    mobile: {
-      label: 'Mobile',
-      id: 'mobile',
-      name: 'mobile',
-      type: 'number',
+    webTitle: {
+      label: 'Website Title',
+      id: 'webTitle',
+      name: 'webTitle',
+      type: 'text',
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
       options: []
     },
-    email: {
-      label: 'Email Address',
-      id: 'email',
-      name: 'email',
+    websiteDes: {
+      label: 'Website Description',
+      id: 'websiteDes',
+      name: 'websiteDes',
       type: 'email',
       value: '',
       error: false,
@@ -62,10 +62,42 @@ export default function UpdateBasicSitesetting() {
       mandatory: true,
       options: []
     },
-    website: {
-      label: 'Website',
-      id: 'website',
-      name: 'website',
+    countryCode: {
+      label: 'Country Code',
+      id: 'countryCode',
+      name: 'countryCode',
+      type: 'select',
+      options: [
+        { id: 0, label: 'Please Select' },
+        { id: 1, label: 'Male' },
+        { id: 2, label: 'Female' }
+      ],
+      value: { id: 0, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    contactNumber: {
+      label: 'Contact Number',
+      id: 'contactNumber',
+      name: 'contactNumber',
+      type: 'select',
+      options: [
+        { id: 0, label: 'Please Select' },
+        { id: 1, label: 'Male' },
+        { id: 2, label: 'Female' }
+      ],
+      value: { id: 0, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    fullAddress: {
+      label: 'Full Address',
+      id: 'fullAddress',
+      name: 'fullAddress',
       type: 'text',
       value: '',
       error: false,
@@ -73,17 +105,60 @@ export default function UpdateBasicSitesetting() {
       mandatory: true,
       options: []
     },
-    address: {
-      label: 'Address',
-      id: 'address',
-      name: 'address',
+    taxApplicable: {
+      label: 'Tax Applicable',
+      id: 'taxApplicable',
+      name: 'taxApplicable',
+      type: 'select',
+      options: [
+        { id: 0, label: 'Please Select' },
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' }
+      ],
+      value: { id: 0, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    taxName: {
+      label: 'Tax Name ',
+      id: 'taxName',
+      name: 'taxName',
       type: 'text',
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
       options: []
-    }
+    },
+    serviceTax: {
+      label: 'Service Tax (%)',
+      id: 'serviceTax',
+      name: 'serviceTax',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    defaultCountryCode: {
+      label: 'Default Country Code',
+      id: 'defaultCountryCode',
+      name: 'defaultCountryCode',
+      type: 'select',
+      options: [
+        { id: 0, label: 'Please Select' },
+        { id: 1, label: 'Male' },
+        { id: 2, label: 'Female' }
+      ],
+      value: { id: 0, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
   };
 
   const [formData, setFormData] = useState<FormData>(formFields);
@@ -102,11 +177,11 @@ export default function UpdateBasicSitesetting() {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else if (key === 'email' && field.value && !/\S+@\S+\.\S+/.test(field.value)) {
+        } else if (field.mandatory && (field.type === "select" && (!field.value || !field.value.label))) {
           newFormData[key].error = true;
-          newFormData[key].helperText = 'Invalid email address';
+          newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else {
+          } else {
           newFormData[key].helperText = '';
         }
       }
@@ -117,6 +192,7 @@ export default function UpdateBasicSitesetting() {
   };
 
   const handleChange = (name: FormDataKeys, value: any) => {
+    console.log("checking: ")
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
     newFormData[name].error = false;
@@ -142,47 +218,58 @@ export default function UpdateBasicSitesetting() {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log("checking.......")
     // console.log('Form Submitted', formData);
     e.preventDefault();
     const sampleObject = {
-      branchName: formData.branchName.value,
-      phoneNumber: formData.phoneNumber.value,
-      email: formData.email.value,
-      state: formData.state.value,
-      address: formData.address.value,
-      city: formData.city.value,
-      status: formData.status.value,
-      pincode: formData.pincode.value
     };
     console.log('sampleObject.........', sampleObject);
     if (validate()) {
       console.log('Form Submitted', formData);
     }
   };
+  console.log('formData: ', formData)
   return (
-    <Grid>
-        <MainCard>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', pb: 1 }}>
-        <Typography>Update basic site setting</Typography>
-        </Box>
+    <Container sx={{ backgroundColor: '#FFF',
+      padding: '40px 30px',
+      boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px ,rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+      borderRadius: '10px'}}>
+      
+        <Typography variant="h3" marginBottom={2} sx={{padding:"15px 0px"}}>Update basic site setting</Typography>
+        <MainCard border={true} sx={{padding:"10px 20px"}}>
         <form onSubmit={handleSubmit} noValidate>
         <Grid container spacing={2} sx={{pt: 5}}>
           <Grid item xs={6}>
-            <CommonInputField inputProps={formData.title} onChange={handleChange} />
+            <CommonInputField inputProps={formData.webName} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonInputField inputProps={formData.mobile} onChange={handleChange} />
+            <CommonInputField inputProps={formData.webTitle} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonInputField inputProps={formData.email} onChange={handleChange} />
+            <CommonInputField inputProps={formData.websiteDes} onChange={handleChange} />
+          </Grid>
+          <Grid item xs={2}>
+          <CommonSelectField inputProps={formData.countryCode} onSelectChange={handleSelectChange} />
+          </Grid>
+          <Grid item xs={4}>
+          <CommonSelectField inputProps={formData.contactNumber} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonInputField inputProps={formData.website} onChange={handleChange} />
+            <CommonInputField inputProps={formData.fullAddress} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonInputField inputProps={formData.address} onChange={handleChange} />
+          <CommonSelectField inputProps={formData.taxApplicable} onSelectChange={handleSelectChange} />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
+            <CommonInputField inputProps={formData.taxName} onChange={handleChange} />
+          </Grid>
+          <Grid item xs={6}>
+            <CommonInputField inputProps={formData.serviceTax} onChange={handleChange} />
+          </Grid>
+          <Grid item xs={6}>
+          <CommonSelectField inputProps={formData.defaultCountryCode} onSelectChange={handleSelectChange} />
+          </Grid>
+          <Grid item xs={12} textAlign={"end"}>
             <Button type="submit" variant="contained" color="primary">
               Submit
             </Button>
@@ -190,6 +277,6 @@ export default function UpdateBasicSitesetting() {
         </Grid>
       </form>
         </MainCard>
-    </Grid>
+    </Container>
   );
 }

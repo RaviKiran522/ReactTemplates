@@ -88,6 +88,7 @@ import UpdateMetricPrefix from 'pages/siteSetup/UpdateMetriPrefix';
 import SocialMediaLink from 'pages/siteSetup/SocialMediaLink';
 import GoogleAnalyticsCode from 'pages/siteSetup/GoogleAnalyticsCode';
 import AppLink from 'pages/siteSetup/AppLink';
+import CreateInBound from 'pages/Staffcalling/CreateInbound/CreateInbound';
 import Invoice from 'pages/Sales/Invoice';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -416,7 +417,7 @@ const MainRoutes = {
               children: [
                 {
                   path: 'createinbound',
-                  element: <CreateInbound />,
+                  element: <CreateInBound/>,
                 },
                 {
                   path: 'listinbound',
@@ -438,6 +439,11 @@ const MainRoutes = {
                   path: 'viewProfile',
                   element: <CustomerInBoundViewProfile />
                 },
+                {
+                  path: 'editInBound',
+                  element: <CreateInBound edit={true}/>
+                },
+               
               ]
             }
           ],
@@ -485,7 +491,7 @@ const MainRoutes = {
               element: <ViewSlaes />
             },
             {
-              path: 'invoiceprint',
+              path: 'invoicegenerate',
               element: <InVoicePrint />
             },
             {

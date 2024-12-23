@@ -18,6 +18,7 @@ import EducationInfo from './EducationInfo';
 import FamilyInfo from './FamilyInfo';
 import PartnerInfo from './PartenerInfo';
 import ConfirmInfo from './ConfirmInfo';
+import { useLocation } from 'react-router';
 // import EducationDetails from 'pages/customer-management/EducationDetails';
 // import PersonalDetails from 'pages/customer-management/PersonalDetails';
 // import PartnerDetails from 'pages/customer-management/PartnerDetails';
@@ -29,7 +30,7 @@ const steps = ['Personal Details', 'Education Details', 'Family Details', 'Partn
 
 // ==============================|| FORMS WIZARD - BASIC ||============================== //
 
-export default function CreateInbound() {
+export default function CreateInBound({edit}: any) {
   const personalDetails: any = {
     fullName: {
       label: 'Full Name',
@@ -181,8 +182,8 @@ export default function CreateInbound() {
     },
     selectRassi: {
       label: 'Select Moonsign/Raasi',
-      id: 'selectMoonsign/Raasi',
-      name: 'selectMoonsign/Raasi',
+      id: 'selectRassi',
+      name: 'selectRassi',
       type: 'select',
       options: [
         { id: 1, label: 'mesha' },
@@ -377,7 +378,7 @@ export default function CreateInbound() {
         { id: 1, label: 'Yes' },
         { id: 2, label: 'No' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id: 1, label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -564,8 +565,8 @@ export default function CreateInbound() {
     },
     sports: {
       label: 'Select Sports',
-      id: 'hobbies',
-      name: 'hobbies',
+      id: 'sports',
+      name: 'sports',
       type: 'select',
       options: [
         { id: 1, label: 'Badmintion' },
@@ -588,7 +589,7 @@ export default function CreateInbound() {
       name: 'favouritecuisne',
       type: 'select',
       options: [{ id: 1, label: 'South India' }],
-      value: [{ id: 1, label: 'Please select' }],
+      value: [{ id: 2, label: 'Please select' }],
       error: false,
       helperText: '',
       mandatory: true,
@@ -745,7 +746,7 @@ export default function CreateInbound() {
         { id: 2, label: 'vizag' },
         { id: 3, label: 'chennai' }
       ],
-      value: { id: 0, label: 'Select' },
+      value: { id: 1, label: 'Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -822,7 +823,7 @@ export default function CreateInbound() {
         { id: 2, label: 'son' },
         { id: 3, label: 'daughter' }
       ],
-      value: { id: 0, label: 'Select' },
+      value: { id: 1, label: 'Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -837,7 +838,7 @@ export default function CreateInbound() {
         { id: 2, label: 'News Paper' },
         { id: 3, label: 'Self' }
       ],
-      value: { id: 0, label: 'Select' },
+      value: { id: 1, label: 'Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -852,7 +853,7 @@ export default function CreateInbound() {
         { id: 2, label: 'srikakulam' },
         { id: 3, label: 'TS' }
       ],
-      value: { id: 0, label: 'Select' },
+      value: { id: 1, label: 'Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -866,11 +867,11 @@ export default function CreateInbound() {
       name: 'education',
       type: 'select',
       options: [
-        { id: 0, label: 'Please Select' },
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
+        { id: 1, label: 'Please Select' },
+        { id: 2, label: 'Male' },
+        { id: 3, label: 'Female' }
       ],
-      value: { id: 0, label: 'Please Select' },
+      value: { id: 1, label: 'Please Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -914,11 +915,11 @@ export default function CreateInbound() {
       name: 'designation',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'Please select' },
+        { id: 2, label: 'Aswini' },
+        { id: 3, label: 'Bharani' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id: 1, label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -934,7 +935,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1187,11 +1188,11 @@ export default function CreateInbound() {
       name: 'familyStatus',
       type: 'select',
       options: [
-        { id: 0, label: 'Please Select' },
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
+        { id: 1, label: 'Please Select' },
+        { id: 2, label: 'Male' },
+        { id: 3, label: 'Female' }
       ],
-      value: { id: 0, label: 'Please Select' },
+      value: { id: 1, label: 'Please Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1246,11 +1247,11 @@ export default function CreateInbound() {
       name: 'fcaste',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'Please select' },
+        { id: 2, label: 'Aswini' },
+        { id: 3, label: 'Bharani' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id: 1, label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1270,7 +1271,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1286,7 +1287,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1413,11 +1414,11 @@ export default function CreateInbound() {
       name: 'mcaste',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'Please select' },
+        { id: 2, label: 'Aswini' },
+        { id: 3, label: 'Bharani' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id: 1, label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1437,7 +1438,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1453,7 +1454,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1608,11 +1609,11 @@ export default function CreateInbound() {
       name: 'lookingFor',
       type: 'select',
       options: [
-        { id: 0, label: 'Please Select' },
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
+        { id: 1, label: 'Please Select' },
+        { id: 2, label: 'Male' },
+        { id: 3, label: 'Female' }
       ],
-      value: { id: 0, label: 'Please Select' },
+      value: { id: 1, label: 'Please Select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1628,7 +1629,7 @@ export default function CreateInbound() {
         { id: 2, label: 'TS' },
         { id: 3, label: 'UP' }
       ],
-      value: { id: 1, label: 'AP' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1644,7 +1645,7 @@ export default function CreateInbound() {
         { id: 2, label: 'TS' },
         { id: 3, label: 'UP' }
       ],
-      value: { id: 1, label: 'AP' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1656,11 +1657,11 @@ export default function CreateInbound() {
       name: 'heightFrom',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'Please select' },
+        { id: 2, label: 'Aswini' },
+        { id: 3, label: 'Bharani' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id: 1, label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1676,7 +1677,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1692,7 +1693,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1708,7 +1709,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Yes' },
         { id: 3, label: 'No' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1724,7 +1725,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1740,7 +1741,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1756,7 +1757,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1811,11 +1812,11 @@ export default function CreateInbound() {
       name: 'smoke',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'Please select' },
+        { id: 2, label: 'Aswini' },
+        { id: 3, label: 'Bharani' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id:1 , label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1831,7 +1832,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1847,7 +1848,7 @@ export default function CreateInbound() {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1902,7 +1903,9 @@ export default function CreateInbound() {
   const [partnerDetailsFormData, setPartnerDetailsFormData] = useState<any>(partnerDetails);
 
   const [activeStep, setActiveStep] = useState(0);
-
+const location = useLocation();
+  let locationState = sessionStorage.getItem("customer");
+  locationState = locationState ? JSON.parse(locationState) : null;
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -1931,7 +1934,7 @@ export default function CreateInbound() {
   }
 
   return (
-    <MainCard title="ADD INBOUND">
+    <MainCard title={ edit ? "EDIT INBOUND" : "ADD INBOUND"}>
       <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
         {steps.map((label) => (
           <Step key={label}>

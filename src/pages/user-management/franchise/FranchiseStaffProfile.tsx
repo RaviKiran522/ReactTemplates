@@ -21,6 +21,7 @@ import UserHistory from '../UserHistory';
 import CreateFranchiseStaff from './CreateFranchiseStaff';
 import BranchViewProfile from '../branches/ViewBranchProfile';
 import ChnageBranchRole from '../branches/ChangeBranchRole';
+import FranchiseViewProfile from './ViewFranchiseProfile';
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
@@ -78,7 +79,7 @@ export default function FranchiseStaffProfile({ tabInd }: any) {
         </Box>
         <Box>
           <TabPanel value={value} index={0}>
-            <BranchViewProfile />
+            <FranchiseViewProfile />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <CreateFranchiseStaff needTitle={false} />

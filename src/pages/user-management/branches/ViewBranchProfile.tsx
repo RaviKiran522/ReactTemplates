@@ -26,6 +26,7 @@ import defaultImages from 'assets/images/users/default.png';
 // assets
 import { CallCalling, Gps, Link1, Profile, Setting, Sms } from 'iconsax-react';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button } from '@mui/material';
+import { useNavigate } from 'react-router';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 let detailsObject = {
@@ -66,6 +67,53 @@ let detailsObject = {
 export default function BranchViewProfile() {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    navigate('/branches/listStaff');// Use the route path defined in your router
+  };
+  const handleInactiveNavigation = () => {
+    navigate('/branches/suspendedStaff');// Use the route path defined in your router
+  };
+  const handleBlockedNavigation = () => {
+    navigate('/branches/blockedStaff');// Use the route path defined in your router
+  };
+
+  const handleListCustomersNavigation = () => {
+    navigate('/customerManagement/listCustomers');// Use the route path defined in your router
+  };
+  const handleConvertedCustomersNavigation = () => {
+    navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
+  };
+  const handleExpiredCustomersNavigation = () => {
+    navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
+  };
+  const handleBlockedRequesCustomersNavigation = () => {
+    navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
+  };
+  const handleFreeCustomersNavigation = () => {
+    navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
+  };
+  const handlePaidCustomersNavigation = () => {
+    navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
+  };
+  const handleBlockedCustomersNavigation = () => {
+    navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
+  };
+
+  const handleListInboundNavigation = () => {
+    navigate('/staffCalling/inbound/listinbound');// Use the route path defined in your router
+  };
+  const handleFreeInboundNavigation = () => {
+    navigate('/staffCalling/inbound/freeinbound');// Use the route path defined in your router
+  };
+  const handlePaidInboundNavigation = () => {
+    navigate('/staffCalling/inbound/paidinbound');// Use the route path defined in your router
+  };
+  const handleBlockedInboundNavigation = () => {
+    navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
+  };
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={5} md={4} xl={3}>
@@ -86,6 +134,245 @@ export default function BranchViewProfile() {
                       <Typography color="secondary">Password : 34354343</Typography>
                     </Stack>
                   </Stack>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12}>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                      >
+                        Total Staff
+                      </AccordionSummary>
+
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Active Staff
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleInactiveNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >InActive Staff
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked Staff
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+
+                <Grid item xs={12}>
+
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                      >
+                        Total Customers
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleListCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          List Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleFreeCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Free Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleConvertedCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Converted Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handlePaidCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Paid Customers
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleExpiredCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Plan Expired Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked Cusromers
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedRequesCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked Requests
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+
+
+                <Grid item xs={12}>
+
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                      >
+                        Total InBound
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleListInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          List InBound
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleFreeInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Free InBound
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handlePaidInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Paid InBound
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked InBound
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                      >
+                        Total Sales
+                      </AccordionSummary>
+
+                      <AccordionDetails >
+
+                        <Typography>
+
+                          Sales History
+                        </Typography>
+
+
+                      </AccordionDetails>
+
+
+                    </Accordion>
+                  </List>
                 </Grid>
                 <Grid item xs={12}>
                   <Divider />
@@ -129,7 +416,7 @@ export default function BranchViewProfile() {
 
                   </List>
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <Divider />
                 </Grid>
                 <Grid item xs={12} >
@@ -271,7 +558,7 @@ export default function BranchViewProfile() {
                       <Typography align="left">Approved date : 09-12-1982</Typography>
                     </ListItem>
                   </List>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                   <Divider />
                 </Grid>
@@ -295,45 +582,6 @@ export default function BranchViewProfile() {
                 </Grid> */}
 
 
-                <Grid item xs={12}>
-                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                    <Accordion>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1-content"
-                        id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
-                      >
-                        Total Staff
-                      </AccordionSummary>
-
-                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <Typography>
-                          Active Staff
-                        </Typography>
-                        <Typography>
-                          908
-                        </Typography>
-                      </AccordionDetails>
-                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <Typography>
-                          InActive Staff
-                        </Typography>
-                        <Typography>
-                          724
-                        </Typography>
-                      </AccordionDetails>
-                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <Typography>
-                          Blocked Staff
-                        </Typography>
-                        <Typography>
-                          673
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                  </List>
-                </Grid>
 
 
               </Grid>

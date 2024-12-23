@@ -1,4 +1,23 @@
 import { FormattedMessage } from 'react-intl';
+import {
+  HomeTrendUp, User,Card,ReceiptDisscount, Personalcard, CallCalling, SearchStatus, Solana, People, PenAdd, Setting, Shield,
+} from 'iconsax-react';
+import { i } from 'vite/dist/node/types.d-aGj9QkWt';
+
+const icons = {
+  dashboard: HomeTrendUp,
+  userManagement: User,
+  customerManagement: People,
+  staffCalling: CallCalling,
+  search: SearchStatus,
+  sales: Solana,
+  plans: PenAdd,
+  addNewDetails: Setting,
+  siteSetup: Shield,
+  careers:Card,
+  reports:ReceiptDisscount,
+  others:Personalcard
+}
 
 export const loadingMenu = [
   {
@@ -11,6 +30,7 @@ export const loadingMenu = [
         id: 'dashboard',
         title: 'Dashboard',
         type: 'item',
+        icon: icons.dashboard,
         url: '/dashboard/default',
         breadcrumbs: false
       },
@@ -18,7 +38,7 @@ export const loadingMenu = [
         id: 'userManagement',
         title: 'User Management',
         type: 'collapse',
-        icon: null,
+        icon: icons.userManagement,
         children: [
           {
             id: 'branches',
@@ -164,6 +184,7 @@ export const loadingMenu = [
         id: 'customerManagement',
         title: 'Customer Management',
         type: 'collapse',
+        icon: icons.customerManagement,
         breadcrumbs: false,
         children: [
           {
@@ -228,7 +249,7 @@ export const loadingMenu = [
         id: 'staffCalling',
         title: 'Staff Calling',
         type: 'collapse',
-        // url: '/staffCalling',
+        icon: icons.staffCalling,
         breadcrumbs: false,
         children: [
           {
@@ -237,51 +258,51 @@ export const loadingMenu = [
             type: 'collapse',
             breadcrumbs: false,
             children: [
-         
-                  {
-                    id: 'createinbound',
-                    title: 'Create Inbound',
-                    type: 'item',
-                    url: '/staffCalling/inbound/createinbound',
-                    breadcrumbs: false,
-                  },
-                  {
-                    id: 'listinbound',
-                    title: 'List Inbound',
-                    type: 'item',
-                    url: '/staffCalling/inbound/listinbound',
-                    breadcrumbs: false,
-                  },
-                  {
-                    id: 'freeinbound',
-                    title: 'Free InBound',
-                    type: 'item',
-                    url: '/staffCalling/inbound/freeinbound',
-                    breadcrumbs: false,
-                  },
-                  {
-                    id: 'paidinbound',
-                    title: 'Paid InBound',
-                    type: 'item',
-                    url: '/staffCalling/inbound/paidinbound',
-                    breadcrumbs: false,
-                  },
-                  {
-                    id: 'blockedinbound',
-                    title: 'Blocked InBound',
-                    type: 'item',
-                    url: '/staffCalling/inbound/blockedinbound',
-                    breadcrumbs: false,
-                  },
-                ]
-              }
+
+              {
+                id: 'createinbound',
+                title: 'Create Inbound',
+                type: 'item',
+                url: '/staffCalling/inbound/createinbound',
+                breadcrumbs: false,
+              },
+              {
+                id: 'listinbound',
+                title: 'List Inbound',
+                type: 'item',
+                url: '/staffCalling/inbound/listinbound',
+                breadcrumbs: false,
+              },
+              {
+                id: 'freeinbound',
+                title: 'Free InBound',
+                type: 'item',
+                url: '/staffCalling/inbound/freeinbound',
+                breadcrumbs: false,
+              },
+              {
+                id: 'paidinbound',
+                title: 'Paid InBound',
+                type: 'item',
+                url: '/staffCalling/inbound/paidinbound',
+                breadcrumbs: false,
+              },
+              {
+                id: 'blockedinbound',
+                title: 'Blocked InBound',
+                type: 'item',
+                url: '/staffCalling/inbound/blockedinbound',
+                breadcrumbs: false,
+              },
+            ]
+          }
         ]
       },
       {
         id: 'search',
         title: 'Search',
         type: 'collapse',
-        // url: '/search',
+        icon: icons.search,
         breadcrumbs: false,
         children: [
           {
@@ -297,6 +318,7 @@ export const loadingMenu = [
         id: 'sales',
         title: 'Sales',
         type: 'collapse',
+        icon: icons.sales,
         breadcrumbs: false,
         children: [
           {
@@ -315,10 +337,10 @@ export const loadingMenu = [
           },
 
           {
-            id: 'invoiceprint',
-            title: 'Invoice Print',
+            id: 'invoicegenerate',
+            title: 'Invoice Generate',
             type: 'item',
-            url: '/sales/invoiceprint',
+            url: '/sales/invoicegenerate',
             breadcrumbs: false
           },
           {
@@ -334,7 +356,7 @@ export const loadingMenu = [
         id: 'plans',
         title: 'Plans',
         type: 'collapse',
-        // url: '/plans',
+        icon: icons.plans,
         breadcrumbs: false,
         children: [
           {
@@ -379,6 +401,7 @@ export const loadingMenu = [
         id: 'addNewDetails',
         title: 'Add New Details',
         type: 'collapse',
+        icon: icons.addNewDetails,
         breadcrumbs: false,
         children: [
           {
@@ -514,6 +537,7 @@ export const loadingMenu = [
         id: 'siteSetup',
         title: 'Site Setup',
         type: 'collapse',
+        icon: icons.siteSetup,
         breadcrumbs: false,
         children: [
           {
@@ -578,6 +602,7 @@ export const loadingMenu = [
         id: 'careers',
         title: 'Careers',
         type: 'item',
+        icon: icons.careers,
         url: '/careers',
         breadcrumbs: false
       },
@@ -585,6 +610,7 @@ export const loadingMenu = [
         id: 'reports',
         title: 'Reports',
         type: 'item',
+        icon: icons.reports,
         url: '/reports',
         breadcrumbs: false
       },
@@ -592,6 +618,7 @@ export const loadingMenu = [
         id: 'others',
         title: 'Others',
         type: 'item',
+        icon: icons.others,
         url: '/others',
         breadcrumbs: false
       }

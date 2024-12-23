@@ -5,12 +5,14 @@ import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
-import Addpayment from '../franchise/Addpayment';
+import Addpayment from '../ActionsPopUps/Addpayment';
+import AgentCreateInvoice from '../ActionsPopUps/CreateinvoiceAgent';
 
 // The UsersList component now passes actions to the ReactTable component
 export default function AgentsList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [show,setShow] = useState(false)
+  const [show,setShow] = useState(false);
+  const [invoice,setInvoice] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
@@ -81,7 +83,10 @@ export default function AgentsList() {
     useEffect(() => {
       console.log('page size: ', rowsPerPage, 'pageNumber: ', pageNumber);
     }, [rowsPerPage, pageNumber]);
+
     const handleClose = () => {
+      // setShow(false);
+      setInvoice(false);
       setAnchorEl(null);
     };
     return (
@@ -104,14 +109,7 @@ export default function AgentsList() {
           >
             Edit
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              setOpen({ flag: true, action: 'delete' });
-              handleClose();
-            }}
-          >
-            Delete
-          </MenuItem>
+          <MenuItem onClick={() => { setInvoice(true); }}>Create InVoice</MenuItem>
           <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'block' });
@@ -120,14 +118,14 @@ export default function AgentsList() {
           >
             Block
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'leave' });
               handleClose();
             }}
           >
             Leave
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem onClick={() => { setShow(true); handleClose(); }}>Add Payment</MenuItem>
         </Menu>
       </>
@@ -165,6 +163,9 @@ export default function AgentsList() {
     setShow(false)
   }
 
+  const handleInvoiceClose =() =>{
+    setInvoice(false)
+  }
   return (
     <>
     <ReactTable
@@ -191,6 +192,12 @@ export default function AgentsList() {
     {show && (
         <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
           <Addpayment open={show} onClose={handlePayementClose} />
+        </div>
+      )}
+
+{invoice && (
+        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+          <AgentCreateInvoice open={invoice} onClose={handleInvoiceClose} />
         </div>
       )}
     </>

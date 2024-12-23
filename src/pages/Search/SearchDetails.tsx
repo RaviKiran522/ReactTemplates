@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import React, { useState } from "react";
 import PaginationButtons from "./Paginations"; // Import the new pagination component
-import Button from "themes/overrides/Button";
+import Button from "@mui/material/Button";
 import { Divider } from "@mui/material";
 
 export default function SearchDetails(props: any) {
@@ -22,9 +22,15 @@ export default function SearchDetails(props: any) {
 
   return (
     <Grid container spacing={3} style={{ width: "100%" }}>
-      <Typography variant="h3" sx={{padding:"10px"}}>
-        SEARCH RESULTS
-      </Typography>
+     <Grid container sx={{ display: "flex", flexDirection: "row", padding: "10px 0px", marginBottom: "1", }} >
+            <Typography variant="h3" >
+              SEARCH RESULTS
+            </Typography>
+            <Card style={{ backgroundColor: "#e3e291", width: '40%', height: '30px', marginLeft: "17%", padding: "5px" }} >
+              Total Profiles Based on Your Filter's is
+              <Button sx={{ color: "white", backgroundColor: "#e3526c", width: '40px', height: '20px', marginLeft: "26px" }}>51123</Button>
+            </Card>
+          </Grid>
       <Grid item xs={12} marginBottom={1} >
               <Divider />
             </Grid>
@@ -42,6 +48,7 @@ export default function SearchDetails(props: any) {
         {paginatedData.length > 0 &&
           paginatedData.map((each: any, index: number) => (
             <MainCard key={index} style={{ marginBottom: "16px",borderColor: '#878683' }}>
+              
               <Grid container sx={{display:"flex", flexDirection:"row", justifyContent:"space-evenly"}}>
                 <Grid item xs={12} sm={5} md={4} xl={2}>
                   {/* <MainCard> */}

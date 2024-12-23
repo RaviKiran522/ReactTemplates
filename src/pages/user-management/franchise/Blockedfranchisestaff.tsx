@@ -12,21 +12,21 @@ export default function BlockedFranchiseStaff() {
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
-    { empId: '4321', name: 'vamsi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '1234', name: 'ravi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Complicated' },
-    { empId: '3432', name: 'kiran', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Relationship' },
-    { empId: '123', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '121', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '122', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '124', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '125', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' }
+    { empId: '4321', name: 'vamsi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '1234', name: 'ravi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '3432', name: 'kiran', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '123', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '121', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '122', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '124', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '125', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' }
   ];
   const data2 = [
-    { empId: '126', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '127', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '128', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '129', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '1210', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' }
+    { empId: '126', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '127', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '128', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '129', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '1210', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' }
   ];
 
   const handleEdit = (row: any) => {
@@ -133,6 +133,7 @@ export default function BlockedFranchiseStaff() {
 
   const columns = useMemo(
     () => [
+      { header: 'S.No', accessorKey: 'sno' ,cell:(props:any) => props.row.index + 1,enableSorting:false},
       { header: 'Employee ID', accessorKey: 'empId' },
       { header: 'Name', accessorKey: 'name' },
       { header: 'Office Number', accessorKey: 'officeNumber' },
@@ -146,12 +147,12 @@ export default function BlockedFranchiseStaff() {
           const status = props.getValue(); // Use getValue() to get the cell value
 
           switch (status) {
-            case 'Complicated':
-              return <Chip color="error" label="Complicated" size="small" variant="light" />;
-            case 'Relationship':
-              return <Chip color="success" label="Relationship" size="small" variant="light" />;
+            case 'Blocked':
+              return <Chip color="error" label="Blocked" size="small" variant="light" />;
+            case 'Suspebded':
+              return <Chip color="error" label="Suspebded" size="small" variant="light" />;
             default:
-              return <Chip color="info" label="Single" size="small" variant="light" />;
+              return <Chip color="success" label="Active" size="small" variant="light" />;
           }
         }
       }

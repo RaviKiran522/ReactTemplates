@@ -157,15 +157,15 @@ export default function CreateCustomer({edit}: any) {
     },
     selectStar: {
       label: 'Star',
-      id: 'star',
-      name: 'star',
+      id: 'selectStar',
+      name: 'selectStar',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'Bharani' },
+        { id: 2, label: 'Aswini' },
+        { id: 3, label: 'Bharani' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: { id: null, label: 'Please select' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -173,8 +173,8 @@ export default function CreateCustomer({edit}: any) {
     },
     selectRassi: {
       label: 'Select Moonsign/Raasi',
-      id: 'selectMoonsign/Raasi',
-      name: 'selectMoonsign/Raasi',
+      id: 'selecselectRassitMoonsign',
+      name: 'selectRassi',
       type: 'select',
       options: [
         { id: 1, label: 'mesha' },
@@ -556,8 +556,8 @@ export default function CreateCustomer({edit}: any) {
     },
     sports: {
       label: 'Select Sports',
-      id: 'hobbies',
-      name: 'hobbies',
+      id: 'sports',
+      name: 'sports',
       type: 'select',
       options: [
         { id: 1, label: 'Badmintion' },
@@ -926,7 +926,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1262,7 +1262,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1278,7 +1278,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1429,7 +1429,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1445,7 +1445,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1668,7 +1668,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1684,7 +1684,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1700,7 +1700,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Yes' },
         { id: 3, label: 'No' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1716,7 +1716,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1732,7 +1732,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1748,7 +1748,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1823,7 +1823,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Late' },
         { id: 3, label: 'Alive' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -1839,7 +1839,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Tula' },
         { id: 3, label: 'Gemini' }
       ],
-      value: { id: 1, label: 'mesha' },
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,

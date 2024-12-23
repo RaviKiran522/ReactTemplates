@@ -32,6 +32,7 @@ import React, { useState } from 'react';
 import CommonTextAreaField from 'pages/common-components/common-textarea';
 import { Accordion, AccordionDetails, AccordionSummary, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import _ from 'lodash';
+import { useNavigate } from 'react-router';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 interface TabPanelProps {
@@ -335,6 +336,21 @@ export default function InBoundViewProfile() {
     });
   };
 
+  const navigate = useNavigate();
+
+  const handleListInboundNavigation = () => {
+    navigate('/staffCalling/inbound/listinbound');// Use the route path defined in your router
+  };
+  const handleFreeInboundNavigation = () => {
+    navigate('/staffCalling/inbound/freeinbound');// Use the route path defined in your router
+  };
+  const handlePaidInboundNavigation = () => {
+    navigate('/staffCalling/inbound/paidinbound');// Use the route path defined in your router
+  };
+  const handleBlockedInboundNavigation = () => {
+    navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
+  };
+
   return (
     <Grid container spacing={2}>
       {/* Profile Card Section */}
@@ -407,7 +423,67 @@ export default function InBoundViewProfile() {
                 </List>
               </Stack>
             </Grid>
+            <Grid item xs={12} marginBottom={2} marginTop={2}>
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
 
+              <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                    sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                  >
+                    Total InBound
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography
+                      onClick={handleListInboundNavigation}
+                      style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                    >
+                      List InBound
+                    </Typography>
+                    <Typography>
+                      908
+                    </Typography>
+                  </AccordionDetails>
+
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography
+                      onClick={handleFreeInboundNavigation}
+                      style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                    >
+                      Free InBound
+                    </Typography>
+                    <Typography>
+                      908
+                    </Typography>
+                  </AccordionDetails>
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography
+                      onClick={handlePaidInboundNavigation}
+                      style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                    >Paid InBound
+                    </Typography>
+                    <Typography>
+                      724
+                    </Typography>
+                  </AccordionDetails>
+                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography
+                      onClick={handleBlockedInboundNavigation}
+                      style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                    >Blocked InBound
+                    </Typography>
+                    <Typography>
+                      673
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              </List>
+            </Grid>
 
             <Grid item xs={12} marginBottom={2} marginTop={2}>
               <Divider />
@@ -552,52 +628,7 @@ export default function InBoundViewProfile() {
                 </ListItem>
               </List>
             </Grid>
-            <Grid item xs={12} marginBottom={2} marginTop={2}>
-              <Divider />
-            </Grid>
-            <Grid item xs={12}>
 
-              <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                <Accordion>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
-                  >
-                    Total InBound
-                  </AccordionSummary>
-
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Typography>
-
-                      <a href="freeinbound" style={{ textDecoration: "none", color: "black" }}> Free InBound</a>
-                    </Typography>
-                    <Typography>
-                      908
-                    </Typography>
-                  </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Typography>
-
-                      <a href="paidinbound" style={{ textDecoration: "none", color: "black" }}> Paid InBound</a>
-                    </Typography>
-                    <Typography>
-                      724
-                    </Typography>
-                  </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Typography>
-
-                      <a href="blockedinbound" style={{ textDecoration: "none", color: "black" }}> Blocked Customers</a>
-                    </Typography>
-                    <Typography>
-                      673
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-              </List>
-            </Grid>
           </Grid>
 
         </MainCard>

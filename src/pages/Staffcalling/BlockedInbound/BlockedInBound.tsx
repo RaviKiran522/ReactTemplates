@@ -122,6 +122,21 @@ export default function BlockedInBound() {
       mandatory: false,
       isMulti: false,
     },
+    creates: {
+      label: 'Creates',
+      id: 'creates',
+      name: 'creates',
+      options: [
+        { id: 1, label: 'Branch' },
+        { id: 2, label: 'Franchise' },
+        { id: 3, label: 'Agent' },
+      ],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      isMulti: false,
+    },
     createdBy: {
       label: 'Created By',
       id: 'createdBy',
@@ -238,6 +253,11 @@ export default function BlockedInBound() {
       window.open(fullPath, '_blank');
       // history(`/customerManagement/viewProfile`)
     }
+    if (action == 'edit') {
+      sessionStorage.setItem("customer", JSON.stringify(each))
+      const fullPath = `${window.location.origin}/admin/staffCalling/inbound/editInBound`;
+      window.open(fullPath, '_blank');
+    }
     if (action == 'block') {
       setBlockopen(true)
     }
@@ -291,6 +311,9 @@ export default function BlockedInBound() {
                 </Grid>
                 <Grid item xs={3}>
                   <CommonSelectField inputProps={formData.maritalStatus} onSelectChange={handleSelectChange} />
+                </Grid>
+                <Grid item xs={3}>
+                  <CommonSelectField inputProps={formData.creates} onSelectChange={handleSelectChange} />
                 </Grid>
                 <Grid item xs={3}>
                   <CommonSelectField inputProps={formData.createdBy} onSelectChange={handleSelectChange} />

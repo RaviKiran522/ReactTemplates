@@ -75,66 +75,71 @@ const CreateFranchise: React.FC = () => {
       mandatory: true,
       options: []
     },
-    state: {
-      label: 'State',
-      id: 'state',
-      name: 'state',
-      type: 'select',
+   
+    statename: {
+      label: 'Select State Name',
+      id: 'statename',
+      name: 'statename',
+      type:'select',
       options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
+        { id: 1, label: 'ANDHRAPRADESH' },
+        { id: 2, label: 'TELANGANA' },
+        { id: 3, label: 'TAMILANADU' },
       ],
-      value: { id: 1, label: 'AP' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
-      isMulti: false
+      isMulti: false,
     },
-    city: {
-      label: 'Select City',
-      id: 'address',
-      name: 'address',
+    
+    cityname: {
+      label: 'Select City Name',
+      id: 'cityname',
+      name: 'cityname',
+      type:'select',
       options: [
-        { id: 1, label: 'hyderabad' },
-        { id: 2, label: 'vizag' },
-        { id: 3, label: 'chennai' }
+        { id: 1, label: 'Hyderabadh' },
+        { id: 2, label: 'Vizag' },
+        { id: 3, label: 'Tanuku' },
       ],
-      value: { id: 1, label: 'hyderabad' },
+      value:'',
       error: false,
       helperText: '',
       mandatory: true,
-      isMulti: false
+      isMulti: false,
     },
     status: {
       label: 'Status',
       id: 'status',
       name: 'status',
+      type:'select',
       options: [
-        { id: 1, label: 'hyderabad' },
-        { id: 2, label: 'vizag' },
-        { id: 3, label: 'chennai' }
+        { id: 1, label: 'Hyderabadh' },
+        { id: 2, label: 'Vizag' },
+        { id: 3, label: 'Tanuku' },
       ],
-      value: { id: 1, label: 'hyderabad' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    address: {
-      label: 'Address',
-      id: 'address',
-      name: 'address',
-      type: 'text',
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
+      isMulti: false,
+    },
+    adress: {
+      label: 'Address',
+      id: 'adress',
+      name: 'adress',
+      type:'select',
       options: [
-        { id: 1, label: 'hyderabad' },
-        { id: 2, label: 'vizag' },
-        { id: 3, label: 'chennai' }
-      ]
+        { id: 1, label: 'Hyderabadh' },
+        { id: 2, label: 'Vizag' },
+        { id: 3, label: 'Tanuku' },
+      ],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false,
     },
     pincode: {
       label: 'Pincode',
@@ -166,28 +171,63 @@ const CreateFranchise: React.FC = () => {
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
-
+  
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
-
-        if (field.mandatory && !field.value && field.value == '') {
-          newFormData[key].error = true;
-          newFormData[key].helperText = `${field.label} is required`;
-          isValid = false;
-        } else if (key === 'email' && field.value && !/\S+@\S+\.\S+/.test(field.value)) {
-          newFormData[key].error = true;
-          newFormData[key].helperText = 'Invalid email address';
-          isValid = false;
-        } else {
+  
+        // Check for mandatory fields
+        if (field.mandatory) {
+          // Check for empty text, number, or email fields
+          if (
+            field.type !== 'select' &&
+            field.type !== 'date' &&
+            (!field.value || field.value === '')
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} is required`;
+            isValid = false;
+          }
+          // Check for empty select fields
+          else if (
+            field.type === 'select' &&
+            (!field.value || !field.value.id || field.value.id === null)
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} must be selected`;
+            isValid = false;
+          }
+          // Check for empty date fields
+          else if (field.type === 'date' && !field.value) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Date is required';
+            isValid = false;
+          }
+          // Email validation
+          else if (
+            key === 'email' &&
+            field.value &&
+            !/\S+@\S+\.\S+/.test(field.value)
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Invalid email address';
+            isValid = false;
+          }
+        }
+  
+        // No errors
+        else {
+          newFormData[key].error = false;
           newFormData[key].helperText = '';
         }
       }
     }
-
+  
     setFormData(newFormData);
     return isValid;
   };
+  
+  
 
   const handleChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
@@ -221,9 +261,9 @@ const CreateFranchise: React.FC = () => {
       branchName: formData.branchName.value,
       phoneNumber: formData.phoneNumber.value,
       email: formData.email.value,
-      state: formData.state.value,
-      address: formData.address.value,
-      city: formData.city.value,
+      statename: formData.statename.value,
+      adress: formData.adress.value,
+      cityname: formData.cityname.value,
       status: formData.status.value,
       pincode: formData.pincode.value
     };
@@ -257,13 +297,13 @@ const CreateFranchise: React.FC = () => {
             <CommonInputField inputProps={formData.email} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonSelectField inputProps={formData.state} onSelectChange={handleSelectChange} />
+            <CommonSelectField inputProps={formData.statename} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonSelectField inputProps={formData.city} onSelectChange={handleSelectChange} />
+            <CommonSelectField inputProps={formData.cityname} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={6}>
-            <CommonSelectField inputProps={formData.address} onSelectChange={handleSelectChange} />
+            <CommonSelectField inputProps={formData.adress} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={6}>
             <CommonInputField inputProps={formData.pincode} onChange={handleChange} />

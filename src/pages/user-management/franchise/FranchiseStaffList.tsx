@@ -5,28 +5,30 @@ import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
+import FranchiseStaffCreateInvoice from '../ActionsPopUps/FranchisestaffInvoice';
 
 // The UsersList component now passes actions to the ReactTable component
 export default function FranchiseStaffList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
+  const [invoice,setInvoice] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
-    { empId: '4321', name: 'vamsi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '1234', name: 'ravi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Complicated' },
-    { empId: '3432', name: 'kiran', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Relationship' },
-    { empId: '123', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '121', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '122', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '124', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '125', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' }
+    { empId: '4321', name: 'vamsi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '1234', name: 'ravi', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '3432', name: 'kiran', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '123', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '121', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '122', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Blocked' },
+    { empId: '124', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '125', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' }
   ];
   const data2 = [
-    { empId: '126', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '127', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '128', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '129', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' },
-    { empId: '1210', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Single' }
+    { empId: '126', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '127', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '128', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '129', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' },
+    { empId: '1210', name: 'vinay', officeNumber: '0987654', role: 'poiu', branch: 'gfds', status: 'Active' }
   ];
 
   const handleEdit = (row: any) => {
@@ -102,14 +104,15 @@ export default function FranchiseStaffList() {
           >
             Edit
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'delete' });
               handleClose();
             }}
           >
             Delete
-          </MenuItem>
+          </MenuItem> */}
+          <MenuItem onClick={() => { setInvoice(true); }}>Create InVoice</MenuItem>
           <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'block' });
@@ -118,14 +121,14 @@ export default function FranchiseStaffList() {
           >
             Block
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'leave' });
               handleClose();
             }}
           >
             Leave
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
       </>
     );
@@ -133,6 +136,7 @@ export default function FranchiseStaffList() {
 
   const columns = useMemo(
     () => [
+      { header: 'S.No', accessorKey: 'sno' ,cell:(props:any) => props.row.index + 1,enableSorting:false},
       { header: 'Employee ID', accessorKey: 'empId' },
       { header: 'Name', accessorKey: 'name' },
       { header: 'Office Number', accessorKey: 'officeNumber' },
@@ -146,12 +150,12 @@ export default function FranchiseStaffList() {
           const status = props.getValue(); // Use getValue() to get the cell value
 
           switch (status) {
-            case 'Complicated':
-              return <Chip color="error" label="Complicated" size="small" variant="light" />;
-            case 'Relationship':
-              return <Chip color="success" label="Relationship" size="small" variant="light" />;
+            case 'Blocked':
+              return <Chip color="error" label="Blocked" size="small" variant="light" />;
+            case 'Suspended':
+              return <Chip color="error" label="Suspended" size="small" variant="light" />;
             default:
-              return <Chip color="info" label="Single" size="small" variant="light" />;
+              return <Chip color="success" label="Active" size="small" variant="light" />;
           }
         }
       }
@@ -159,7 +163,12 @@ export default function FranchiseStaffList() {
     []
   );
 
+  const handleInvoiceClose =() =>{
+    setInvoice(false)
+  }
+
   return (
+    <>
     <ReactTable
       title={'Franchises Staff List'}
       data={data}
@@ -180,5 +189,11 @@ export default function FranchiseStaffList() {
       pageNumber={pageNumber}
       totalPageCount={10}
     />
+    {invoice && (
+      <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+        <FranchiseStaffCreateInvoice open={invoice} onClose={handleInvoiceClose} />
+      </div>
+    )}
+  </>
   );
 }

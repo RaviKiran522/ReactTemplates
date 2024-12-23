@@ -117,13 +117,17 @@ export default function CommonInBoundList(props: any) {
                   </Grid>
                   <Grid item xs={12} sm={5} md={4} xl={4}>
                     <Card style={{ borderColor: '#4680FF', padding: '10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {/* <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Email :</Typography>
                         <Typography>{each.email}</Typography>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Mobile Number :</Typography>
                         <Typography>{each.mobileNumber}</Typography>
+                      </div> */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Typography color="secondary"> Date Of Birth :</Typography>
+                        <Typography>{each.dateOfBirth}</Typography>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Caste :</Typography>
@@ -133,22 +137,20 @@ export default function CommonInBoundList(props: any) {
                         <Typography color="secondary">Marital Status :</Typography>
                         <Typography>{each.maritalStatus}</Typography>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Typography color="secondary"> Date Of Birth :</Typography>
-                        <Typography>{each.dateOfBirth}</Typography>
-                      </div>
+                      
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Create dBy :</Typography>
                         <Typography>{each.createdBy}</Typography>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Typography color="secondary">Branch :</Typography>
+                        <Typography>{each.branch}</Typography>
                       </div>
                     </Card>
                   </Grid>
                   <Grid item xs={12} sm={5} md={4} xl={4}>
                     <Card style={{ borderColor: '#4680FF', padding: '10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Typography color="secondary">Branch :</Typography>
-                        <Typography>{each.branch}</Typography>
-                      </div>
+                     
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Typography color="secondary">Height :</Typography>
                         <Typography>{each.height}</Typography>

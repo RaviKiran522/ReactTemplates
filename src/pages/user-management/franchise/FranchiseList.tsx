@@ -5,12 +5,15 @@ import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
-import Addpayment from './Addpayment';
+import Addpayment from '../ActionsPopUps/Addpayment';
+import BranchCreateInvoice from '../ActionsPopUps/CreateinvoiceBranch';
+import FranchiseCreateInvoice from '../ActionsPopUps/CreateinvoiceFranchise copy';
 
 // The UsersList component now passes actions to the ReactTable component
 export default function FranchiseList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [show,setShow] = useState(false)
+  const [invoice,setInvoice] = useState(false)
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const data: any = [
@@ -87,6 +90,7 @@ export default function FranchiseList() {
 
     const handleClose = () => {
       setShow(false);
+      setInvoice(false);
       setAnchorEl(null);
     };
     return (
@@ -95,9 +99,8 @@ export default function FranchiseList() {
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
           <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
+          <MenuItem onClick={() => { setInvoice(true); }}>Create InVoice</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'leave' }); handleClose(); }}>Leave</MenuItem>
           <MenuItem onClick={() => { setShow(true); }}>Add Payment</MenuItem>
         </Menu>
       </>
@@ -135,6 +138,9 @@ export default function FranchiseList() {
   const handlePayementClose =() =>{
     setShow(false)
   }
+  const handleInvoiceClose =() =>{
+    setInvoice(false)
+  }
 
   return (
     <>
@@ -161,6 +167,12 @@ export default function FranchiseList() {
     {show && (
         <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
           <Addpayment open={show} onClose={handlePayementClose} />
+        </div>
+      )}
+
+{invoice && (
+        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+          <FranchiseCreateInvoice open={invoice} onClose={handleInvoiceClose} />
         </div>
       )}
     </>

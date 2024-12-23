@@ -599,6 +599,36 @@ export const loadingMenu = [
         ]
       },
       {
+        id: 'approvals',
+        title: 'Approvals',
+        type: 'collapse',
+        breadcrumbs: false,
+        children: [
+          {
+            id: 'allApprovals',
+            title: 'All Approvials',
+            type: 'item',
+            url: '/approvals/all',
+            breadcrumbs: false
+          },
+          {
+            id: 'pendingApprovals',
+            title: 'Pending Approvals',
+            type: 'item',
+            url: '/approvals/pending',
+            breadcrumbs: false
+          },
+          {
+            id: 'Reject Approvals',
+            title: 'Reject Approvals',
+            type: 'item',
+            url: '/approvals/reject',
+            breadcrumbs: false
+          }
+        ]
+      },
+      
+      {
         id: 'careers',
         title: 'Careers',
         type: 'item',

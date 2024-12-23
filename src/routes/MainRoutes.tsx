@@ -221,6 +221,11 @@ const PricingPage2 = Loadable(lazy(() => import('pages/extra-pages/price/price2'
 const ListCustomer = Loadable(lazy(() => import('pages/Customer/list-customer')));
 const ViewCustomerProfile = Loadable(lazy(() => import('pages/Customer/view-customer-profile')));
 
+//approval
+const AllApproval = Loadable(lazy(() => import('pages/Approval/list_approval')));
+const PendingApproval = Loadable(lazy(() => import('pages/Approval/pending_approval')));
+const RejectApproval = Loadable(lazy(() => import('pages/Approval/reject_approval')));
+
 const MainRoutes = {
   path: '/',
   children: [
@@ -376,6 +381,23 @@ const MainRoutes = {
             },
           ]
         },
+        {
+          path: 'approvals',
+          children: [
+            {
+              path: 'all',
+              element: <AllApproval />
+            },
+            {
+              path: 'pending',
+              element: <PendingApproval />
+            },
+            {
+              path: 'reject',
+              element: <RejectApproval />
+            },
+          ]
+          },
         {
           path: 'customerManagement',
           children: [

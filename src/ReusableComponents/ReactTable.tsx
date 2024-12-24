@@ -151,9 +151,11 @@ export default function ReactTable({
   setPageNumber,
   pageNumber,
   totalPageCount,
-  needTotalCount
+  needTotalCount,
+  globalFilter,
+  setGlobalFilter,
+  listSelectButton
 }: any) {
-  const [globalFilter, setGlobalFilter] = useState('');
   //const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowdata, setRowdata] = useState<any>({});
   const [columnFilters, setColumnFilters] = useState<any>([]);
@@ -436,7 +438,7 @@ export default function ReactTable({
                   disabled={table.getSelectedRowModel().flatRows.map((row) => row.original).length === 0}
                   onClick={() => setOpen({ flag: true, action: 'suspend' })}
                 >
-                  SUSPEND
+                  {listSelectButton.name1}
                 </Button>
               </AnimateButton>
               <AnimateButton>
@@ -446,7 +448,7 @@ export default function ReactTable({
                   disabled={table.getSelectedRowModel().flatRows.map((row) => row.original).length === 0}
                   onClick={() => setOpen({ flag: true, action: 'activate' })}
                 >
-                  ACTIVATE
+                  {listSelectButton.name2}
                 </Button>
               </AnimateButton>
             </Stack>

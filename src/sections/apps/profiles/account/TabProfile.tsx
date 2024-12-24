@@ -25,11 +25,71 @@ import defaultImages from 'assets/images/users/default.png';
 // assets
 import { CallCalling, Gps, Link1, Profile, Setting, Sms } from 'iconsax-react';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { useNavigate } from 'react-router';
+import React from 'react';
+import UserHistory from 'pages/user-management/UserHistory';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 
-export default function TabProfile() {
+interface FranchiseViewProfileProps {
+  onActivateTab: () => void;
+}
+
+export default function TabProfile({onActivateTab}:FranchiseViewProfileProps ) {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+
+   const navigate = useNavigate();
+  
+    const handleNavigation = () => {
+      navigate('/branches/listStaff');// Use the route path defined in your router
+    };
+    const handleInactiveNavigation = () => {
+      navigate('/branches/suspendedStaff');// Use the route path defined in your router
+    };
+    const handleBlockedNavigation = () => {
+      navigate('/branches/blockedStaff');// Use the route path defined in your router
+    };
+  
+    const handleListCustomersNavigation = () => {
+      navigate('/customerManagement/listCustomers');// Use the route path defined in your router
+    };
+    const handleConvertedCustomersNavigation = () => {
+      navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
+    };
+    const handleExpiredCustomersNavigation = () => {
+      navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
+    };
+    const handleBlockedRequesCustomersNavigation = () => {
+      navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
+    };
+    const handleFreeCustomersNavigation = () => {
+      navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
+    };
+    const handlePaidCustomersNavigation = () => {
+      navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
+    };
+    const handleBlockedCustomersNavigation = () => {
+      navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
+    };
+  
+    const handleListInboundNavigation = () => {
+      navigate('/staffCalling/inbound/listinbound');// Use the route path defined in your router
+    };
+    const handleFreeInboundNavigation = () => {
+      navigate('/staffCalling/inbound/freeinbound');// Use the route path defined in your router
+    };
+    const handlePaidInboundNavigation = () => {
+      navigate('/staffCalling/inbound/paidinbound');// Use the route path defined in your router
+    };
+    const handleBlockedInboundNavigation = () => {
+      navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
+    };
+    const handleSalesNavigation = () => {
+      // Trigger the callback to activate the 4th tab
+      onActivateTab();
+     // Switch to the UserHistory tab
+  };
+  const [currentTab, setCurrentTab] = React.useState<string>("home");
 
   return (
     <Grid container spacing={3}>
@@ -114,149 +174,254 @@ export default function TabProfile() {
                 </Grid>
               </Grid>
 
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-              <Grid item xs={12} marginTop={2} marginBottom={2}>
-                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Profile size={18} />
-                    </ListItemIcon>
+              <Grid item xs={12}  marginBottom={2} marginTop={2}>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12}>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
+                      >
+                        Total Staff
+                      </AccordionSummary>
 
-                    <Typography align="left">Profile</Typography>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Active Staff
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleInactiveNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >InActive Staff
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked Staff
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
 
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Setting size={18} />
-                    </ListItemIcon>
+                <Grid item xs={12}  marginBottom={2} marginTop={2}>
+                  <Divider />
+                </Grid>
 
-                    <Typography align="left">Profile Settings</Typography>
+                <Grid item xs={12}>
 
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Gps size={18} />
-                    </ListItemIcon>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
+                      >
+                        Total Customers
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleListCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          List Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
 
-                    <Typography align="left">Shortlisted Profiles</Typography>
-
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Blocked Profiles</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Profiles I Viewed</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Viewed My Profile</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Interest Sent</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Interest Received</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Viewed Contacts</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">My Contacts Viewed</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">mobile Request Sent</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Link1 size={18} />
-                    </ListItemIcon>
-                    <Typography align="left">Mobile Requests Received</Typography>
-                  </ListItem>
-
-                </List>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-              <Grid item xs={12} marginTop={2} >
-                <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Sms size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">anshan.dh81@gmail.com</Typography>
-
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CallCalling size={18} />
-                    </ListItemIcon>
-
-                    <Typography align="left">8654 239 581</Typography>
-
-                  </ListItem>
-                  <ListItem>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleFreeCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Free Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleConvertedCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Converted Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handlePaidCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Paid Customers
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleExpiredCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Plan Expired Customers
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked Cusromers
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedRequesCustomersNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked Requests
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
+                <Grid item xs={12} marginBottom={2} marginTop={2}>
+                  <Divider />
+                </Grid>
 
 
-                    <Typography align="left">Branch : Hyderabad</Typography>
+                <Grid item xs={12}>
 
-                  </ListItem>
-                  <ListItem>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
+                      >
+                        Total InBound
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleListInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          List InBound
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
 
-                    <Typography align="left">Date of Birth : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleFreeInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >
+                          Free InBound
+                        </Typography>
+                        <Typography>
+                          908
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handlePaidInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Paid InBound
+                        </Typography>
+                        <Typography>
+                          724
+                        </Typography>
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          onClick={handleBlockedInboundNavigation}
+                          style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
+                        >Blocked InBound
+                        </Typography>
+                        <Typography>
+                          673
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  </List>
+                </Grid>
 
-                    <Typography align="left">Inbond Date : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
+                <Grid item xs={12}  marginBottom={2} marginTop={2}>
+                  <Divider />
+                </Grid>
 
-                    <Typography align="left">Registered Date : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
+                <Grid item xs={12}>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
+                      >
+                        Total Sales
+                      </AccordionSummary>
 
-                    <Typography align="left">Created By : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
+                     
+                      <AccordionDetails >
+                        {/* Conditionally render based on the current tab */}
+                        {currentTab === "home" && (
+                          <Typography
+                            onClick={handleSalesNavigation}
+                            style={{ cursor: "pointer", textDecoration: "none", color: "black" }}
+                          >
+                            Sales History
+                          </Typography>
+                        )}
 
-                    <Typography align="left">Blocked By : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
+                        {currentTab === "userHistory" && <UserHistory />}
 
-                    <Typography align="left">Invoice date : 09-12-1982</Typography>
-                  </ListItem>
-                  <ListItem>
+                      </AccordionDetails>
 
-                    <Typography align="left">Approved date : 09-12-1982</Typography>
-                  </ListItem>
-                </List>
-              </Grid>
+
+                    </Accordion>
+                  </List>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
+              
 
 
             </MainCard>

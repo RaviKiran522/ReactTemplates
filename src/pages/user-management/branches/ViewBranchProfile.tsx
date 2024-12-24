@@ -27,6 +27,8 @@ import defaultImages from 'assets/images/users/default.png';
 import { CallCalling, Gps, Link1, Profile, Setting, Sms } from 'iconsax-react';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button } from '@mui/material';
 import { useNavigate } from 'react-router';
+import UserHistory from '../UserHistory';
+import React from 'react';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 let detailsObject = {
@@ -64,8 +66,13 @@ let detailsObject = {
   }
 }
 
-export default function BranchViewProfile() {
+
+interface FranchiseViewProfileProps {
+  onActivateTab: () => void;
+}
+export default function BranchViewProfile({onActivateTab}:FranchiseViewProfileProps ) {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const [currentTab, setCurrentTab] = React.useState("home");
 
   const navigate = useNavigate();
 
@@ -113,6 +120,11 @@ export default function BranchViewProfile() {
   const handleBlockedInboundNavigation = () => {
     navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
   };
+  const handleSalesNavigation = () => {
+    // Trigger the callback to activate the 4th tab
+    onActivateTab();
+   // Switch to the UserHistory tab
+};
 
   return (
     <Grid container spacing={3}>
@@ -146,7 +158,7 @@ export default function BranchViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total Staff
                       </AccordionSummary>
@@ -198,7 +210,7 @@ export default function BranchViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total Customers
                       </AccordionSummary>
@@ -293,7 +305,7 @@ export default function BranchViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total InBound
                       </AccordionSummary>
@@ -355,18 +367,24 @@ export default function BranchViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total Sales
                       </AccordionSummary>
 
+                     
                       <AccordionDetails >
+                        {/* Conditionally render based on the current tab */}
+                        {currentTab === "home" && (
+                          <Typography
+                            onClick={handleSalesNavigation}
+                            style={{ cursor: "pointer", textDecoration: "none", color: "black" }}
+                          >
+                            Sales History
+                          </Typography>
+                        )}
 
-                        <Typography>
-
-                          Sales History
-                        </Typography>
-
+                        {currentTab === "userHistory" && <UserHistory />}
 
                       </AccordionDetails>
 

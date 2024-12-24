@@ -1,4 +1,4 @@
-import { useEffect, useState, SyntheticEvent } from 'react';
+import { useEffect, useState, SyntheticEvent, SetStateAction } from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 
 // material-ui
@@ -23,6 +23,8 @@ import CreateBranch from './CreateBranchStaff';
 import UserHistory from '../UserHistory';
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //
+
+ 
 
 export default function BranchProfile() {
   const [value, setValue] = useState(0);
@@ -55,6 +57,9 @@ export default function BranchProfile() {
     console.log('Updated roles:', updatedRoles);
     setRoles(updatedRoles);
   };
+  const handleTabChange = (newValue: SetStateAction<number>) => {
+    setValue(newValue);
+  };
 
   return (
     <>
@@ -72,7 +77,7 @@ export default function BranchProfile() {
         </Box>
         <Box>
           <TabPanel value={value} index={0}>
-            <BranchViewProfile />
+            <BranchViewProfile  onActivateTab={() => handleTabChange(4)} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <CreateBranch needTitle={false} />

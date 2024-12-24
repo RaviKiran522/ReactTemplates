@@ -6,7 +6,7 @@ import ReactTable from 'ReusableComponents/ReactTable';
 
 
 
-export default function ViewSales() {
+export default function CustomerSles() {
   const [openPopup, setOpenPopup] = React.useState(false); // State for dialog visibility
   const [open, setOpen] = React.useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = React.useState(0);
@@ -87,7 +87,7 @@ export default function ViewSales() {
   return (
 
     <ReactTable
-      title={"All Sales"}
+      title={"Customer Sales"}
       data={data}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}

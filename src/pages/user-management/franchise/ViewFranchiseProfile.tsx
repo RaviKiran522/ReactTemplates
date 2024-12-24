@@ -66,7 +66,11 @@ let detailsObject = {
   }
 }
 
-export default function FranchiseViewProfile() {
+interface FranchiseViewProfileProps {
+  onActivateTab: () => void;
+}
+
+export default function FranchiseViewProfile({ onActivateTab }: FranchiseViewProfileProps) {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
   const navigate = useNavigate();
@@ -83,7 +87,9 @@ export default function FranchiseViewProfile() {
   const [currentTab, setCurrentTab] = useState("home"); // Manage current tab
 
   const handleSalesNavigation = () => {
-    setCurrentTab("userHistory"); // Switch to the UserHistory tab
+      // Trigger the callback to activate the 4th tab
+      onActivateTab();
+     // Switch to the UserHistory tab
   };
 
   const handleListCustomersNavigation = () => {
@@ -154,7 +160,7 @@ export default function FranchiseViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total Staff
                       </AccordionSummary>
@@ -206,7 +212,7 @@ export default function FranchiseViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total Customers
                       </AccordionSummary>
@@ -301,7 +307,7 @@ export default function FranchiseViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total InBound
                       </AccordionSummary>
@@ -363,7 +369,7 @@ export default function FranchiseViewProfile() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
-                        sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                        sx={{ flexDirection: "row" }} // Moves the icon and text to the right
                       >
                         Total Sales
                       </AccordionSummary>

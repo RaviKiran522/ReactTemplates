@@ -305,6 +305,7 @@ export const loadingMenu = [
         icon: icons.search,
         breadcrumbs: false,
         children: [
+          
           {
             id: 'advancesearch',
             title: 'Advance Search',
@@ -322,34 +323,56 @@ export const loadingMenu = [
         breadcrumbs: false,
         children: [
           {
-            id: 'addsales',
-            title: 'Add Sales',
+          id: 'viewsales',
+          title: 'View Sales',
+          type: 'collapse',
+          breadcrumbs: false,
+          children: [
+          {
+            id: 'allsales',
+            title: 'All Sales',
             type: 'item',
-            url: '/sales/addsales',
+            url: '/sales/viewsales/allsales',
             breadcrumbs: false
           },
           {
-            id: 'viewsales',
-            title: 'View Sales',
+            id: 'customersales',
+            title: 'Customer Sales',
             type: 'item',
-            url: '/sales/viewsales',
-            breadcrumbs: false
-          },
-
-          {
-            id: 'invoicegenerate',
-            title: 'Invoice Generate',
-            type: 'item',
-            url: '/sales/invoicegenerate',
+            url: '/sales/viewsales/customersales',
             breadcrumbs: false
           },
           {
-            id: 'viewonlinepayment',
-            title: 'View Online payment',
+            id: 'branchsales',
+            title: 'Branch Sales',
             type: 'item',
-            url: '/sales/viewonlinepayment',
+            url: '/sales/viewsales/branchsales',
             breadcrumbs: false
           },
+          {
+            id: 'franchisesales',
+            title: 'Franchise Sales',
+            type: 'item',
+            url: '/sales/viewsales/franchisesales',
+            breadcrumbs: false
+          },
+          {
+            id: 'agentales',
+            title: 'Agent Sales',
+            type: 'item',
+            url: '/sales/viewsales/agentales',
+            breadcrumbs: false
+          },
+        ]
+        
+        },
+        {
+          id: 'invoicegenerate',
+          title: 'Invoice Generate',
+          type: 'item',
+          url: '/sales/invoicegenerate',
+          breadcrumbs: false
+        },
         ]
       },
       {

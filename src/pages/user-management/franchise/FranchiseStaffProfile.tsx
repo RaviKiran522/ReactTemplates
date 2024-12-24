@@ -1,4 +1,4 @@
-import { useEffect, useState, SyntheticEvent } from 'react';
+import { useEffect, useState, SyntheticEvent, SetStateAction } from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 
 // material-ui
@@ -62,6 +62,11 @@ export default function FranchiseStaffProfile({ tabInd }: any) {
     console.log('Updated roles:', updatedRoles);
     setRoles(updatedRoles);
   };
+  
+  const handleTabChange = (newValue: SetStateAction<number>) => {
+    setValue(newValue);
+  };
+
 
   return (
     <>
@@ -79,7 +84,7 @@ export default function FranchiseStaffProfile({ tabInd }: any) {
         </Box>
         <Box>
           <TabPanel value={value} index={0}>
-            <FranchiseViewProfile />
+            <FranchiseViewProfile onActivateTab={() => handleTabChange(4)}/>
           </TabPanel>
           <TabPanel value={value} index={1}>
             <CreateFranchiseStaff needTitle={false} />

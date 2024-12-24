@@ -1,4 +1,4 @@
-import { useEffect, useState, SyntheticEvent } from 'react';
+import { useEffect, useState, SyntheticEvent, SetStateAction } from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 
 // material-ui
@@ -50,6 +50,11 @@ export default function AgentProfile() {
       permissions: { view: false, create: false, edit: false, delete: false }
     }
   ]);
+
+   const handleTabChange = (newValue: SetStateAction<number>) => {
+      setValue(newValue);
+    };
+    
   const handleCheckboxChange = (updatedRoles: any) => {
     console.log('Updated roles:', updatedRoles);
     setRoles(updatedRoles);
@@ -72,7 +77,7 @@ export default function AgentProfile() {
         </Box>
         <Box>
           <TabPanel value={value} index={0}>
-            <TabProfile />
+            <TabProfile onActivateTab={() => handleTabChange(4)} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <CreateAgent needTitle={false} />

@@ -90,6 +90,10 @@ import GoogleAnalyticsCode from 'pages/siteSetup/GoogleAnalyticsCode';
 import AppLink from 'pages/siteSetup/AppLink';
 import CreateInBound from 'pages/Staffcalling/CreateInbound/CreateInbound';
 import Invoice from 'pages/Sales/Invoice';
+import CustomerSles from 'pages/Sales/Customersales';
+import BranchSales from 'pages/Sales/Branchsales';
+import FranchiseSales from 'pages/Sales/Franchisesales';
+import AgentSales from 'pages/Sales/Agentsales';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -505,23 +509,36 @@ const MainRoutes = {
           path: 'sales',
           children: [
             {
-              path: 'addsales',
-              element: <AddSales />
-            },
-            {
               path: 'viewsales',
+              children: [
+            {
+              path: 'allsales',
               element: <ViewSlaes />
             },
             {
-              path: 'invoicegenerate',
-              element: <InVoicePrint />
+              path: 'customersales',
+              element: <CustomerSles />
             },
             {
-              path: 'viewonlinepayment',
-              element: <ViewOnlinePayment />
+              path: 'branchsales',
+              element: <BranchSales />
+            },
+            {
+              path: 'franchisesales',
+              element: <FranchiseSales />
+            },
+            {
+              path: 'agentales',
+              element: <AgentSales />
             },
 
-
+          ]
+          
+        },
+        {
+          path: 'invoicegenerate',
+          element: <InVoicePrint />
+        },
           ]
         },
         {

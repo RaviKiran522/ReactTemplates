@@ -50,8 +50,8 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
     <>
       <Formik
         initialValues={{
-          email: 'info@phoenixcoded.co',
-          password: '123456',
+          email: 'raju@gmail.com',
+          password: '1234567890',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -61,7 +61,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
             await login(values.email, values.password);
-            if (scriptedRef.current) {
+            if (isLoggedIn) {
               setStatus({ success: true });
               setSubmitting(false);
               navigation('/dashboard/default'); // load menu on login success

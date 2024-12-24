@@ -1,0 +1,6 @@
+{
+    "baseUrl": "https://api.annapurnamatrimony.com/",
+    "loginUrl": "auth/login",
+    "refreshToken": "auth/refresh-token",
+    "SECRET_KEY": "DFDFB-DFDFB-DFBDF-FNGDC-FGVNCGBV-GHMVN"
+}

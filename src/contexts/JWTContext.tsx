@@ -10,10 +10,11 @@ import authReducer from 'contexts/auth-reducer/auth';
 
 // project import
 import Loader from 'components/Loader';
-import axios from 'utils/axios';
+import axios from 'axios';
 import { KeyedObject } from 'types/root';
 import { AuthProps, JWTContextType } from 'types/auth';
-
+import common from '../services/Common.json';
+import { decryptToken, encryptToken } from '../services/CryptoUtils';
 const chance = new Chance();
 
 // constant
@@ -50,7 +51,7 @@ const JWTContext = createContext<JWTContextType | null>(null);
 
 export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-
+  console.log('state: ', state);
   useEffect(() => {
     const init = async () => {
       try {
@@ -82,17 +83,80 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
     init();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/account/login', { email, password });
-    const { serviceToken, user } = response.data;
-    setSession(serviceToken);
-    dispatch({
-      type: LOGIN,
-      payload: {
-        isLoggedIn: true,
-        user
+  const refreshAccessToken = async () => {
+    try {
+      const refToken = sessionStorage.getItem('refToken');
+      console.log("sessionStorage.getItem('refToken'): ", refToken);
+      const refreshtoken = decryptToken(refToken);
+      const response = await axios.post(common.baseUrl + common.refreshToken, {
+        refreshToken: refreshtoken // Send the refresh token to get a new access token
+      });
+      const { status, accessToken } = response.data;
+      if (status) {
+        const encryptedToken = encryptToken(accessToken);
+        sessionStorage.setItem('token', encryptedToken);
+        refreshTokenInterval();
+      } else {
+        dispatch({
+          type: LOGOUT
+        });
       }
-    });
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      // Optionally redirect to login
+    }
+  };
+
+  const refreshTokenInterval = () => {
+    const interval = setTimeout(() => {
+      console.log("refresh token")
+      refreshAccessToken();
+    }, 1000*60*14);
+  }
+
+  const login = async (email: string, password: string) => {
+    console.log('login........');
+    try {
+      const response = await axios.post(common.baseUrl + common.loginUrl, {
+        username: email,
+        password: password
+      });
+      const { status, accessToken, refreshToken } = response.data;
+      if (status) {
+        const encryptedToken = encryptToken(accessToken);
+        const refreshedToken = encryptToken(refreshToken);
+        sessionStorage.setItem('token', encryptedToken);
+        sessionStorage.setItem('refToken', refreshedToken);
+        refreshTokenInterval();
+        dispatch({
+          type: LOGIN,
+          payload: {
+            isLoggedIn: true,
+            user: null
+          }
+        });
+      } else {
+        dispatch({
+          type: LOGOUT
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      dispatch({
+        type: LOGOUT
+      });
+    }
+
+    // const response = await axios.post('/api/account/login', { email, password });
+    // const { serviceToken, user } = response.data;
+    // setSession(serviceToken);
+    // dispatch({
+    //   type: LOGIN,
+    //   payload: {
+    //     isLoggedIn: true,
+    //     user
+    //   }
+    // });
   };
 
   const register = async (email: string, password: string, firstName: string, lastName: string) => {

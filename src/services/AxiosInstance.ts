@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { decryptToken } from './CryptoUtils';
 
 const axiosInstance = axios.create({
   baseURL: 'https://api.annapurnamatrimony.com/',
@@ -11,7 +12,7 @@ const axiosInstance = axios.create({
 // Add request interceptor (e.g., for tokens)
 axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = sessionStorage.getItem('token'); // Example: Fetch token from sessionStorage
+    const accessToken = decryptToken(sessionStorage.getItem('token') || ""); // Example: Fetch token from sessionStorage
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

@@ -1,18 +1,33 @@
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
 import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
+import { Severity } from 'Common/utils';
+import { createLanguage, editLanguage, languageList } from 'services/add-new-details/AddNewDetails';
+import Alert from '@mui/material/Alert';
+import { Stack, textAlign } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from "@mui/material/Backdrop";
 
 export default function Languages() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [rowsPerPage, setRowsPerPage] = useState(0);
-  const [pageNumber, setPageNumber] = useState(1);
+ const [rowsPerPage, setRowsPerPage] = useState(0);
+   const [pageNumber, setPageNumber] = useState(1);
+   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+   const [isLoading, setIsLoading] = useState(false);
+   const [listLoader, setListLoader] = useState(false);
+   const [listFilter, setListFilter] = useState({status: null, id: null, search: "", skip: 0, limit: 10});
+   const [tableData, setTableData] = useState([]);
+   const [rowCount, setRowCount] = useState(0);
+   const [globalFilter, setGlobalFilter] = useState('');
+   const [isEdit,setIsEdit] = useState(false)
+   const [statusPopup,setStatusPopup] = useState(false)
 
   // const [formData, setFormData] = useState({
 
@@ -66,7 +81,6 @@ export default function Languages() {
     },
 
   }
-
   const [formData, setFormData] = useState<FormData>(formFields);
   type FormDataKeys = keyof typeof formData;
 
@@ -114,38 +128,49 @@ export default function Languages() {
     return isValid;
   };
   
-
-  const handleFormSubmit = () => {
-    if (!validate()) {
-      console.log("Validation failed. Form data is invalid.");
-      return; // Stop further execution
+  const debouncedListLanguages = useCallback(
+    debounce(() => listLanguages(), 500), // Adjust debounce time as needed
+    []
+  );
+  
+  useEffect(() => {
+    debouncedListLanguages();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+  
+  const handleFormSubmit = async () => {
+    if (validate()) {
+      const newRecord = {
+        name: formData.languagesName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+      };
+      setIsLoading(true);
+      const result = await createLanguage(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await listLanguages(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
     }
-  
-    const newRecord = {
-      sno: (data.length + 1).toString(),
-      languages: formData.languagesName.value,
-      status: formData.statusName.value.label // Ensure the label is used here
-    };
-  
-    setData([...data, newRecord]);
-    console.log("Updated Data: ", data);
-    setOpenPopup(false);
   };
-  
-  
 
-  const initailData: any = [
-    { sno: "1", languages: "ENGLISHG", status: "Enable" },
-    { sno: "2", languages: "TELUGU", status: "Disable" },
-    { sno: "3", languages: "TAMIL", status: "Enable" },
-    { sno: "4", languages: "KANNADA", status: "Disable" },
-    { sno: "5", languages: "HINDHI", status: "Enable" },
-    { sno: "6", languages: "SPANISH", status: "Enable" },
-    { sno: "7", languages: "CHINESE", status: "Enable" },
-    { sno: "8", languages: "MLAYALAM", status: "Enable" },
-    { sno: "9", languages: "BENGALI", status: "Enable" }
-  ];
-  const [data, setData] = useState(initailData);
+ 
+  
 
   const columns = useMemo(
     () => [
@@ -176,9 +201,25 @@ export default function Languages() {
     newFormData[name].helperText = '';
     setFormData(newFormData);
   };
-  const handleEdit = (row: any) => {
+  const [rowId,setRowId]= useState(0)
+  const[status,setStatus] = useState("")
+
+  const handleEdit = (row: any,action:any) => {
     // Pre-fill formData with the selected row's data
     const newFormData = _.cloneDeep(formData);
+    setRowId(row.id)
+    setIsLoading(false)
+    if(action == 'Status'){
+      let checkStatus = row.status == 'Disable' ? 'Enable' : 'Disable'
+      setStatus(checkStatus)
+      setStatusPopup(true)
+      setOpenPopup(false)
+      setIsEdit(false)
+    }else if(action == 'Edit'){
+      setStatusPopup(false)
+      setOpenPopup(true)
+      setIsEdit(true)
+    }
   
     // Map row values to formData fields
     newFormData.languagesName.value = row.languages; // Map "country" to "countryName"
@@ -187,8 +228,69 @@ export default function Languages() {
     ) || { id: null, label: '' };
   
     setFormData(newFormData); // Update formData state
-    setOpenPopup(true); // Open dialog
+    // setOpenPopup(true); // Open dialog
   };
+  const handleEditFormSubmit = async() =>{
+    if (validate()) {
+      console.log('roodkoksfodksfodf',rowId)
+      const newRecord = {
+        name: formData.languagesName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+        id:rowId
+      };
+      setIsLoading(true);
+      const result = await editLanguage(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await listLanguages(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    }
+  }
+   const listLanguages = async () => {
+      setListLoader(true);
+      const result = await languageList(listFilter);
+      if (result.status) {
+        setListLoader(false);
+        setRowCount(result.totalCount);
+        if(result.data.length>0) {
+          const data = result.data.map((item: any, index: any) => ({ id:item.id,sno: listFilter.skip+index+1, languages: item.languageName, status: item.status ? 'Enable' : 'Disable' }));
+          setTableData(data);
+        }
+        else {
+          setTableData([]);
+        }
+      }
+      else {
+        setListLoader(false);
+      }
+    }
+    useEffect(() => {
+      if(globalFilter !== "") {
+        setListFilter({...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter})
+      }
+      else {
+        setListFilter({...listFilter, skip: (pageNumber-1)*rowsPerPage, limit: rowsPerPage, search: globalFilter})
+      }
+    }, [rowsPerPage, pageNumber, globalFilter]);
+   
 
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -197,28 +299,62 @@ export default function Languages() {
       setAnchorEl(event.currentTarget);
     };
 
-    useEffect(() => {
-      console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
-    }, [rowsPerPage, pageNumber]);
-
     const handleClose = () => {
       setAnchorEl(null);
     };
-
-    
-
 
     return (
       <>
         <Button onClick={handleClick}>...</Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem> */}
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row,'Edit'); handleClose(); }}>Edit</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row,'Status'); handleClose()}}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
         </Menu>
       </>
     );
   };
+  const onPopupCloseHandler = ()=>{
+    setOpenPopup(false)
+    setFormData(formFields);
+    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    setStatusPopup(false)
+  }
+
+  const statusConfirmHandler = async() =>{
+    if (validate()) {
+      console.log('roodkoksfodksfodf',rowId)
+      const newRecord = {
+        name: formData.languagesName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+        id:rowId
+      };
+      setIsLoading(true);
+      const result = await editLanguage(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await listLanguages(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+          setStatusPopup(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    }
+  }
 
   return (
     <>
@@ -230,9 +366,18 @@ export default function Languages() {
         </Grid>
 
       {/* React Table */}
+      <Backdrop
+        sx={{
+          color: "blue",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <ReactTable
-        title={"Languages Management"}
-        data={data}
+        title={'Language Management'}
+        data={tableData}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
         includeSearch={true}
@@ -246,11 +391,26 @@ export default function Languages() {
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
-        totalPageCount={60}
+        totalPageCount={Math.ceil(rowCount/rowsPerPage)}  
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
       />
 
       {/* Dialog for Create Form */}
       <Dialog open={openPopup}  maxWidth="sm" fullWidth>
+      {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() => {
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+              }}
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
         <DialogTitle> Create Languages</DialogTitle>
         <DialogContent>
 
@@ -265,9 +425,31 @@ export default function Languages() {
 
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={handleFormSubmit}>
-            Create
+          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={onPopupCloseHandler}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit} startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}>
+            {!isEdit ? 'Create' : 'Update'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={statusPopup}  maxWidth="sm" >
+      {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() => {
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+              }}
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle> Are you sure.you want to {status} ?</DialogTitle>
+        
+        <DialogActions style={{display:'flex',justifyContent:'space-around'}}>
+          <Button variant="contained" color="error"   onClick={onPopupCloseHandler}>Cancel</Button>
+          <Button variant="contained" color="primary"  onClick={ statusConfirmHandler} startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}>
+           Confirm
           </Button>
         </DialogActions>
       </Dialog>

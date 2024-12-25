@@ -455,8 +455,8 @@ export default function ReactTable({
           </Grid>
         </Grid>
       )}
-      <Modal open={open.flag} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
-        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' ? style : style1}>
+      <Modal open={open.flag} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description" >
+        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' ? style : style1} style={{width:'300px'}}>
           {open.action === 'edit' ? (
             <>
               <HandleFormInPopup />
@@ -484,7 +484,7 @@ export default function ReactTable({
           ) : (
             <Stack direction="row" justifyContent="space-around" spacing={3}>
               <Typography id="modal-description" sx={{ mt: 2,fontSize:19 }}>
-                Are you sure, you want to {open.action} this row?
+                Are you sure, you want to {open.action} ?
               </Typography>
             </Stack>
           )}
@@ -509,10 +509,10 @@ export default function ReactTable({
                   <Button
                     sx={{
                       mt: 3,
-                      backgroundColor: 'blue',
+                      backgroundColor: '#4680FF',
                       color: 'white',
                       '&:hover': {
-                        backgroundColor: 'darkblue',
+                        backgroundColor: '#4680FF',
                         color: 'white'
                       }
                     }}

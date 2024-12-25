@@ -5,6 +5,7 @@ import { Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
+import EditCareerPopup from './Editpopup';
 // import BranchStaffCreateInvoice from '../ActionsPopUps/BranchstaffInvoice';
 
 // The UsersList component now passes actions to the ReactTable component
@@ -44,8 +45,8 @@ export default function CareersList() {
 
   const handleView = (row: any) => {
     console.log('row.........', row);
-    const newUrl = '/admin/userManagement/Branch';
-    sessionStorage.setItem('branchUser', JSON.stringify(row));
+    const newUrl = '/admin/careers/viewProfile';
+    sessionStorage.setItem('carrresuser', JSON.stringify(row));
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -84,6 +85,7 @@ export default function CareersList() {
     }, [rowsPerPage, pageNumber]);
     
     const handleClose = () => {
+      
       setAnchorEl(null);
     };
     return (
@@ -98,15 +100,14 @@ export default function CareersList() {
           >
             View Profile
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               handleEdit(row);
               handleClose();
             }}
           >
             Edit
-          </MenuItem>
-          <MenuItem onClick={() => { setInvoice(true); }}>Create InVoice</MenuItem>
+          </MenuItem> */}
           <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'block' });
@@ -114,15 +115,8 @@ export default function CareersList() {
             }}
           >
             Block
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              setOpen({ flag: true, action: 'leave' });
-              handleClose();
-            }}
-          >
-            Leave
-          </MenuItem>
+          </MenuItem> 
+          <MenuItem onClick={() => { setInvoice(true); handleClose(); }}>Register</MenuItem>
         </Menu>
       </>
     );
@@ -180,9 +174,15 @@ export default function CareersList() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={60}
+      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
     />
 
-   
-  </>
+{invoice && (
+        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+          <EditCareerPopup open={invoice} onClose={handleInvoiceClose} />
+        </div>
+      )}
+    </>
+  
   );
 }

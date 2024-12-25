@@ -182,6 +182,7 @@ export default function BranchStaffList() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={60}
+      
     />
 
     {invoice && (

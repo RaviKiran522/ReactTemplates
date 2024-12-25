@@ -81,3 +81,12 @@ export const editSource = async (data: any) => {
     }
 }
 
+export const createProfession = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateSource", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}

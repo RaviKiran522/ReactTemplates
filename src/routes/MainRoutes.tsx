@@ -98,6 +98,10 @@ import AgentUserReports from 'pages/Reports/Userreports/Agentreports';
 import FranchiseUserReports from 'pages/Reports/Userreports/Franchisereports';
 import BranchUserReports from 'pages/Reports/Userreports/Branchreports';
 import CareersList from 'pages/Careers/Listcareers';
+import CreerViewProfile from 'pages/Careers/Creerviewprofile';
+import BlockedList from 'pages/Careers/Blockedlist';
+// import Careetabfile from 'pages/Careers/Tabfile';
+
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -677,9 +681,18 @@ const MainRoutes = {
                 path: 'careerslist',
                 element: <CareersList />
               },
+              // {
+              //   path: 'careerslist',
+              // element: <Careetabfile />
+              // },
+              {
+                path: 'viewProfile',
+              element: <CreerViewProfile/>
+              },
+              
               {
                 path: 'blockedlist',
-                element: <CareersList />
+                element: <BlockedList />
               },
               
             ]

@@ -7,6 +7,7 @@ import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
+import { createProfession } from 'services/add-new-details/AddNewDetails';
 
 export default function Professions() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
@@ -109,6 +110,17 @@ export default function Professions() {
     // Return the final validation result
     return isValid;
   };
+
+
+  const getProfessionList = async () => {
+  }
+
+useEffect(() => {
+
+
+},[]);
+
+
   const handleFormSubmit = () => {
     if (validate()) {
       // Only proceed if validation is successful
@@ -119,8 +131,15 @@ export default function Professions() {
       const newRecord = {
         sno: (data.length + 1).toString(),
         professions: formData.professionsName.value, // Defaulting religion to B.tech
-        status: formData.statusName.value.label // Defaulting status to Enable
+        status: formData.statusName.value.label === 'ENABLE' ? 1 : 0 // Defaulting status to Enable
       };
+
+      const requestBody ={
+        
+          name: "India",
+          status: 0
+        
+      }
   
       setData([...data, newRecord]); // Add the new record to the data array
       console.log("Updated Data: ", data); // Log the updated array
@@ -241,7 +260,7 @@ export default function Professions() {
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
         totalPageCount={60}
-
+        listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
       />
 
       {/* Dialog for Create Form */}

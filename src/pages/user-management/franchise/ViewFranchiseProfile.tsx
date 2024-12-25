@@ -73,17 +73,38 @@ interface FranchiseViewProfileProps {
 export default function FranchiseViewProfile({ onActivateTab }: FranchiseViewProfileProps) {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
+
+
+  const handleNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/franchise/listStaff';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleInactiveNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/franchise/suspendedStaff';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleBlockedNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/franchise/blockedStaff';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+
   const navigate = useNavigate();
 
-  const handleNavigation = () => {
-    navigate('/franchise/listStaff');// Use the route path defined in your router
-  };
-  const handleInactiveNavigation = () => {
-    navigate('/franchise/suspendedStaff');// Use the route path defined in your router
-  };
-  const handleBlockedNavigation = () => {
-    navigate('/franchise/blockedStaff');// Use the route path defined in your router
-  };
+  // const handleNavigation = () => {
+  //   navigate('/franchise/listStaff');// Use the route path defined in your router
+  // };
+  // const handleInactiveNavigation = () => {
+  //   navigate('/franchise/suspendedStaff');// Use the route path defined in your router
+  // };
+  // const handleBlockedNavigation = () => {
+  //   navigate('/franchise/blockedStaff');// Use the route path defined in your router
+  // };
   const [currentTab, setCurrentTab] = useState("home"); // Manage current tab
 
   const handleSalesNavigation = () => {
@@ -91,41 +112,109 @@ export default function FranchiseViewProfile({ onActivateTab }: FranchiseViewPro
       onActivateTab();
      // Switch to the UserHistory tab
   };
+  const handleListCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/listCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleConvertedCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/convertedCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleExpiredCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/planExpiredCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleBlockedRequesCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/blockedRequests';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleFreeCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/freeCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handlePaidCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/paidCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
+  const handleBlockedCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/blockedCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
 
-  const handleListCustomersNavigation = () => {
-    navigate('/customerManagement/listCustomers');// Use the route path defined in your router
+  // const handleListCustomersNavigation = () => {
+  //   navigate('/customerManagement/listCustomers');// Use the route path defined in your router
+  // };
+  // const handleConvertedCustomersNavigation = () => {
+  //   navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
+  // };
+  // const handleExpiredCustomersNavigation = () => {
+  //   navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
+  // };
+  // const handleBlockedRequesCustomersNavigation = () => {
+  //   navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
+  // };
+  // const handleFreeCustomersNavigation = () => {
+  //   navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
+  // };
+  // const handlePaidCustomersNavigation = () => {
+  //   navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
+  // };
+  // const handleBlockedCustomersNavigation = () => {
+  //   navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
+  // };
+
+  const handleListInboundNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/staffCalling/inbound/listinbound';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleConvertedCustomersNavigation = () => {
-    navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
+  const handleFreeInboundNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/staffCalling/inbound/freeinbound';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleExpiredCustomersNavigation = () => {
-    navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
+  const handlePaidInboundNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/staffCalling/inbound/paidinbound';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleBlockedRequesCustomersNavigation = () => {
-    navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
-  };
-  const handleFreeCustomersNavigation = () => {
-    navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
-  };
-  const handlePaidCustomersNavigation = () => {
-    navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
-  };
-  const handleBlockedCustomersNavigation = () => {
-    navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
+  const handleBlockedInboundNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/staffCalling/inbound/blockedinbound';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
 
-  const handleListInboundNavigation = () => {
-    navigate('/staffCalling/inbound/listinbound');// Use the route path defined in your router
-  };
-  const handleFreeInboundNavigation = () => {
-    navigate('/staffCalling/inbound/freeinbound');// Use the route path defined in your router
-  };
-  const handlePaidInboundNavigation = () => {
-    navigate('/staffCalling/inbound/paidinbound');// Use the route path defined in your router
-  };
-  const handleBlockedInboundNavigation = () => {
-    navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
-  };
+
+  // const handleListInboundNavigation = () => {
+  //   navigate('/staffCalling/inbound/listinbound');// Use the route path defined in your router
+  // };
+  // const handleFreeInboundNavigation = () => {
+  //   navigate('/staffCalling/inbound/freeinbound');// Use the route path defined in your router
+  // };
+  // const handlePaidInboundNavigation = () => {
+  //   navigate('/staffCalling/inbound/paidinbound');// Use the route path defined in your router
+  // };
+  // const handleBlockedInboundNavigation = () => {
+  //   navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
+  // };
 
 
 

@@ -10,12 +10,15 @@ import CommonSelectField from 'pages/common-components/common-select';
 import { height } from '@mui/system';
 import moment from 'moment';
 import CommonDatePicker from 'pages/common-components/common-date';
+import MainCard from 'components/MainCard';
+import Viewapprovalpopup from './Viewapprovalpopup';
 
 export default function RejectApprovals() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [approve, setApprove] = useState(false);
 
   
   interface FormField {
@@ -37,16 +40,16 @@ export default function RejectApprovals() {
   }
 
   const formFields: FormData = {
-    invoiceno: {
-      label: 'Enter Invoice NO',
-      id: 'invoiceno',
-      name: 'invoiceno',
-      type: 'text',
+    mobileno: {
+      label: 'Enter Mobile NO',
+      id: 'mobileno',
+      name: 'mobileno',
+      type: 'number',
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
-      options : []
+      options: []
     },
     customerid: {
       label: 'Enter Customer ID',
@@ -57,135 +60,102 @@ export default function RejectApprovals() {
       error: false,
       helperText: '',
       mandatory: true,
-      options : []
+      options: []
     },
-    selectpackage: {
-      label: 'Select Package',
-      id: 'selectpackage',
-      name: 'selectpackage',
-      type:'select',
+    customername: {
+      label: 'Enter Customer Name',
+      id: 'customername',
+      name: 'customername',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    customersurname: {
+      label: 'Enter Customer Surname',
+      id: 'customersurname',
+      name: 'customersurname',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    approvedby: {
+      label: 'Select Approved By',
+      id: 'approvedby',
+      name: 'approvedby',
+      type: 'select',
       options: [
-        { id: 1, label: 'FREE' },
-        { id: 2, label: 'PLATINUM' },
-        { id: 3, label: 'SILVER' },
+        { id: 1, label: 'Admin' },
+        { id: 2, label: 'Agent' },
+        { id: 3, label: 'Baranch' },
       ],
-      value: {id:1,label:''},
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false,
     },
-    marriagetype: {
-        label: 'Select Marriage Type',
-        id: 'marriagetype',
-        name: 'marriagetype',
-        type:'select',
-        options: [
-          { id: 1, label: 'First' },
-          { id: 2, label: 'Second' },
-        
-        ],
-        value: {id:1,label:''},
-        error: false,
-        helperText: '',
-        mandatory: true,
-        isMulti: false,
-      },
-    durationtype: {
-      label: 'Select Duration Type',
-      id: 'durationtype',
-      name: 'durationtype',
-      type:'select',
+    documenttype: {
+      label: 'Select Document Type',
+      id: 'documenttype',
+      name: 'documenttype',
+      type: 'select',
       options: [
-        { id: 1, label: 'DAYS' },
-        { id: 2, label: 'WEEKS' },
-        { id: 3, label: 'MONTHS' },
-        { id: 2, label: 'YEARS' },
-        { id: 3, label: 'UNLIMITED' },
+        { id: 1, label: 'First' },
+        { id: 2, label: 'Second' },
+
       ],
-      // value: [{ id: 1, label: 'WEEKS' },{ id: 2, label: 'YEARS' },],
-      value: {id:1,label:''},
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false,
     },
-    planamount: {
-        label: 'Enter Plan Amount',
-        id: 'planamount',
-        name: 'planamount',
-        type: 'number',
-        value: '',
-        error: false,
-        helperText: '',
-        mandatory: true,
-        options : []
-      },
-      plandiscount: {
-        label: 'Enter Plan Discount',
-        id: 'plandiscount',
-        name: 'plandiscount',
-        type: 'number',
-        value: '',
-        error: false,
-        helperText: '',
-        mandatory: true,
-        options : []
-      },
-    invoicedate: {
-        label: 'Invoice Date',
-        id: 'invoicedate',
-        name: 'invoicedate',
-        value: "",
-        error: false,
-        helperText: 'Please select date',
-        mandatory: true,
-        options : []
-      },
-      enddate: {
-        label: 'Plan End Date',
-        id: 'enddate',
-        name: 'enddate',
-        value: "",
-        error: false,
-        helperText: 'Please select date',
-        mandatory: true,
-        options : []
-      },
-      branch: {
-        label: 'Select Branch',
-        id: 'branch',
-        name: 'branch',
-        type: 'select',
-        options: [
-          { id: 1, label: 'Guntur Head Office' },
-          { id: 2, label: 'Ongole' },
-          { id: 3, label: 'Nellure' },
-          { id: 4, label: 'Hyderabad' },
-          { id: 5, label: 'Vijayawada' },
-        ],
-        value: {id:1,label:''},
-        error: false,
-        helperText: '',
-        mandatory: true,
-        isMulti: false,
-      },
-      paymentmode: {
-        label: 'Payment Mode',
-        id: 'paymentmode',
-        name: 'paymentmode',
-        type: 'select',
-        options: [
-          { id: 1, label: 'Cheque' },
-          { id: 2, label: 'Cash' },
-          { id: 3, label: 'Online' },
-        ],
-        value: {id:1,label:''},
-        error: false,
-        helperText: '',
-        mandatory: true,
-        isMulti: false,
-      },
+    selectcaste: {
+      label: 'Select Caste',
+      id: 'selectcaste',
+      name: 'selectcaste',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Kaapu/Naidu' },
+        { id: 2, label: 'Reddy' },
+
+      ],
+      value: { id: 1, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false,
+    },
+
+    documentnumber: {
+      label: 'Enter Document Number',
+      id: 'documentnumber',
+      name: 'documentnumber',
+      type: 'number',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+
+    approveddate: {
+      label: 'Appeoved Date',
+      id: 'approveddate',
+      name: 'approveddate',
+      value: "",
+      error: false,
+      helperText: 'Please select date',
+      mandatory: true,
+      options: []
+    },
+
   };
 
   const [formData, setFormData] = useState<FormData>(formFields);
@@ -231,29 +201,36 @@ export default function RejectApprovals() {
     return isValid;
   };
 
-  const handleFormSubmit = () => {
-    if (validate()) {
-      // Close the popup immediately after validation
-      setOpenPopup(false);
+  const handleFormSubmit = (e: React.FormEvent) => {
+      if (validate()) {
+        // Close the popup immediately after validation
+        // setOpenPopup(false);
+        setOpenPopup(false)
+        // Construct the new record
+        const newRecord = {
+          customerid: formData.customerid.value,
+          customername: formData.customername.value,
+          customersurname: formData.customersurname.value,
+          mobileno: formData.mobileno.value,
+          selectcaste: formData.selectcaste.value,
+          documenttype: formData.documenttype.value,
+          documentnumber: formData.documentnumber.value,
+          approvedby: formData.approvedby.value,
+          approveddate: moment(formData.approveddate.value).format('YYYY/MM/DD'),
   
-      // Construct the new record
-      const newRecord = {
-        customerid: formData.customerid.value,
-        invoiceno: formData.invoiceno.value,
-        durationtype: formData.durationtype.value,
-        marriagetype: formData.marriagetype.value,
-        selectpackage: formData.selectpackage.value,
-        branch: formData.branch.value,
-        paymentmode: formData.paymentmode.value,
-        invoicedate: moment(formData.invoicedate.value).format('YYYY/MM/DD'),
-      };
+        };
+        // Log or update data
+        console.log("New Record:", newRecord);
   
-      // Log or update data
-      console.log("New Record:", newRecord);
-      // Example: Add the new record to your data
-      setData((prevData: any) => [...prevData, newRecord]);
-    }
-  };
+        e.preventDefault();
+        if (validate()) {
+          console.log('Form Submitted', formData);
+        }
+      }
+  
+  
+  
+    };
   
   
 // xii.actions
@@ -336,13 +313,16 @@ export default function RejectApprovals() {
             <>
               <IconButton onClick={handleClick}>...</IconButton>
               <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-               <MenuItem onClick={() => { handleView(row); handleClose(); }}>View</MenuItem>
+               <MenuItem onClick={() => { setApprove(true); handleClose(); }}>View</MenuItem>
                 <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
               </Menu>
             </>
           );
         };
 
+        const handleInvoiceClose =() =>{
+          setApprove(false)
+        }
 return (
   <>
     {/* Removed Button to Open Popup */}
@@ -369,42 +349,58 @@ return (
 
     {/* Dialog for Create Form */}
     <Dialog open={openPopup} maxWidth="sm" fullWidth>
-      <DialogTitle>Customer Details</DialogTitle>
+      <DialogTitle>Reject Approval</DialogTitle>
       <DialogContent>
       
-      {/* <Grid container spacing={2}> */}
-         <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.customerid} onChange={handleChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.invoiceno} onChange={handleChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonDatePicker inputProps={formData.invoicedate} onDateChange={handleDateChange} />
-          </Grid>
-         <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.selectpackage} onSelectChange={handleSelectChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.marriagetype} onSelectChange={handleSelectChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-              <CommonSelectField inputProps={formData.branch} onSelectChange={handleSelectChange} />
+      <MainCard>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonInputField inputProps={formData.customerid} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.customername} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.customersurname} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.mobileno} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonSelectField inputProps={formData.selectcaste} onSelectChange={handleSelectChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonSelectField inputProps={formData.documenttype} onSelectChange={handleSelectChange} />
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.documentnumber} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonSelectField inputProps={formData.approvedby} onSelectChange={handleSelectChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonDatePicker inputProps={formData.approveddate} onDateChange={handleDateChange} />
+              </Grid>
             </Grid>
-         
-          <Grid item xs={12} padding={2}>
-              <CommonSelectField inputProps={formData.paymentmode} onSelectChange={handleSelectChange} />
-            </Grid>
+          </MainCard>
           
 
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
         <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={handleFormSubmit}>
-          Save Changes
+          Submit
         </Button>
       </DialogActions>
     </Dialog>
+
+    {approve && (
+        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+          <Viewapprovalpopup open={approve} onClose={handleInvoiceClose} />
+        </div>
+      )}
+    
   </>
 );
 }

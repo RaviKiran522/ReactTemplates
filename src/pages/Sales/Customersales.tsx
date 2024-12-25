@@ -75,7 +75,7 @@ export default function CustomerSles() {
         <IconButton onClick={handleClick}>...</IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleInvoice(row); handleClose(); }}>View Invoice</MenuItem>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit Invoice</MenuItem>
+          <MenuItem onClick={() => { handleInvoice(row); handleClose(); }}>Edit Invoice</MenuItem>
           {/* <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Downlod Invoice</MenuItem> */}
                 <MenuItem onClick={() => { handleInvoice(row); handleClose(); }}>Downlod Invoice</MenuItem>
 

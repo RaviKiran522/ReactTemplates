@@ -368,6 +368,7 @@ import CommonSelectField from 'pages/common-components/common-select';
 import { height } from '@mui/system';
 import moment from 'moment';
 import CommonDatePicker from 'pages/common-components/common-date';
+import MainCard from 'components/MainCard';
 
 export default function ListPlans() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
@@ -696,37 +697,38 @@ return (
     <Dialog open={openPopup} maxWidth="sm" fullWidth>
       <DialogTitle>Update Plan</DialogTitle>
       <DialogContent>
-      
-      {/* <Grid container spacing={2}> */}
-        <Grid item xs={12} padding={2}>
+      <MainCard>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={6}>
             <CommonSelectField inputProps={formData.selectcategory} onSelectChange={handleSelectChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonInputField inputProps={formData.planname} onChange={handleChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonInputField inputProps={formData.duration} onChange={handleChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonSelectField inputProps={formData.durationtype} onSelectChange={handleSelectChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonSelectField inputProps={formData.numberofcontacts} onSelectChange={handleSelectChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonInputField inputProps={formData.planamount} onChange={handleChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonInputField inputProps={formData.plandiscount} onChange={handleChange} />
           </Grid>
           
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonDatePicker inputProps={formData.activedate} onDateChange={handleDateChange} />
           </Grid>
-          <Grid item xs={12} padding={2}>
+          <Grid item xs={12} sm={6} md={6}>
             <CommonDatePicker inputProps={formData.enddate} onDateChange={handleDateChange} />
           </Grid>
-          {/* </Grid> */}
+          </Grid>
+          </MainCard>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>

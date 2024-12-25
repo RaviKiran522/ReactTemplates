@@ -10,7 +10,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-// import EmailIcon from "@mui/icons-material/Email";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
 // import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 // import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 
@@ -30,9 +31,10 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import React, { useState } from 'react';
 import CommonTextAreaField from 'pages/common-components/common-textarea';
-import { Accordion, AccordionDetails, AccordionSummary, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import _ from 'lodash';
 import { useNavigate } from 'react-router';
+import { C } from '@fullcalendar/core/internal-common';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
 interface TabPanelProps {
@@ -337,28 +339,72 @@ export default function ViewProfile() {
   };
 
 
-  const navigate = useNavigate();
-  const handleListCustomersNavigation = () => {
-    navigate('/customerManagement/listCustomers');// Use the route path defined in your router
+  const handleListCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/listCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleConvertedCustomersNavigation = () => {
-    navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
+  const handleConvertedCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/convertedCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleExpiredCustomersNavigation = () => {
-    navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
+  const handleExpiredCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/planExpiredCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const  handleBlockedRequesCustomersNavigation = () => {
-    navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
+  const handleBlockedRequesCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/blockedRequests';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleFreeCustomersNavigation = () => {
-    navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
+  const handleFreeCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/freeCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handlePaidCustomersNavigation = () => {
-    navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
+  const handlePaidCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/paidCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
-  const handleBlockedCustomersNavigation = () => {
-    navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
+  const handleBlockedCustomersNavigation = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/customerManagement/blockedCustomers';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
   };
+
+
+  // const navigate = useNavigate();
+  // const handleListCustomersNavigation = () => {
+  //   navigate('/customerManagement/listCustomers');// Use the route path defined in your router
+  // };
+  // const handleConvertedCustomersNavigation = () => {
+  //   navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
+  // };
+  // const handleExpiredCustomersNavigation = () => {
+  //   navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
+  // };
+  // const  handleBlockedRequesCustomersNavigation = () => {
+  //   navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
+  // };
+  // const handleFreeCustomersNavigation = () => {
+  //   navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
+  // };
+  // const handlePaidCustomersNavigation = () => {
+  //   navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
+  // };
+  // const handleBlockedCustomersNavigation = () => {
+  //   navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
+  // };
 
 
 
@@ -1430,13 +1476,196 @@ export default function ViewProfile() {
             <MainCard >
               <List sx={{ py: 0 }}>
                 <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
+                  {/* <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography variant="h5" color="secondary">Adhar File Not Uploaded By Customer </Typography>
-                      </Stack>
+                      <Stack spacing={0.5}> */}
+                        <Box
+                          p={3}
+                          sx={{
+                            width: "80%",
+                            maxWidth: '100%',
+                            margin: "auto",
+                            backgroundColor: "white",
+                            borderRadius: 2,
+                            boxShadow: 3,
+                          }}
+                        >
+                          {/* Image Section */}
+                          <Card
+                            sx={{
+                              width: '100%',
+                              maxWidth: '100%',
+                              borderRadius: '8px',
+                              padding: 2,
+                              marginBottom: 2, // Add spacing here
+                            }}
+                          >
+                            <img
+                              src="https://cdn.pixabay.com/photo/2022/11/09/00/44/aadhaar-card-7579588_1280.png"
+                              alt="Sample"
+                              style={{
+                                width: '100%',
+                                maxWidth: '100%',
+                                borderRadius: '8px',
+                              }}
+                            />
+                          </Card>
+
+
+                          <Card
+                            sx={{
+                             
+                              width: '100%',
+                              maxWidth: '100%',
+                              borderRadius: '8px',
+                              padding: 2,
+                              marginBottom: 2, // Add spacing here
+                            }}
+                          >
+                            <Grid
+                              display="flex"
+                              flexDirection="row"
+                              justifyContent="space-between"
+                              gap={2} // Space between the items
+                              
+                            >
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                                <Button variant='contained' sx={{ padding: 1, flex: 1 ,  backgroundColor:'primary' }}>Aadhar Uploaded By</Button>
+                              {/* </Card> */}
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                                <Button  variant='contained' sx={{ padding: 1, flex: 1 }}>Aadhar Verified By</Button>
+                              {/* </Card> */}
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                                <Button  variant='contained' sx={{ padding: 1, flex: 1 }}>Aadhar Verified Date</Button>
+                              {/* </Card> */}
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                                <Button  variant='contained' sx={{ padding: 1, flex: 1 }}>Delete</Button>
+                              {/* </Card> */}
+                            </Grid>
+                          </Card>
+
+                          <Card
+                            sx={{
+                             
+                              width: '100%',
+                              maxWidth: '100%',
+                              borderRadius: '8px',
+                              padding: 2,
+                              marginBottom: 2, // Add spacing here
+                            }}
+                          >
+                            <Grid
+                              display="flex"
+                              flexDirection="row"
+                              justifyContent="space-between"
+                              gap={2} // Space between the items
+                              
+                            >
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                              <Button
+                                  variant="contained"
+                                
+                                  startIcon={<CheckCircleIcon />}
+                                  sx={{ padding: 1, flex: 1 ,  backgroundColor:'green' }}
+                                >
+                                  AE100625
+                                </Button>
+                              {/* </Card> */}
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                              <Button
+                                  variant="contained"
+                                
+                                  startIcon={<CheckCircleIcon />}
+                                  sx={{ padding: 1, flex: 1 ,  backgroundColor:'green' }}
+                                >
+                                   AEADMIN
+                                </Button>
+                              {/* </Card> */}
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                              <Button
+                                  variant="contained"
+                                
+                                  startIcon={<CheckCircleIcon />}
+                                  sx={{ textAlign:'center', flex: 1 ,  backgroundColor:'green' }}
+                                >
+                                  20-12-2024 01:59:44
+                                </Button>
+                              {/* </Card> */}
+                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                              <Button
+                                  variant="contained"
+                                
+                                  startIcon={<DeleteIcon />}
+                                  sx={{ padding: 1, flex: 1 ,  backgroundColor:'green' }}
+                                >
+                                  Delete
+                                </Button>
+                              {/* </Card> */}
+                            </Grid>
+                          </Card>
+
+
+
+
+
+                          {/* Buttons Section */}
+                          {/* <Paper elevation={3} sx={{ p: 2 }}> */}
+                          {/* <Grid container spacing={2} alignItems="center">
+                              <Grid item xs={12} sm={3}>
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  startIcon={<CheckCircleIcon />}
+                                  fullWidth
+                                >
+                                  AE100625
+                                </Button>
+                                <Typography variant="caption" display="block" textAlign="center">
+                                  AADHAR UPLOADED BY
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} sm={3}>
+                                <Button
+                                  variant="contained"
+                                  color="success"
+                                  startIcon={<CheckCircleIcon />}
+                                  fullWidth
+                                >
+                                  AEADMIN
+                                </Button>
+                                <Typography variant="caption" display="block" textAlign="center">
+                                  AADHAR VERIFIED BY
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} sm={3}>
+                                <Button
+                                  variant="contained"
+                                  color="success"
+                                  startIcon={<CheckCircleIcon />}
+                                  fullWidth
+                                >
+                                  20-12-2024 01:59:44
+                                </Button>
+                                <Typography variant="caption" display="block" textAlign="center">
+                                  AADHAR VERIFIED DATE
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} sm={3}>
+                                <Button
+                                  variant="contained"
+                                  color="error"
+                                  startIcon={<DeleteIcon />}
+                                  fullWidth
+                                >
+                                  DELETE
+                                </Button>
+                              </Grid>
+                            </Grid>
+                          {/* </Paper> */}
+                        </Box>
+                      {/* </Stack>
                     </Grid>
-                  </Grid>
+                  </Grid> */}
                 </ListItem>
               </List>
             </MainCard>

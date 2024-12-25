@@ -10,14 +10,17 @@ import CommonSelectField from 'pages/common-components/common-select';
 import { height } from '@mui/system';
 import moment from 'moment';
 import CommonDatePicker from 'pages/common-components/common-date';
+import MainCard from 'components/MainCard';
+import Viewapprovalpopup from './Viewapprovalpopup';
 
 export default function AllApprovals() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [approve, setApprove] = useState(false);
 
-  
+
   interface FormField {
     label: any;
     id: any;
@@ -37,16 +40,16 @@ export default function AllApprovals() {
   }
 
   const formFields: FormData = {
-    invoiceno: {
-      label: 'Enter Invoice NO',
-      id: 'invoiceno',
-      name: 'invoiceno',
-      type: 'text',
+    mobileno: {
+      label: 'Enter Mobile NO',
+      id: 'mobileno',
+      name: 'mobileno',
+      type: 'number',
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
-      options : []
+      options: []
     },
     customerid: {
       label: 'Enter Customer ID',
@@ -57,135 +60,102 @@ export default function AllApprovals() {
       error: false,
       helperText: '',
       mandatory: true,
-      options : []
+      options: []
     },
-    selectpackage: {
-      label: 'Select Package',
-      id: 'selectpackage',
-      name: 'selectpackage',
-      type:'select',
+    customername: {
+      label: 'Enter Customer Name',
+      id: 'customername',
+      name: 'customername',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    customersurname: {
+      label: 'Enter Customer Surname',
+      id: 'customersurname',
+      name: 'customersurname',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+    approvedby: {
+      label: 'Select Approved By',
+      id: 'approvedby',
+      name: 'approvedby',
+      type: 'select',
       options: [
-        { id: 1, label: 'FREE' },
-        { id: 2, label: 'PLATINUM' },
-        { id: 3, label: 'SILVER' },
+        { id: 1, label: 'Admin' },
+        { id: 2, label: 'Agent' },
+        { id: 3, label: 'Baranch' },
       ],
-      value: {id:1,label:''},
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false,
     },
-    marriagetype: {
-        label: 'Select Marriage Type',
-        id: 'marriagetype',
-        name: 'marriagetype',
-        type:'select',
-        options: [
-          { id: 1, label: 'First' },
-          { id: 2, label: 'Second' },
-        
-        ],
-        value: {id:1,label:''},
-        error: false,
-        helperText: '',
-        mandatory: true,
-        isMulti: false,
-      },
-    durationtype: {
-      label: 'Select Duration Type',
-      id: 'durationtype',
-      name: 'durationtype',
-      type:'select',
+    documenttype: {
+      label: 'Select Document Type',
+      id: 'documenttype',
+      name: 'documenttype',
+      type: 'select',
       options: [
-        { id: 1, label: 'DAYS' },
-        { id: 2, label: 'WEEKS' },
-        { id: 3, label: 'MONTHS' },
-        { id: 2, label: 'YEARS' },
-        { id: 3, label: 'UNLIMITED' },
+        { id: 1, label: 'First' },
+        { id: 2, label: 'Second' },
+
       ],
-      // value: [{ id: 1, label: 'WEEKS' },{ id: 2, label: 'YEARS' },],
-      value: {id:1,label:''},
+      value: { id: 1, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false,
     },
-    planamount: {
-        label: 'Enter Plan Amount',
-        id: 'planamount',
-        name: 'planamount',
-        type: 'number',
-        value: '',
-        error: false,
-        helperText: '',
-        mandatory: true,
-        options : []
-      },
-      plandiscount: {
-        label: 'Enter Plan Discount',
-        id: 'plandiscount',
-        name: 'plandiscount',
-        type: 'number',
-        value: '',
-        error: false,
-        helperText: '',
-        mandatory: true,
-        options : []
-      },
-    invoicedate: {
-        label: 'Invoice Date',
-        id: 'invoicedate',
-        name: 'invoicedate',
-        value: "",
-        error: false,
-        helperText: 'Please select date',
-        mandatory: true,
-        options : []
-      },
-      enddate: {
-        label: 'Plan End Date',
-        id: 'enddate',
-        name: 'enddate',
-        value: "",
-        error: false,
-        helperText: 'Please select date',
-        mandatory: true,
-        options : []
-      },
-      branch: {
-        label: 'Select Branch',
-        id: 'branch',
-        name: 'branch',
-        type: 'select',
-        options: [
-          { id: 1, label: 'Guntur Head Office' },
-          { id: 2, label: 'Ongole' },
-          { id: 3, label: 'Nellure' },
-          { id: 4, label: 'Hyderabad' },
-          { id: 5, label: 'Vijayawada' },
-        ],
-        value: {id:1,label:''},
-        error: false,
-        helperText: '',
-        mandatory: true,
-        isMulti: false,
-      },
-      paymentmode: {
-        label: 'Payment Mode',
-        id: 'paymentmode',
-        name: 'paymentmode',
-        type: 'select',
-        options: [
-          { id: 1, label: 'Cheque' },
-          { id: 2, label: 'Cash' },
-          { id: 3, label: 'Online' },
-        ],
-        value: {id:1,label:''},
-        error: false,
-        helperText: '',
-        mandatory: true,
-        isMulti: false,
-      },
+    selectcaste: {
+      label: 'Select Caste',
+      id: 'selectcaste',
+      name: 'selectcaste',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Kaapu/Naidu' },
+        { id: 2, label: 'Reddy' },
+
+      ],
+      value: { id: 1, label: '' },
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false,
+    },
+
+    documentnumber: {
+      label: 'Enter Document Number',
+      id: 'documentnumber',
+      name: 'documentnumber',
+      type: 'number',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      options: []
+    },
+
+    approveddate: {
+      label: 'Appeoved Date',
+      id: 'approveddate',
+      name: 'approveddate',
+      value: "",
+      error: false,
+      helperText: 'Please select date',
+      mandatory: true,
+      options: []
+    },
+
   };
 
   const [formData, setFormData] = useState<FormData>(formFields);
@@ -202,7 +172,7 @@ export default function AllApprovals() {
       },
     }));
   };
-  
+
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
@@ -220,7 +190,7 @@ export default function AllApprovals() {
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
         }
-        
+
         else {
           newFormData[key].helperText = '';
         }
@@ -231,78 +201,94 @@ export default function AllApprovals() {
     return isValid;
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     if (validate()) {
       // Close the popup immediately after validation
-      setOpenPopup(false);
-  
+      // setOpenPopup(false);
+      setOpenPopup(false)
       // Construct the new record
       const newRecord = {
         customerid: formData.customerid.value,
-        invoiceno: formData.invoiceno.value,
-        durationtype: formData.durationtype.value,
-        marriagetype: formData.marriagetype.value,
-        selectpackage: formData.selectpackage.value,
-        branch: formData.branch.value,
-        paymentmode: formData.paymentmode.value,
-        invoicedate: moment(formData.invoicedate.value).format('YYYY/MM/DD'),
+        customername: formData.customername.value,
+        customersurname: formData.customersurname.value,
+        mobileno: formData.mobileno.value,
+        selectcaste: formData.selectcaste.value,
+        documenttype: formData.documenttype.value,
+        documentnumber: formData.documentnumber.value,
+        approvedby: formData.approvedby.value,
+        approveddate: moment(formData.approveddate.value).format('YYYY/MM/DD'),
+
       };
-  
       // Log or update data
       console.log("New Record:", newRecord);
-      // Example: Add the new record to your data
-      setData((prevData: any) => [...prevData, newRecord]);
+
+      e.preventDefault();
+      if (validate()) {
+        console.log('Form Submitted', formData);
+      }
     }
+
+
+
   };
-  
-  
-// xii.actions
-// 1.view
-// a.show the document, detais and photo
-// 2.edit
+
+
+
+  // xii.actions
+  // 1.view
+  // a.show the document, detais and photo
+  // 2.edit
   const initailData: any = [
-        { sno: "1",id:'1', name: "Mahesh",surName :'koppisetti',mobileNumber:'9089389383',caste:'BC-b' ,documentType:'uyeuw',documentNumber:'8383',status:'Active',
-            approvedBy:'Admin',approvedDate:'13-01-2018 11:35:35' },
-            { sno: "1",id:'1', name: "Mahesh",surName :'koppisetti',mobileNumber:'9089389383',caste:'BC-b' ,documentType:'uyeuw',documentNumber:'8383',status:'Active',
-                approvedBy:'Admin',approvedDate:'13-01-2018 11:35:35' },
-                { sno: "1",id:'1', name: "Mahesh",surName :'koppisetti',mobileNumber:'9089389383',caste:'BC-b' ,documentType:'uyeuw',documentNumber:'8383',status:'Active',
-                    approvedBy:'Admin',approvedDate:'13-01-2018 11:35:35' },
-                    { sno: "1",id:'1', name: "Mahesh",surName :'koppisetti',mobileNumber:'9089389383',caste:'BC-b' ,documentType:'uyeuw',documentNumber:'8383',status:'Active',
-                        approvedBy:'Admin',approvedDate:'13-01-2018 11:35:35' },
-        ];
+    {
+      sno: "1", id: '1', name: "Mahesh", surName: 'koppisetti', mobileNumber: '9089389383', caste: 'BC-b', documentType: 'uyeuw', documentNumber: '8383', status: 'Active',
+      approvedBy: 'Admin', approvedDate: '13-01-2018 11:35:35'
+    },
+    {
+      sno: "1", id: '1', name: "Mahesh", surName: 'koppisetti', mobileNumber: '9089389383', caste: 'BC-b', documentType: 'uyeuw', documentNumber: '8383', status: 'Active',
+      approvedBy: 'Admin', approvedDate: '13-01-2018 11:35:35'
+    },
+    {
+      sno: "1", id: '1', name: "Mahesh", surName: 'koppisetti', mobileNumber: '9089389383', caste: 'BC-b', documentType: 'uyeuw', documentNumber: '8383', status: 'Active',
+      approvedBy: 'Admin', approvedDate: '13-01-2018 11:35:35'
+    },
+    {
+      sno: "1", id: '1', name: "Mahesh", surName: 'koppisetti', mobileNumber: '9089389383', caste: 'BC-b', documentType: 'uyeuw', documentNumber: '8383', status: 'Active',
+      approvedBy: 'Admin', approvedDate: '13-01-2018 11:35:35'
+    },
+  ];
   const [data, setData] = useState(initailData);
- 
-  
-     const columns = useMemo(
-        () => [
-          { header: 'S.NO', accessorKey: 'sno' },
-          { header: 'ID', accessorKey: 'id' },
-          { header: 'Name', accessorKey: 'name' },
-          { header: 'SurName', accessorKey: 'surName' },
-          { header: 'Mobile Number', accessorKey: 'mobileNumber' },
-          { header: 'Caste', accessorKey: 'caste' },
-          { header: 'Document Type', accessorKey: 'documentType' },
-          { header: 'Document Number', accessorKey: 'documentNumber' },
-          { header: 'Status', accessorKey: 'status' },
-          { header: 'Approved By', accessorKey: 'approvedBy' },
-          { header: 'Approved Date', accessorKey: 'approvedDate' },
-          
-        ],
-        []
-      );
-  
-      
-      const handleView = (row: any) => {
-        console.log('row.........', row)
-        const newUrl = '/admin/sales/addsales';
-        const fullPath = `${window.location.origin}${newUrl}`;
-        window.open(fullPath, '_blank');
-      };
+
+
+  const columns = useMemo(
+    () => [
+      { header: 'S.NO', accessorKey: 'sno' },
+      { header: 'ID', accessorKey: 'id' },
+      { header: 'Name', accessorKey: 'name' },
+      { header: 'SurName', accessorKey: 'surName' },
+      { header: 'Mobile Number', accessorKey: 'mobileNumber' },
+      { header: 'Caste', accessorKey: 'caste' },
+      { header: 'Document Type', accessorKey: 'documentType' },
+      { header: 'Document Number', accessorKey: 'documentNumber' },
+      { header: 'Status', accessorKey: 'status' },
+      { header: 'Approved By', accessorKey: 'approvedBy' },
+      { header: 'Approved Date', accessorKey: 'approvedDate' },
+
+    ],
+    []
+  );
+
+
+  const handleView = (row: any) => {
+    console.log('row.........', row)
+    const newUrl = '/admin/sales/addsales';
+    const fullPath = `${window.location.origin}${newUrl}`;
+    window.open(fullPath, '_blank');
+  };
 
   const handleEdit = (row: any) => {
     setOpenPopup(true); // Open dialog
   };
-  
+
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -321,7 +307,7 @@ export default function AllApprovals() {
   useEffect(() => {
     console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
   }, [rowsPerPage, pageNumber]);
-  
+
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -333,80 +319,101 @@ export default function AllApprovals() {
       setAnchorEl(null);
     };
     return (
-            <>
-              <IconButton onClick={handleClick}>...</IconButton>
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-               <MenuItem onClick={() => { handleView(row); handleClose(); }}>View</MenuItem>
-                <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-              </Menu>
-            </>
-          );
-        };
+      <>
+        <IconButton onClick={handleClick}>...</IconButton>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+          <MenuItem onClick={() => { setApprove(true);; handleClose(); }}>View</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+        </Menu>
+      </>
+    );
+  };
 
-return (
-  <>
-    {/* Removed Button to Open Popup */}
+     
+  const handleInvoiceClose =() =>{
+    setApprove(false)
+  }
 
-    {/* React Table */}
-    <ReactTable
-      title={"All Approvals"}
-      data={data}
-      columns={columns}
-      actions={(row: any) => <ActionMenu row={row} />}
-      includeSearch={true}
-      needCSV={true}
-      pagination={'top'}
-      columnVisibility={true}
-      needCheckBoxes={true}
-      needActivateAndSuspendButtons={true}
-      open={open}
-      setOpen={setOpen}
-      setRowsPerPage={setRowsPerPage}
-      setPageNumber={setPageNumber}
-      pageNumber={pageNumber}
-      totalPageCount={60}
-    />
+  return (
+    <>
+      {/* Removed Button to Open Popup */}
 
-    {/* Dialog for Create Form */}
-    <Dialog open={openPopup} maxWidth="sm" fullWidth>
-      <DialogTitle>Customer Details</DialogTitle>
-      <DialogContent>
-      
-      {/* <Grid container spacing={2}> */}
-         <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.customerid} onChange={handleChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonInputField inputProps={formData.invoiceno} onChange={handleChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonDatePicker inputProps={formData.invoicedate} onDateChange={handleDateChange} />
-          </Grid>
-         <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.selectpackage} onSelectChange={handleSelectChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-            <CommonSelectField inputProps={formData.marriagetype} onSelectChange={handleSelectChange} />
-          </Grid>
-          <Grid item xs={12} padding={2}>
-              <CommonSelectField inputProps={formData.branch} onSelectChange={handleSelectChange} />
+      {/* React Table */}
+      <ReactTable
+        title={"All Approvals"}
+        data={data}
+        columns={columns}
+        actions={(row: any) => <ActionMenu row={row} />}
+        includeSearch={true}
+        needCSV={true}
+        pagination={'top'}
+        columnVisibility={true}
+        needCheckBoxes={true}
+        needActivateAndSuspendButtons={true}
+        open={open}
+        setOpen={setOpen}
+        setRowsPerPage={setRowsPerPage}
+        setPageNumber={setPageNumber}
+        pageNumber={pageNumber}
+        totalPageCount={60}
+      />
+
+      {/* Dialog for Create Form */}
+      <Dialog open={openPopup} maxWidth="sm" fullWidth>
+        <DialogTitle>List Approval</DialogTitle>
+        <DialogContent>
+          <MainCard>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonInputField inputProps={formData.customerid} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.customername} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.customersurname} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.mobileno} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonSelectField inputProps={formData.selectcaste} onSelectChange={handleSelectChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonSelectField inputProps={formData.documenttype} onSelectChange={handleSelectChange} />
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6} >
+                <CommonInputField inputProps={formData.documentnumber} onChange={handleChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonSelectField inputProps={formData.approvedby} onSelectChange={handleSelectChange} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <CommonDatePicker inputProps={formData.approveddate} onDateChange={handleDateChange} />
+              </Grid>
             </Grid>
-         
-          <Grid item xs={12} padding={2}>
-              <CommonSelectField inputProps={formData.paymentmode} onSelectChange={handleSelectChange} />
-            </Grid>
-          
+          </MainCard>
 
-      </DialogContent>
-      <DialogActions>
-        <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
-        <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={handleFormSubmit}>
-          Save Changes
-        </Button>
-      </DialogActions>
-    </Dialog>
-  </>
-);
+
+
+
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={handleFormSubmit}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {approve && (
+        <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
+          <Viewapprovalpopup open={approve} onClose={handleInvoiceClose} />
+        </div>
+      )}
+    </>
+  );
 }
 
 

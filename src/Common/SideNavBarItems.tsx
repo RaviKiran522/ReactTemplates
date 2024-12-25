@@ -1,6 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 import {
-  HomeTrendUp, User,Card,ReceiptDisscount, Personalcard, CallCalling, SearchStatus, Solana, People, PenAdd, Setting, Shield,
+  HomeTrendUp, User,Card,ReceiptDisscount,Archive, Personalcard, CallCalling, SearchStatus, Solana, People, PenAdd, Setting, Shield,
 } from 'iconsax-react';
 import { i } from 'vite/dist/node/types.d-aGj9QkWt';
 
@@ -16,7 +16,8 @@ const icons = {
   siteSetup: Shield,
   careers:Card,
   reports:ReceiptDisscount,
-  others:Personalcard
+  others:Personalcard,
+  approvals:Archive
 }
 
 export const loadingMenu = [
@@ -625,6 +626,7 @@ export const loadingMenu = [
         id: 'approvals',
         title: 'Approvals',
         type: 'collapse',
+        icon: icons.approvals,
         breadcrumbs: false,
         children: [
           {
@@ -650,22 +652,83 @@ export const loadingMenu = [
           }
         ]
       },
-      
-      {
-        id: 'careers',
-        title: 'Careers',
-        type: 'item',
-        icon: icons.careers,
-        url: '/careers',
-        breadcrumbs: false
-      },
       {
         id: 'reports',
         title: 'Reports',
-        type: 'item',
+        type: 'collapse',
         icon: icons.reports,
-        url: '/reports',
-        breadcrumbs: false
+        breadcrumbs: false,
+        children: [
+          {
+            id: 'userrepots',
+            title: 'User Reports',
+            type: 'collapse',
+            // url: '/reports/userrepots',
+            breadcrumbs: false,
+            children: [
+              {
+                id: 'BranchUserReports',
+                title: 'Branch User Reports',
+                type: 'item',
+                url: '/reports/userrepots/BranchUserReports',
+                breadcrumbs: false
+              },
+              {
+                id: 'franchiseuserrepots',
+                title: 'Franchise User Reports',
+                type: 'item',
+                url: '/reports/userrepots/franchiseuserrepots',
+                breadcrumbs: false
+              },
+              {
+                id: 'agentuserrepots',
+                title: 'Agent User Reports',
+                type: 'item',
+                url: '/reports/userrepots/agentuserrepots',
+                breadcrumbs: false
+              }
+
+            ]
+          },
+          {
+            id: 'customerreports',
+            title: 'Customer Reports',
+            type: 'item',
+            url: '/reports/customerreports',
+            breadcrumbs: false
+          },
+          {
+            id: 'salesreports',
+            title: 'Sales Reports',
+            type: 'item',
+            url: '/reports/salesreports',
+            breadcrumbs: false
+          }
+        ]
+      },
+      {
+        id: 'careers',
+        title: 'Careers',
+        type: 'collapse',
+        icon: icons.careers,
+        // url: '/careers',
+        breadcrumbs: false,
+        children: [
+          {
+            id: 'careerslist',
+            title: 'Careers List',
+            type: 'item',
+            url: '/careers/careerslist',
+            breadcrumbs: false
+          },
+          {
+            id: 'blockedlist',
+            title: 'Blocked List',
+            type: 'item',
+            url: '/careers/blockedlist',
+            breadcrumbs: false
+          }
+        ]
       },
       {
         id: 'others',

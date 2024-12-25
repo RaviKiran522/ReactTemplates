@@ -94,6 +94,10 @@ import CustomerSles from 'pages/Sales/Customersales';
 import BranchSales from 'pages/Sales/Branchsales';
 import FranchiseSales from 'pages/Sales/Franchisesales';
 import AgentSales from 'pages/Sales/Agentsales';
+import AgentUserReports from 'pages/Reports/Userreports/Agentreports';
+import FranchiseUserReports from 'pages/Reports/Userreports/Franchisereports';
+import BranchUserReports from 'pages/Reports/Userreports/Branchreports';
+import CareersList from 'pages/Careers/Listcareers';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -643,6 +647,43 @@ const MainRoutes = {
             },
           ]
         },
+        {
+          path: 'reports',
+          children: [
+            {
+              path: 'userrepots',
+              children: [
+                {
+                  path: 'BranchUserReports',
+                  element: <BranchUserReports/>,
+                },
+                {
+                  path: 'franchiseuserrepots',
+                  element: <FranchiseUserReports/>,
+                },
+                {
+                  path: 'agentuserrepots',
+                  element: <AgentUserReports/>,
+                },
+              
+              ]
+            }
+          ]
+          },
+          {
+            path: 'careers',
+            children: [
+              {
+                path: 'careerslist',
+                element: <CareersList />
+              },
+              {
+                path: 'blockedlist',
+                element: <CareersList />
+              },
+              
+            ]
+          },
 
         {
           path: 'widget',

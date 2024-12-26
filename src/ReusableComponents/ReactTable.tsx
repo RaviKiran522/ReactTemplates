@@ -86,7 +86,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '80%', // Increase the width
-  maxWidth: '800px', // Set a maximum width
+  maxWidth: '500px', // Set a maximum width
   bgcolor: 'background.paper',
   boxShadow: 24,
   maxHeight: '80vh',
@@ -432,21 +432,21 @@ export default function ReactTable({
             <Stack direction="row" justifyContent="flex-start" spacing={3}>
               <AnimateButton>
                 <Button
-                  color="error"
                   variant="contained"
                   type="button"
                   disabled={table.getSelectedRowModel().flatRows.map((row) => row.original).length === 0}
-                  onClick={() => setOpen({ flag: true, action: 'suspend' })}
+                  onClick={() => setOpen({ flag: true, action: listSelectButton.name1 })}
                 >
                   {listSelectButton.name1}
                 </Button>
               </AnimateButton>
               <AnimateButton>
                 <Button
+                  color="error"
                   variant="contained"
                   type="button"
                   disabled={table.getSelectedRowModel().flatRows.map((row) => row.original).length === 0}
-                  onClick={() => setOpen({ flag: true, action: 'activate' })}
+                  onClick={() => setOpen({ flag: true, action: listSelectButton.name2 })}
                 >
                   {listSelectButton.name2}
                 </Button>
@@ -456,7 +456,7 @@ export default function ReactTable({
         </Grid>
       )}
       <Modal open={open.flag} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description" >
-        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' ? style : style1} style={{width:'300px'}}>
+        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' || open.action === 'disable' || open.action === 'DISABLE' || open.action === 'ENABLE' ? style : style1} style={{width:'300px'}}>
           {open.action === 'edit' ? (
             <>
               <HandleFormInPopup />
@@ -483,8 +483,8 @@ export default function ReactTable({
             </>
           ) : (
             <Stack direction="row" justifyContent="space-around" spacing={3}>
-              <Typography id="modal-description" sx={{ mt: 2,fontSize:19 }}>
-                Are you sure, you want to {open.action} ?
+              <Typography id="modal-description" sx={{ mt: 2,fontSize:16 }}>
+                Are you sure, you want to {open.action} {open.action === listSelectButton.name1 ||open.action === listSelectButton.name2 ? "rows" : "row" }
               </Typography>
             </Stack>
           )}

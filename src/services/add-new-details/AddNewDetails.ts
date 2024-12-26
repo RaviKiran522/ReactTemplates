@@ -20,6 +20,46 @@ export const countryList = async (data: any) => {
     }
 }
 
+export const updateCountry = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateCountry", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const createState = async (data: any) => {
+    const response = await httpsPost("admin-settings/state", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const updateState = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateState", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const statesList = async (data: any) => {
+    const response = await httpsPost("admin-settings/statesList", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
 export const languageList = async (data: any) => {
     const response = await httpsPost("admin-settings/languageList", data)
     if(response) {
@@ -90,3 +130,4 @@ export const createProfession = async (data: any) => {
         return null;
     }
 }
+

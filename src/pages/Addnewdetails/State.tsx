@@ -1,20 +1,55 @@
-
 import { useEffect, useMemo, useState } from 'react';
-import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
+import ReactTable from 'ReusableComponents/ReactTable'; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import {
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+  Switch,
+  FormControlLabel,
+  Select,
+  MenuItem as DropdownItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+  RadioGroup,
+  Radio,
+  FormLabel,
+  Grid
+} from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
+import { createState, countryList, statesList, updateState } from 'services/add-new-details/AddNewDetails';
 import { height } from '@mui/system';
+import { Severity } from 'Common/utils';
+import Alert from '@mui/material/Alert';
+import { Stack } from '@mui/system';
 
 export default function State() {
-  const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
+  const [openPopup, setOpenPopup] = useState({ flag: false, action: '', stateId: null }); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-
+  const [rowCount, setRowCount] = useState(0);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [listFilter, setListFilter] = useState({
+    search: '',
+    status: null,
+    id: null,
+    countryId: null,
+    skip: 0, 
+    limit: 10
+  });
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [listLoader, setListLoader] = useState(false);
   // const [formData, setFormData] = useState({
 
   //   stateName: '',
@@ -50,55 +85,51 @@ export default function State() {
       mandatory: true,
       options: []
     },
-    selectName: {
+    country: {
       label: 'Select Country Name',
-      id: 'selectName',
-      name: 'selectName',
-      type:'select',
-      options: [
-        { id: 1, label: 'INDIA' },
-        { id: 2, label: 'AUSTRALIA' },
-        { id: 3, label: 'ENGLAND' },
-      ],
-      value: {id:null,label:''},
+      id: 'country',
+      name: 'country',
+      type: 'select',
+      options: [],
+      value: { id: null, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
-      isMulti: false,
+      isMulti: false
     },
     statusName: {
-      label: "Status",
-      id: "statusName",
-      name: "statusName",
-      type: "select",
+      label: 'Status',
+      id: 'statusName',
+      name: 'statusName',
+      type: 'select',
       options: [
         { id: 1, label: 'ENABLE' },
-        { id: 2, label: 'DISABLE' },
+        { id: 2, label: 'DISABLE' }
       ],
-      value: {id:null,label:''},
+      value: { id: null, label: '' },
       error: false,
-      helperText: "",
+      helperText: '',
       mandatory: true,
-      isMulti: false,
-    },
-
-  }
+      isMulti: false
+    }
+  };
 
   const [formData, setFormData] = useState<FormData>(formFields);
   type FormDataKeys = keyof typeof formData;
+  const [data, setData] = useState([]);
 
   const handleChange = (name: FormDataKeys, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [name]: {
         ...prev[name], // Preserve existing properties of the field
-        value,         // Update the value
-        error: false,  // Reset error state
-        helperText: "", // Clear helper text
-      },
+        value, // Update the value
+        error: false, // Reset error state
+        helperText: '' // Clear helper text
+      }
     }));
   };
-  
+
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
@@ -107,17 +138,15 @@ export default function State() {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
 
-        if (field.mandatory && !field.value && field.value == "") {
+        if (field.mandatory && !field.value && field.value == '') {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else if (field.mandatory && (field.type === "select" && (!field.value || !field.value.label))) {
+        } else if (field.mandatory && field.type === 'select' && (!field.value || !field.value.label)) {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        }
-        
-        else {
+        } else {
           newFormData[key].helperText = '';
         }
       }
@@ -127,78 +156,207 @@ export default function State() {
     return isValid;
   };
 
-  const handleFormSubmit = () => {
-    if (validate()) {
-      setOpenPopup(false);
-      const newRecord = {
-        sno: (data.length + 1).toString(),
-        counrty: formData.selectName.value.label,
-        state: formData.stateName.value,
-        // status: formData.status.value ? "Enable" : "Disable",
-        status: formData.statusName.value.label 
-      };
-  
-      setData((prevData: any) => [...prevData, newRecord]);
-  
-      console.log("Updated Data:", [...data, newRecord]); // Log updated data array
+  const getCountries = async () => {
+    const result = await countryList({});
+    console.log('countries: ', result);
+    const res = result.data.map((item: any) => ({ id: item.id, label: item.countryName }));
+    setFormData((prev) => ({
+      ...prev,
+      country: {
+        ...prev['country'], // Preserve existing properties of the field
+        options: res, // Update the value
+        error: false, // Reset error state
+        helperText: '' // Clear helper text
+      }
+    }));
+  };
+
+  const getStates = async () => {
+    const result = await statesList(listFilter);
+    console.log('states: ', result);
+    if(result.data.length > 0) {
+      setRowCount(result.totalCount);
+      const data = result.data.map((item: any, index: any) => ({
+        sno: index + 1,
+        counrty: item.country.countryName,
+        state: item.stateName,
+        status: item.status === 1 ? 'Enable' : 'Disable',
+        stateId: item.id,
+        countryId: item.country.id
+      }));
+      setData(data);
     }
   };
-  
+  console.log("data: ", data)
+  useEffect(() => {
+    getCountries();
+  }, []);
 
-  const initailData: any = [
-    { sno: "1",counrty:"INDIA",state:"ANDHRAPRADESH",status: "Enable" },
-    { sno: "2",counrty:"INDIA",state:"TELANGANA", status: "Enable" },
-    { sno: "3",counrty:"INDIA",state:"KARNATAKA", status: "Enable" },
-    { sno: "4",counrty:"INDIA",state:"ODISHA", status: "Enable" },
-    { sno: "5",counrty:"INDIA",state:"TAMILANADU", status: "Enable" },
-    { sno: "6",counrty:"INDIA",state:"BIHAR", status: "Disable" },
-    { sno: "7",counrty:"INDIA",state:"DELHI", status: "Enable" },
-    { sno: "8", counrty:"INDIA",state:"KERALA", status: "Disable" },
-    { sno: "9", counrty:"INDIA",state:"GUJARAT", status: "Enable" }
-  ];
-  const [data, setData] = useState(initailData);
+  useEffect(() => {
+    getStates();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
+  useEffect(() => {
+    if (globalFilter !== '') {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter });
+    } else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter });
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
+
+  const handleEdit = (row: any) => {
+    // Pre-fill formData with the selected row's data
+    const newFormData = _.cloneDeep(formData);
+    console.log('row: ', row);
+    // Map row values to formData
+    newFormData.country.value = newFormData.country.options.find((option) => option.label === row.counrty) || { id: null, label: '' };
+    newFormData.stateName.value = row.state;
+    newFormData.statusName.value = newFormData.statusName.options.find(
+      (option) => option.label.toUpperCase() === row.status.toUpperCase()
+    ) || { id: null, label: '' };
+
+    setFormData(newFormData); // Update formData state
+    setOpenPopup({ flag: true, action: 'update', stateId: row.stateId });
+  };
+
+  const updateCountryHandler = async (updateData: any = {}, multiple = '') => {
+    if (!multiple) {
+      let d = Object.keys(updateData).length;
+      console.log("updateData: ", updateData)
+      const updateRecord = {
+        stateName: d > 0 ? updateData?.state : formData.stateName.value,
+        status: d > 0 ? (updateData?.status === 'Enable' ? 0 : 1) : formData.statusName.value.label === 'ENABLE' ? 1 : 0,
+        id: d > 0 ? updateData.stateId : openPopup.stateId,
+        countryId: d > 0 ? updateData.countryId : formData.country.value.id,
+      };
+      const update = await updateState(updateRecord);
+      if (update.status) {
+        setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+        setIsLoading(false);
+        getStates();
+        setTimeout(() => {
+          setOpenPopup({ flag: false, action: '', stateId: null });
+          setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+          setFormData((prev) => ({
+            ...prev,
+            stateName: {
+              ...prev['stateName'], // Preserve existing properties of the field
+              value: "", // Update the value
+              error: false, // Reset error state
+              helperText: '' // Clear helper text
+            },
+            statusName: {
+              ...prev['statusName'], // Preserve existing properties of the field
+              value: { id: null, label: '' }, // Update the value
+              error: false, // Reset error state
+              helperText: '' // Clear helper text
+            },
+            country: {
+              ...prev['country'], // Preserve existing properties of the field
+              value: { id: null, label: '' }, // Update the value
+              error: false, // Reset error state
+              helperText: '' // Clear helper text
+            },
+          }));
+        }, 1500);
+      } else {
+        setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+        setIsLoading(false);
+      }
+    } else {
+      updateData?.map(async (item: any) => {
+        const updateRecord = {
+          stateName: item?.state,
+          status: item?.status === 'Enable' ? 0 : 1,
+          id: item.stateId,
+          countryId: item.countryId,
+        };
+        const update = await updateState(updateRecord);
+      });
+      setOpen({ flag: false, action: '' });
+      setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
+    }
+    getStates();
+    setTimeout(() => {
+      setOpenPopup({ flag: false, action: '', stateId: null });
+      setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    }, 1500);
+  };
+
+  const handleFormSubmit = async () => {
+    if (validate()) {
+      setIsLoading(true);
+      if (openPopup.action === 'create') {
+        const requestBody = {
+          countryId: formData.country.value.id,
+          stateName: formData.stateName.value,
+          status: formData.statusName.value.label === 'ENABLE' ? 1 : 0
+        };
+        const result = await createState(requestBody);
+        if (result.status) {
+          setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
+          setIsLoading(false);
+          getStates();
+          setTimeout(() => {
+            setOpenPopup({ flag: false, action: '', stateId: null });
+            setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+            setFormData((prev) => ({
+              ...prev,
+              stateName: {
+                ...prev['stateName'], // Preserve existing properties of the field
+                value: "", // Update the value
+                error: false, // Reset error state
+                helperText: '' // Clear helper text
+              },
+              statusName: {
+                ...prev['statusName'], // Preserve existing properties of the field
+                value: { id: null, label: '' }, // Update the value
+                error: false, // Reset error state
+                helperText: '' // Clear helper text
+              },
+              country: {
+                ...prev['country'], // Preserve existing properties of the field
+                value: { id: null, label: '' }, // Update the value
+                error: false, // Reset error state
+                helperText: '' // Clear helper text
+              },
+            }));
+          }, 1500);
+        } else {
+          setSuccessBanner({ flag: true, message: result.message, severity: Severity.Error });
+          setIsLoading(false);
+        }
+      } else {
+        updateCountryHandler();
+      }
+    }
+  };
 
   const columns = useMemo(
     () => [
-      { header: "S.NO", accessorKey: "sno" },
-      
-      { header: "State Name", accessorKey: "state" },
-      { header: "Counrty Name", accessorKey: "counrty" },
+      { header: 'S.NO', accessorKey: 'sno' },
+
+      { header: 'State Name', accessorKey: 'state' },
+      { header: 'Counrty Name', accessorKey: 'counrty' },
       {
-        header: "Status",
-        accessorKey: "status",
+        header: 'Status',
+        accessorKey: 'status',
         cell: (props: Cell<any, any>) => {
           const status = props.getValue(); // Get the value of the "status" field
           return (
             <Chip
-              color={status === "Enable" ? "success" : "error"}
+              color={status === 'Enable' ? 'success' : 'error'}
               label={status}
               size="small"
               variant="outlined" // Changed to "outlined" for better visual distinction
             />
           );
-        },
-      },
+        }
+      }
     ],
     []
   );
-  
-  const handleEdit = (row: any) => {
-    // Pre-fill formData with the selected row's data
-    const newFormData = _.cloneDeep(formData);
-  
-    // Map row values to formData
-    newFormData.selectName.value = newFormData.selectName.options.find(
-      (option) => option.label === row.counrty
-    ) || { id: null, label: '' };
-    newFormData.stateName.value = row.state;
-    newFormData.statusName.value = newFormData.statusName.options.find(
-      (option) => option.label.toUpperCase() === row.status.toUpperCase()
-    ) || { id: null, label: '' };
-  
-    setFormData(newFormData); // Update formData state
-    setOpenPopup(true); // Open dialog
-  };
+
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -207,6 +365,16 @@ export default function State() {
     setFormData(newFormData);
   };
 
+  const buttonHandler = (action: string, users: any) => {
+    if (action === 'disable') {
+      updateCountryHandler(users);
+    } else if (action === 'ENABLE') {
+      updateCountryHandler(users, 'ENABLE');
+    } else if (action === 'DISABLE') {
+      updateCountryHandler(users, 'DISABLE');
+    }
+  };
+console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -214,24 +382,38 @@ export default function State() {
       setAnchorEl(event.currentTarget);
     };
 
-    useEffect(() => {
-      console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
-    }, [rowsPerPage, pageNumber]);
-
     const handleClose = () => {
       setAnchorEl(null);
     };
-
-    
-
-
     return (
       <>
         <Button onClick={handleClick}>...</Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'delete' }); handleClose(); }}>Delete</MenuItem>
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleEdit(row);
+              handleClose();
+            }}
+          >
+            Edit
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setOpen({ flag: true, action: 'delete' });
+
+              handleClose();
+            }}
+          >
+            Delete
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setOpen({ flag: true, action: 'disable' });
+              handleClose();
+            }}
+          >
+            Disable
+          </MenuItem>
         </Menu>
       </>
     );
@@ -241,14 +423,14 @@ export default function State() {
     <>
       {/* Button to Open Popup */}
       <Grid style={{ marginBottom: '20px', textAlign: 'end' }}>
-        <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
+        <Button variant="contained" color="primary" onClick={() => setOpenPopup({ flag: true, action: 'create', stateId: null })}>
           Create State
         </Button>
-        </Grid>
+      </Grid>
 
       {/* React Table */}
       <ReactTable
-        title={"State Management"}
+        title={'State Management'}
         data={data}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
@@ -262,24 +444,39 @@ export default function State() {
         setOpen={setOpen}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
+        buttonHandler={buttonHandler}
         pageNumber={pageNumber}
-        totalPageCount={60}
+        totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        listSelectButton={{ name1: 'ENABLE', name2: 'DISABLE' }}
       />
 
       {/* Dialog for Create Form */}
-      <Dialog open={openPopup} maxWidth="sm" fullWidth>
-        <DialogTitle> Create State</DialogTitle>
+      <Dialog open={openPopup.flag} maxWidth="sm" fullWidth>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() => {
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+              }}
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle>{openPopup.action === 'create' ? 'Create State' : 'Update State'}</DialogTitle>
         <DialogContent>
-        <Grid item xs={12} padding={2} >
-            <CommonSelectField inputProps={formData.selectName} onSelectChange={handleSelectChange} />
+          <Grid item xs={12} padding={2}>
+            <CommonSelectField inputProps={formData.country} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12} padding={2}>
             <CommonInputField inputProps={formData.stateName} onChange={handleChange} />
           </Grid>
-          <Grid item xs={12} padding={2} >
+          <Grid item xs={12} padding={2}>
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
-          
 
           {/* <FormControl component="fieldset" sx={{margin:"1rem"}}>
             <FormLabel component="legend">Status</FormLabel>
@@ -304,14 +501,40 @@ export default function State() {
             </RadioGroup>
 
           </FormControl> */}
-
-
-
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={handleFormSubmit}>
-            Create
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ margin: '1rem' }}
+            onClick={() => {
+              setOpenPopup({ flag: false, action: '', stateId: null });
+              setFormData((prev) => ({
+                ...prev,
+                stateName: {
+                  ...prev['stateName'], // Preserve existing properties of the field
+                  value: "", // Update the value
+                  error: false, // Reset error state
+                  helperText: '' // Clear helper text
+                },
+                statusName: {
+                  ...prev['statusName'], // Preserve existing properties of the field
+                  value: { id: null, label: '' }, // Update the value
+                  error: false, // Reset error state
+                  helperText: '' // Clear helper text
+                },
+                country: {
+                  ...prev['country'], // Preserve existing properties of the field
+                  value: { id: null, label: '' }, // Update the value
+                  error: false, // Reset error state
+                  helperText: '' // Clear helper text
+                },
+              }));            }}
+          >
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" sx={{ margin: '1rem' }} onClick={handleFormSubmit}>
+            {openPopup.action === 'create' ? 'Create' : 'Update'}{' '}
           </Button>
         </DialogActions>
       </Dialog>

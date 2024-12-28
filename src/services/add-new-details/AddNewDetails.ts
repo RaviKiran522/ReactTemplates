@@ -60,6 +60,126 @@ export const statesList = async (data: any) => {
     }
 }
 
+export const createDistrict = async (data: any) => {
+    const response = await httpsPost("admin-settings/district", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const districtList = async (data: any) => {
+    const response = await httpsPost("admin-settings/districtsList", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const updateDistrict = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateDistrict", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const createCity = async (data: any) => {
+    const response = await httpsPost("admin-settings/city", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const cityList = async (data: any) => {
+    const response = await httpsPost("admin-settings/cityList", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const updateCity = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateCity", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const createReligion = async (data: any) => {
+    const response = await httpsPost("admin-settings/religion", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const religionList = async (data: any) => {
+    const response = await httpsPost("admin-settings/religionList", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const updateReligion = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateReligion", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const createCaste = async (data: any) => {
+    const response = await httpsPost("admin-settings/cast", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const updateCaste = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateCast", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const casteList = async (data: any) => {
+    const response = await httpsPost("admin-settings/castList", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
 export const languageList = async (data: any) => {
     const response = await httpsPost("admin-settings/languageList", data)
     if(response) {

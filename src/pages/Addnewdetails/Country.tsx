@@ -162,6 +162,7 @@ export default function Country() {
   };
 
   const updateCountryHandler = async (updateData: any = {}, multiple = "") => {
+    setIsLoading(true);
     if(!multiple) {
       let d = Object.keys(updateData).length;
       const updateRecord = {
@@ -186,16 +187,19 @@ export default function Country() {
       }
     }
     else {
+      let updateResult: any;
       updateData?.map(async (item: any) => {
         const updateRecord = {
           name: item?.country,
           status: multiple === "ENABLE" ? 1 : 0 ,
           id: item.id 
         }
-        const update = await updateCountry(updateRecord);
+        updateResult = await updateCountry(updateRecord);
       })
-      setOpen({ flag: false, action: '' });
-      setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
+
+        setOpen({ flag: false, action: '' });
+        setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+
     }
     listCountries();
     setTimeout(() => {

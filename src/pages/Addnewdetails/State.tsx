@@ -22,6 +22,7 @@ import {
   FormLabel,
   Grid
 } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
@@ -31,6 +32,7 @@ import { height } from '@mui/system';
 import { Severity } from 'Common/utils';
 import Alert from '@mui/material/Alert';
 import { Stack } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function State() {
   const [openPopup, setOpenPopup] = useState({ flag: false, action: '', stateId: null }); // State for dialog visibility
@@ -44,7 +46,7 @@ export default function State() {
     status: null,
     id: null,
     countryId: null,
-    skip: 0, 
+    skip: 0,
     limit: 10
   });
   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
@@ -172,9 +174,10 @@ export default function State() {
   };
 
   const getStates = async () => {
+    setListLoader(true);
     const result = await statesList(listFilter);
     console.log('states: ', result);
-    if(result.data.length > 0) {
+    if (result.data.length > 0) {
       setRowCount(result.totalCount);
       const data = result.data.map((item: any, index: any) => ({
         sno: index + 1,
@@ -185,9 +188,12 @@ export default function State() {
         countryId: item.country.id
       }));
       setData(data);
+      setListLoader(false);
+    } else {
+      setListLoader(false);
     }
   };
-  console.log("data: ", data)
+  console.log('data: ', data);
   useEffect(() => {
     getCountries();
   }, []);
@@ -222,12 +228,12 @@ export default function State() {
   const updateCountryHandler = async (updateData: any = {}, multiple = '') => {
     if (!multiple) {
       let d = Object.keys(updateData).length;
-      console.log("updateData: ", updateData)
+      console.log('updateData: ', updateData);
       const updateRecord = {
         stateName: d > 0 ? updateData?.state : formData.stateName.value,
         status: d > 0 ? (updateData?.status === 'Enable' ? 0 : 1) : formData.statusName.value.label === 'ENABLE' ? 1 : 0,
         id: d > 0 ? updateData.stateId : openPopup.stateId,
-        countryId: d > 0 ? updateData.countryId : formData.country.value.id,
+        countryId: d > 0 ? updateData.countryId : formData.country.value.id
       };
       const update = await updateState(updateRecord);
       if (update.status) {
@@ -241,7 +247,7 @@ export default function State() {
             ...prev,
             stateName: {
               ...prev['stateName'], // Preserve existing properties of the field
-              value: "", // Update the value
+              value: '', // Update the value
               error: false, // Reset error state
               helperText: '' // Clear helper text
             },
@@ -256,7 +262,7 @@ export default function State() {
               value: { id: null, label: '' }, // Update the value
               error: false, // Reset error state
               helperText: '' // Clear helper text
-            },
+            }
           }));
         }, 1500);
       } else {
@@ -264,17 +270,18 @@ export default function State() {
         setIsLoading(false);
       }
     } else {
+      let updateResult: any
       updateData?.map(async (item: any) => {
         const updateRecord = {
           stateName: item?.state,
           status: item?.status === 'Enable' ? 0 : 1,
           id: item.stateId,
-          countryId: item.countryId,
+          countryId: item.countryId
         };
-        const update = await updateState(updateRecord);
+        updateResult = await updateState(updateRecord);
       });
-      setOpen({ flag: false, action: '' });
-      setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
+        setOpen({ flag: false, action: '' });
+        setSuccessBanner({ flag: true, message: updateResult.message, severity: Severity.Success });
     }
     getStates();
     setTimeout(() => {
@@ -304,7 +311,7 @@ export default function State() {
               ...prev,
               stateName: {
                 ...prev['stateName'], // Preserve existing properties of the field
-                value: "", // Update the value
+                value: '', // Update the value
                 error: false, // Reset error state
                 helperText: '' // Clear helper text
               },
@@ -319,7 +326,7 @@ export default function State() {
                 value: { id: null, label: '' }, // Update the value
                 error: false, // Reset error state
                 helperText: '' // Clear helper text
-              },
+              }
             }));
           }, 1500);
         } else {
@@ -374,7 +381,7 @@ export default function State() {
       updateCountryHandler(users, 'DISABLE');
     }
   };
-console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
+  console.log('rowCount / rowsPerPage: ', rowCount, rowsPerPage);
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -427,6 +434,29 @@ console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
           Create State
         </Button>
       </Grid>
+
+      {successBanner.flag && (
+        <Stack spacing={2} sx={{ m: 2 }}>
+          <Alert
+            severity={successBanner.severity}
+            onClose={() => {
+              setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+            }}
+          >
+            {successBanner.message}
+          </Alert>
+        </Stack>
+      )}
+
+      <Backdrop
+        sx={{
+          color: 'blue',
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       {/* React Table */}
       <ReactTable
@@ -513,7 +543,7 @@ console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
                 ...prev,
                 stateName: {
                   ...prev['stateName'], // Preserve existing properties of the field
-                  value: "", // Update the value
+                  value: '', // Update the value
                   error: false, // Reset error state
                   helperText: '' // Clear helper text
                 },
@@ -528,12 +558,19 @@ console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
                   value: { id: null, label: '' }, // Update the value
                   error: false, // Reset error state
                   helperText: '' // Clear helper text
-                },
-              }));            }}
+                }
+              }));
+            }}
           >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" sx={{ margin: '1rem' }} onClick={handleFormSubmit}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ margin: '1rem' }}
+            onClick={handleFormSubmit}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
             {openPopup.action === 'create' ? 'Create' : 'Update'}{' '}
           </Button>
         </DialogActions>

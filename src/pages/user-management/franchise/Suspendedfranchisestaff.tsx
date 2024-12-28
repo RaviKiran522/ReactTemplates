@@ -181,6 +181,7 @@ export default function SuspendedFranchiseStaff() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={10}
+      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
     />
   );
 }

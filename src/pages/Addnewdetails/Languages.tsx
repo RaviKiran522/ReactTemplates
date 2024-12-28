@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Typography } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _, { debounce } from 'lodash';
@@ -175,7 +175,7 @@ export default function Languages() {
   const columns = useMemo(
     () => [
       { header: "S.NO", accessorKey: "sno" },
-      { header: "languages Name", accessorKey: "languages" },
+      { header: "Languages Name", accessorKey: "languages" },
       {
         header: "Status",
         accessorKey: "status",
@@ -204,32 +204,35 @@ export default function Languages() {
   const [rowId,setRowId]= useState(0)
   const[status,setStatus] = useState("")
 
-  const handleEdit = (row: any,action:any) => {
-    // Pre-fill formData with the selected row's data
-    const newFormData = _.cloneDeep(formData);
-    setRowId(row.id)
-    setIsLoading(false)
-    if(action == 'Status'){
-      let checkStatus = row.status == 'Disable' ? 'Enable' : 'Disable'
-      setStatus(checkStatus)
-      setStatusPopup(true)
-      setOpenPopup(false)
-      setIsEdit(false)
-    }else if(action == 'Edit'){
-      setStatusPopup(false)
-      setOpenPopup(true)
-      setIsEdit(true)
-    }
-  
-    // Map row values to formData fields
-    newFormData.languagesName.value = row.languages; // Map "country" to "countryName"
-    newFormData.statusName.value = newFormData.statusName.options.find(
-      (option) => option.label.toUpperCase() === row.status.toUpperCase()
-    ) || { id: null, label: '' };
-  
-    setFormData(newFormData); // Update formData state
-    // setOpenPopup(true); // Open dialog
-  };
+  const [selectedRow, setSelectedRow] = useState<any>(null); 
+
+ const handleEdit = (row: any, action: any) => {
+     setRowId(row.id);
+     setIsLoading(false);
+ 
+     if (action === 'Status') {
+       let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+       setStatus(checkStatus);
+       setSelectedRow(row); // Set the selected row data
+       setStatusPopup(true);
+       setOpenPopup(false);
+       setIsEdit(false);
+     } else if (action === 'Edit') {
+       setStatusPopup(false);
+       setOpenPopup(true);
+       setIsEdit(true);
+     }
+ 
+     // Pre-fill formData when editing
+     const newFormData = _.cloneDeep(formData);
+     newFormData.languagesName.value = row.languages;
+     newFormData.statusName.value =
+       newFormData.statusName.options.find(
+         (option) => option.label.toUpperCase() === row.status.toUpperCase()
+       ) || { id: null, label: '' };
+ 
+     setFormData(newFormData);
+   };
   const handleEditFormSubmit = async() =>{
     if (validate()) {
       console.log('roodkoksfodksfodf',rowId)
@@ -274,6 +277,7 @@ export default function Languages() {
           const data = result.data.map((item: any, index: any) => ({ id:item.id,sno: listFilter.skip+index+1, languages: item.languageName, status: item.status ? 'Enable' : 'Disable' }));
           setTableData(data);
         }
+        
         else {
           setTableData([]);
         }
@@ -376,7 +380,7 @@ export default function Languages() {
         <CircularProgress color="inherit" />
       </Backdrop>
       <ReactTable
-        title={'Language Management'}
+        title={'Languages Management'}
         data={tableData}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
@@ -431,25 +435,67 @@ export default function Languages() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={statusPopup}  maxWidth="sm" >
-      {successBanner.flag && (
+
+
+     <Dialog open={statusPopup} maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px', padding: '10px',
+            backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}>
+        {successBanner.flag && (
           <Stack spacing={2} sx={{ m: 2 }}>
             <Alert
               severity={successBanner.severity}
-              onClose={() => {
-                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
-              }}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
             >
               {successBanner.message}
             </Alert>
           </Stack>
         )}
-        <DialogTitle> Are you sure.you want to {status} ?</DialogTitle>
-        
-        <DialogActions style={{display:'flex',justifyContent:'space-around'}}>
-          <Button variant="contained" color="error"   onClick={onPopupCloseHandler}>Cancel</Button>
-          <Button variant="contained" color="primary"  onClick={ statusConfirmHandler} startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}>
-           Confirm
+        <DialogTitle sx={{
+          textAlign: 'center',
+          color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+          borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+        }}> Are you sure you want to {status}?</DialogTitle>
+        <DialogContent >
+          {selectedRow && (
+            <Grid  textAlign={'center'}>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Languages Name:</strong> {selectedRow.languages}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Current Status:</strong> {selectedRow.status}
+              </Typography>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+
+        }}>
+          <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+            sx={{
+              padding: '5px 10px', borderRadius: '8px',
+              fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            sx={{
+              padding: '5px 10px',
+              borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+            variant="contained" color="primary" onClick={statusConfirmHandler}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

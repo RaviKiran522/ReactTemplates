@@ -188,6 +188,7 @@ export default function FranchiseStaffList() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={10}
+      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
     />
     {invoice && (
       <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>

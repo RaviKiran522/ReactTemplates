@@ -245,7 +245,7 @@ export default function Hobbies() {
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
         totalPageCount={60}
-
+        listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
       />
 
       {/* Dialog for Create Form */}
@@ -259,9 +259,6 @@ export default function Hobbies() {
           <Grid item xs={12} padding={2} >
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
-        
-
-
 
         </DialogContent>
         <DialogActions>

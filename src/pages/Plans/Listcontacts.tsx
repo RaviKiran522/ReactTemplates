@@ -126,6 +126,7 @@ export default function ListContacts() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={60}
+      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
     />
   );
 }

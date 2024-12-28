@@ -103,6 +103,7 @@ export default function BranchSales() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={60}
+      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
     />
 
   );

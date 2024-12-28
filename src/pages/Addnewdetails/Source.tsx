@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Typography } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _, { debounce } from 'lodash';
@@ -18,17 +18,20 @@ export default function Source() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
-     const [pageNumber, setPageNumber] = useState(1);
-     const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
-     const [isLoading, setIsLoading] = useState(false);
-     const [listLoader, setListLoader] = useState(false);
-     const [listFilter, setListFilter] = useState({status: null, id: null, search: "", skip: 0, limit: 10});
-     const [tableData, setTableData] = useState([]);
-     const [rowCount, setRowCount] = useState(0);
-     const [globalFilter, setGlobalFilter] = useState('');
-     const [isEdit,setIsEdit] = useState(false)
+  const [pageNumber, setPageNumber] = useState(1);
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [listLoader, setListLoader] = useState(false);
+  const [listFilter, setListFilter] = useState({ status: null, id: null, search: "", skip: 0, limit: 10 });
+  const [tableData, setTableData] = useState([]);
+  const [rowCount, setRowCount] = useState(0);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [isEdit, setIsEdit] = useState(false)
+  const [rowId, setRowId] = useState()
+  const [status, setStatus] = useState("")
+  const [statusPopup, setStatusPopup] = useState(false)
+  const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
-  
   interface FormField {
     label: any;
     id: any;
@@ -68,7 +71,7 @@ export default function Source() {
         { id: 1, label: 'ENABLE' },
         { id: 2, label: 'DISABLE' },
       ],
-      value: {id:null,label:''},
+      value: { id: null, label: '' },
       error: false,
       helperText: "",
       mandatory: true,
@@ -94,12 +97,12 @@ export default function Source() {
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
-  
+
     // Check each form field for validity
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
-  
+
         if (field.mandatory && (!field.value || field.value === "")) {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
@@ -115,79 +118,79 @@ export default function Source() {
         }
       }
     }
-  
+
     // Set the updated formData
     setFormData(newFormData);
-  
+
     // Return the final validation result
     return isValid;
   };
-   const handleFormSubmit = async () => {
-      if (validate()) {
-        const newRecord = {
-          name: formData.sourceName.value,
-          status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
-        };
-        setIsLoading(true);
-        const result = await createSource(newRecord);
-        if (result.status) {
-          setSuccessBanner({
-            flag: true,
-            message: result.message,
-            severity: Severity.Success,
-          });
-          setIsLoading(false);
-          // await listLanguages(); // Explicitly call here
-          setTimeout(() => {
-            setOpenPopup(false);
-            setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
-            setFormData(formFields);
-          }, 1500);
-        } else {
-          setSuccessBanner({
-            flag: true,
-            message: result.message,
-            severity: Severity.Error,
-          });
-          setIsLoading(false);
-        }
+  const handleFormSubmit = async () => {
+    if (validate()) {
+      const newRecord = {
+        name: formData.sourceName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+      };
+      setIsLoading(true);
+      const result = await createSource(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        // await listLanguages(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
       }
-    };
-     const listSource = async () => {
-          setListLoader(true);
-          const result = await sourceList(listFilter);
-          if (result.status) {
-            setListLoader(false);
-            setRowCount(result.totalCount);
-            if(result.data.length>0) {
-              const data = result.data.map((item: any, index: any) => ({ id:item.id,sno: listFilter.skip+index+1, source: item.sourceName, status: item.status ? 'Enable' : 'Disable' }));
-              setTableData(data);
-            }
-            else {
-              setTableData([]);
-            }
-          }
-          else {
-            setListLoader(false);
-          }
-        }
-
-    const debouncedListSource = useCallback(
-        debounce(() => listSource(), 500), // Adjust debounce time as needed
-        []
-      );
-
-    useEffect(() => {
-      if(globalFilter !== "") {
-        setListFilter({...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter})
+    }
+  };
+  const listSource = async () => {
+    setListLoader(true);
+    const result = await sourceList(listFilter);
+    if (result.status) {
+      setListLoader(false);
+      setRowCount(result.totalCount);
+      if (result.data.length > 0) {
+        const data = result.data.map((item: any, index: any) => ({ id: item.id, sno: listFilter.skip + index + 1, source: item.sourceName, status: item.status ? 'Enable' : 'Disable' }));
+        setTableData(data);
       }
       else {
-        setListFilter({...listFilter, skip: (pageNumber-1)*rowsPerPage, limit: rowsPerPage, search: globalFilter})
+        setTableData([]);
       }
-    }, [rowsPerPage, pageNumber, globalFilter]);
-    useEffect(() => {
-      debouncedListSource();
-    }, [listFilter.search, listFilter.skip, listFilter.limit]);
+    }
+    else {
+      setListLoader(false);
+    }
+  }
+
+  const debouncedListSource = useCallback(
+    debounce(() => listSource(), 500), // Adjust debounce time as needed
+    []
+  );
+
+  useEffect(() => {
+    if (globalFilter !== "") {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+    }
+    else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
+  useEffect(() => {
+    debouncedListSource();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
   const initailData: any = [
     { sno: "1", source: "FRIEND", status: "Enable" },
     { sno: "2", source: "NEWS PAPER", status: "Disable" },
@@ -224,57 +227,69 @@ export default function Source() {
     []
   );
 
-  const [rowId,setRowId] = useState()
-  
-  const handleEdit = (row: any) => {
-    // Pre-fill formData with the selected row's data
+
+
+  const handleEdit = (row: any, action: any) => {
+    setRowId(row.id);
+    setIsLoading(false);
+
+    if (action === 'Status') {
+      let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+      setStatus(checkStatus);
+      setSelectedRow(row); // Set the selected row data
+      setStatusPopup(true);
+      setOpenPopup(false);
+      setIsEdit(false);
+    } else if (action === 'Edit') {
+      setStatusPopup(false);
+      setOpenPopup(true);
+      setIsEdit(true);
+    }
+
+    // Pre-fill formData when editing
     const newFormData = _.cloneDeep(formData);
-    setRowId(row.id)
-    setIsEdit(true)
-  
-    // Map row values to formData
     newFormData.sourceName.value = row.source;
-    newFormData.statusName.value = newFormData.statusName.options.find(
-      (option) => option.label.toUpperCase() === row.status.toUpperCase()
-    ) || { id: null, label: '' };
-  
-    setFormData(newFormData); // Update formData state
-    setOpenPopup(true); // Open dialog
+    newFormData.statusName.value =
+      newFormData.statusName.options.find(
+        (option) => option.label.toUpperCase() === row.status.toUpperCase()
+      ) || { id: null, label: '' };
+
+    setFormData(newFormData);
   };
-   const handleEditFormSubmit = async() =>{
-      if (validate()) {
-        console.log('roodkoksfodksfodf',rowId)
-        const newRecord = {
-          name: formData.sourceName.value,
-          status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
-          id:rowId
-        };
-        setIsLoading(true);
-        const result = await editSource(newRecord);
-        if (result.status) {
-          setSuccessBanner({
-            flag: true,
-            message: result.message,
-            severity: Severity.Success,
-          });
-          setIsLoading(false);
-          await listSource(); // Explicitly call here
-          setTimeout(() => {
-            setOpenPopup(false);
-            setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
-            setFormData(formFields);
-            setIsEdit(false)
-          }, 1500);
-        } else {
-          setSuccessBanner({
-            flag: true,
-            message: result.message,
-            severity: Severity.Error,
-          });
-          setIsLoading(false);
-        }
+  const handleEditFormSubmit = async () => {
+    if (validate()) {
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        name: formData.sourceName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+        id: rowId
+      };
+      setIsLoading(true);
+      const result = await editSource(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await listSource(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
       }
     }
+  }
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -298,20 +313,63 @@ export default function Source() {
       setAnchorEl(null);
     };
 
-    
+
 
 
     return (
       <>
         <Button onClick={handleClick}>...</Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem> */}
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row, 'Edit'); handleClose(); }}>Edit</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
         </Menu>
       </>
     );
   };
+
+
+  const onPopupCloseHandler = () => {
+    setOpenPopup(false)
+    setFormData(formFields);
+    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    setStatusPopup(false)
+  }
+
+  const statusConfirmHandler = async () => {
+    if (validate()) {
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        name: formData.sourceName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+        id: rowId
+      };
+      setIsLoading(true);
+      const result = await editSource(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await listSource(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+          setStatusPopup(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    }
+  }
 
   return (
     <>
@@ -320,8 +378,8 @@ export default function Source() {
         <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
           Create Source
         </Button>
-        </Grid>
-        <Backdrop
+      </Grid>
+      <Backdrop
         sx={{
           color: "blue",
           zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -332,31 +390,31 @@ export default function Source() {
       </Backdrop>
       {/* React Table */}
       <ReactTable
-         title={'Source Management'}
-         data={tableData}
-         columns={columns}
-         actions={(row: any) => <ActionMenu row={row} />}
-         includeSearch={true}
-         needCSV={true}
-         pagination={'top'}
-         columnVisibility={true}
-         needCheckBoxes={true}
-         needActivateAndSuspendButtons={true}
-         open={open}
-         setOpen={setOpen}
-         setRowsPerPage={setRowsPerPage}
-         setPageNumber={setPageNumber}
-         pageNumber={pageNumber}
-         totalPageCount={Math.ceil(rowCount/rowsPerPage)}  
-         globalFilter={globalFilter}
-         setGlobalFilter={setGlobalFilter}
-         listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
+        title={'Source Management'}
+        data={tableData}
+        columns={columns}
+        actions={(row: any) => <ActionMenu row={row} />}
+        includeSearch={true}
+        needCSV={true}
+        pagination={'top'}
+        columnVisibility={true}
+        needCheckBoxes={true}
+        needActivateAndSuspendButtons={true}
+        open={open}
+        setOpen={setOpen}
+        setRowsPerPage={setRowsPerPage}
+        setPageNumber={setPageNumber}
+        pageNumber={pageNumber}
+        totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
 
       />
 
       {/* Dialog for Create Form */}
       <Dialog open={openPopup} maxWidth="sm" fullWidth>
-      {successBanner.flag && (
+        {successBanner.flag && (
           <Stack spacing={2} sx={{ m: 2 }}>
             <Alert
               severity={successBanner.severity}
@@ -381,9 +439,73 @@ export default function Source() {
 
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
+          <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
             {isEdit ? 'Edit' : 'Create'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for Status popup */}
+      <Dialog open={statusPopup} maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px', padding: '10px',
+            backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle sx={{
+          textAlign: 'center',
+          color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+          borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+        }}> Are you sure you want to {status}?</DialogTitle>
+        <DialogContent >
+          {selectedRow && (
+            <Grid  textAlign={'center'}>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Source Name:</strong> {selectedRow.source}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Current Status:</strong> {selectedRow.status}
+              </Typography>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+
+        }}>
+          <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+            sx={{
+              padding: '5px 10px', borderRadius: '8px',
+              fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            sx={{
+              padding: '5px 10px',
+              borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+            variant="contained" color="primary" onClick={statusConfirmHandler}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

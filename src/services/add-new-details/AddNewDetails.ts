@@ -2,7 +2,7 @@ import { httpsGet, httpsPost, httpsPatch, httpsDelete } from "services/HttpsCall
 
 export const createCountry = async (data: any) => {
     const response = await httpsPost("admin-settings/country", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -12,7 +12,7 @@ export const createCountry = async (data: any) => {
 
 export const countryList = async (data: any) => {
     const response = await httpsPost("admin-settings/countryList", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -182,7 +182,7 @@ export const casteList = async (data: any) => {
 
 export const languageList = async (data: any) => {
     const response = await httpsPost("admin-settings/languageList", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -192,7 +192,7 @@ export const languageList = async (data: any) => {
 
 export const createLanguage = async (data: any) => {
     const response = await httpsPost("admin-settings/language", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -202,7 +202,7 @@ export const createLanguage = async (data: any) => {
 
 export const editLanguage = async (data: any) => {
     const response = await httpsPost("admin-settings/updateLanguage", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -213,7 +213,7 @@ export const editLanguage = async (data: any) => {
 
 export const createSource = async (data: any) => {
     const response = await httpsPost("admin-settings/source", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -223,7 +223,7 @@ export const createSource = async (data: any) => {
 
 export const sourceList = async (data: any) => {
     const response = await httpsPost("admin-settings/sourceList", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -233,7 +233,7 @@ export const sourceList = async (data: any) => {
 
 export const editSource = async (data: any) => {
     const response = await httpsPost("admin-settings/updateSource", data)
-    if(response) {
+    if (response) {
         return response;
     }
     else {
@@ -242,8 +242,87 @@ export const editSource = async (data: any) => {
 }
 
 export const createProfession = async (data: any) => {
-    const response = await httpsPost("admin-settings/updateSource", data)
-    if(response) {
+    const response = await httpsPost("admin-settings/profession", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listProfession = async (data: any) => {
+    const response = await httpsPost("admin-settings/professionList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+export const editProfession = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateProfession", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const createUniversitys = async (data: any) => {
+    const response = await httpsPost("admin-settings/universities", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listUniversitys = async (data: any) => {
+    const response = await httpsPost("admin-settings/universitiesList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editUniversitys = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateUniversities", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const createDesingation = async (data: any) => {
+    const response = await httpsPost("admin-settings/designation", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listDesingation = async (data: any) => {
+    const response = await httpsPost("admin-settings/designationList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editDesingation = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateDesignation", data)
+    if (response) {
         return response;
     }
     else {

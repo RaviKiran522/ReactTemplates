@@ -180,6 +180,7 @@ export default function BlockedBranchStaff() {
       setPageNumber={setPageNumber}
       pageNumber={pageNumber}
       totalPageCount={10}
+      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
     />
   );
 }

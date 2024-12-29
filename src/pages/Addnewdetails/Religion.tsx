@@ -345,7 +345,7 @@ export default function Religion() {
     <>
       {/* Button to Open Popup */}
       <Grid style={{ marginBottom: '20px', textAlign: 'end' }}>
-        <Button variant="contained" color="primary" onClick={() => setOpenPopup({ flag: false, action: '', religionId: null })}>
+        <Button variant="contained" color="primary" onClick={() => setOpenPopup({ flag: true, action: '', religionId: null })}>
           Create Religion
         </Button>
       </Grid>

@@ -157,6 +157,7 @@ export default function ReactTable({
   listSelectButton
 }: any) {
   //const [open, setOpen] = useState({ flag: false, action: '' });
+
   const [rowdata, setRowdata] = useState<any>({});
   const [columnFilters, setColumnFilters] = useState<any>([]);
   const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -541,4 +542,8 @@ export default function ReactTable({
       </Modal>
     </>
   );
+}
+
+ReactTable.defaultProps = {
+  listSelectButton: { name1: 'ENABLE', name2: 'DISABLE' }
 }

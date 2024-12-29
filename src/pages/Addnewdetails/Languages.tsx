@@ -128,13 +128,13 @@ export default function Languages() {
     return isValid;
   };
   
-  const debouncedListLanguages = useCallback(
-    debounce(() => listLanguages(), 500), // Adjust debounce time as needed
-    []
-  );
+  // const debouncedListLanguages = useCallback(
+  //   debounce(() => listLanguages(), 500), // Adjust debounce time as needed
+  //   []
+  // );
   
   useEffect(() => {
-    debouncedListLanguages();
+    listLanguages();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
   
   const handleFormSubmit = async () => {
@@ -269,6 +269,7 @@ export default function Languages() {
   }
    const listLanguages = async () => {
       setListLoader(true);
+      console.log('listFilter......',listFilter)
       const result = await languageList(listFilter);
       if (result.status) {
         setListLoader(false);
@@ -292,6 +293,7 @@ export default function Languages() {
       }
       else {
         setListFilter({...listFilter, skip: (pageNumber-1)*rowsPerPage, limit: rowsPerPage, search: globalFilter})
+        console.log({...listFilter, skip: (pageNumber-1)*rowsPerPage, limit: rowsPerPage, search: globalFilter})
       }
     }, [rowsPerPage, pageNumber, globalFilter]);
    

@@ -2,17 +2,30 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Backdrop, CircularProgress, Stack, Alert } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
+import { Severity } from 'Common/utils';
+import { createEducation, listEducation } from 'services/add-new-details/AddNewDetails';
 
 export default function Education() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+    const [isLoading, setIsLoading] = useState(false);
+    const [listLoader, setListLoader] = useState(false);
+    const [listFilter, setListFilter] = useState({ status: null, id: null, search: "", skip: 0, limit: 10 });
+    const [tableData, setTableData] = useState([]);
+    const [rowCount, setRowCount] = useState(0);
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [isEdit, setIsEdit] = useState(false)
+    const [statusPopup, setStatusPopup] = useState(false)
+    const [rowId, setRowId] = useState(0)
+    const [status, setStatus] = useState("")
 
  
   interface FormField {
@@ -109,23 +122,43 @@ export default function Education() {
     // Return the final validation result
     return isValid;
   };
-  const handleFormSubmit = () => {
+
+  useEffect(() => {
+    listeducation();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
+
+  const handleFormSubmit = async () => {
     if (validate()) {
-      // Only proceed if validation is successful
-      setOpenPopup(false);
-  
-      console.log("Form Data: ", formData);
-  
       const newRecord = {
-        sno: (data.length + 1).toString(),
-        education: formData.educationName.value, // Defaulting religion to B.tech
-        status: formData.statusName.value.label // Defaulting status to Enable
+        name: formData.educationName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+      }
+     setIsLoading(true);
+          const result = await createEducation(newRecord);
+          if (result.status) {
+            setSuccessBanner({
+              flag: true,
+              message: result.message,
+              severity: Severity.Success,
+            });
+            setIsLoading(false);
+            await listeducation(); // Explicitly call here
+            setTimeout(() => {
+              setOpenPopup(false);
+              setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+              setFormData(formFields);
+            }, 1500);
+          } else {
+            setSuccessBanner({
+              flag: true,
+              message: result.message,
+              severity: Severity.Error,
+            });
+            setIsLoading(false);
+          }
+        }
       };
-  
-      setData([...data, newRecord]); // Add the new record to the data array
-      console.log("Updated Data: ", data); // Log the updated array
-    }
-  };
 
   const initailData: any = [
     { sno: "1", education: "Btech", status: "Enable" },
@@ -162,6 +195,33 @@ export default function Education() {
     ],
     []
   );
+   const listeducation = async () => {
+      setListLoader(true);
+      const result = await listEducation(listFilter);
+      if (result.status) {
+        setListLoader(false);
+        setRowCount(result.totalCount);
+        if (result.data.length > 0) {
+          const data = result.data.map((item: any, index: any) => ({ id: item.id, sno: listFilter.skip + index + 1, education: item.educationName, status: item.status ? 'Enable' : 'Disable' }));
+          setTableData(data);
+        }
+  
+        else {
+          setTableData([]);
+        }
+      }
+      else {
+        setListLoader(false);
+      }
+    }
+    useEffect(() => {
+      if (globalFilter !== "") {
+        setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+      }
+      else {
+        setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+      }
+    }, [rowsPerPage, pageNumber, globalFilter]);
   
   const handleEdit = (row: any) => {
     // Pre-fill formData with the selected row's data
@@ -223,10 +283,22 @@ export default function Education() {
         </Button>
       </Grid>
 
+      {/* Backdrop */}
+      <Backdrop
+        sx={{
+          color: "blue",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      {/* React Table */}
+
       {/* React Table */}
       <ReactTable
         title={"Education Management"}
-        data={data}
+        data={tableData}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
         includeSearch={true}
@@ -240,11 +312,26 @@ export default function Education() {
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
-        totalPageCount={60}
+        totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
       />
 
       {/* Dialog for Create Form */}
       <Dialog open={openPopup}  maxWidth="sm" fullWidth>
+      {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() => {
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+              }}
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
         <DialogTitle> Create Education</DialogTitle>
         <DialogContent>
 

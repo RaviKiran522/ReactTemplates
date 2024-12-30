@@ -175,10 +175,10 @@ export default function Source() {
     }
   }
 
-  const debouncedListSource = useCallback(
-    debounce(() => listSource(), 500), // Adjust debounce time as needed
-    []
-  );
+  // const debouncedListSource = useCallback(
+  //   debounce(() => listSource(), 500), // Adjust debounce time as needed
+  //   []
+  // );
 
   useEffect(() => {
     if (globalFilter !== "") {
@@ -188,8 +188,9 @@ export default function Source() {
       setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
     }
   }, [rowsPerPage, pageNumber, globalFilter]);
+
   useEffect(() => {
-    debouncedListSource();
+    listSource();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
   const initailData: any = [
     { sno: "1", source: "FRIEND", status: "Enable" },

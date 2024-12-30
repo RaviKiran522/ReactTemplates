@@ -522,13 +522,13 @@ export default function Professions() {
     return isValid;
   };
 
-  const debouncedListLanguages = useCallback(
-    debounce(() => professionList(), 500), // Adjust debounce time as needed
-    []
-  );
+  // const debouncedListLanguages = useCallback(
+  //   debounce(() => professionList(), 500), // Adjust debounce time as needed
+  //   []
+  // );
 
   useEffect(() => {
-    debouncedListLanguages();
+    professionList();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
   const handleFormSubmit = async () => {

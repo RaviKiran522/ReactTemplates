@@ -194,6 +194,7 @@ export default function State() {
     }
   };
   console.log('data: ', data);
+  
   useEffect(() => {
     getCountries();
   }, []);

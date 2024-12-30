@@ -128,13 +128,13 @@ export default function Designations() {
     return isValid;
   };
 
-  const debouncedListLanguages = useCallback(
-    debounce(() => designationlist(), 500), // Adjust debounce time as needed
-    []
-  );
+  // const debouncedListLanguages = useCallback(
+  //   debounce(() => designationlist(), 500), // Adjust debounce time as needed
+  //   []
+  // );
 
   useEffect(() => {
-    debouncedListLanguages();
+    designationlist();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
   const handleFormSubmit = async () => {
@@ -368,7 +368,6 @@ export default function Designations() {
         </Button>
       </Grid>
 
-      {/* React Table */}
       <Backdrop
         sx={{
           color: "blue",
@@ -378,6 +377,8 @@ export default function Designations() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      {/* React Table */}
+      
       <ReactTable
         title={'Designations Management'}
         data={tableData}

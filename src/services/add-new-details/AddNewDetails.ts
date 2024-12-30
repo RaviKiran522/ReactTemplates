@@ -330,3 +330,159 @@ export const editDesingation = async (data: any) => {
     }
 }
 
+export const createPropertyDetails = async (data: any) => {
+    const response = await httpsPost("admin-settings/property", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listPropertyDetails = async (data: any) => {
+    const response = await httpsPost("admin-settings/propertiesList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editPropertyDetails = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateProperty", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+
+export const createInterests = async (data: any) => {
+    const response = await httpsPost("admin-settings/interest", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listInterests = async (data: any) => {
+    const response = await httpsPost("admin-settings/interestsList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editinterests = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateInterest", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+export const createHobbies = async (data: any) => {
+    const response = await httpsPost("admin-settings/hobbies", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listHobbies = async (data: any) => {
+    const response = await httpsPost("admin-settings/hobbiesList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editHobbies = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateHobbies", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+
+export const createBlockedReasons = async (data: any) => {
+    const response = await httpsPost("admin-settings/reasons", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listBlockedReasons = async (data: any) => {
+    const response = await httpsPost("admin-settings/reasonsList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editBlockedReasons = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateReason", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+
+export const createEducation = async (data: any) => {
+    const response = await httpsPost("admin-settings/education", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listEducation = async (data: any) => {
+    const response = await httpsPost("admin-settings/educationList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editEducation = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateEducation", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}

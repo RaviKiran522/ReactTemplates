@@ -141,7 +141,7 @@ export default function University() {
           severity: Severity.Success,
         });
         setIsLoading(false);
-        // await univercitylists(); // Explicitly call here
+        await universityList(); // Explicitly call here
         setTimeout(() => {
           setOpenPopup(false);
           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
@@ -186,10 +186,10 @@ export default function University() {
 
   console.log("tableData", tableData);
 
-  const debouncedListSource = useCallback(
-    debounce(() => universityList(), 500), // Adjust debounce time as needed
-    []
-  );
+  // const debouncedListSource = useCallback(
+  //   debounce(() => universityList(), 500), // Adjust debounce time as needed
+  //   []
+  // );
 
   useEffect(() => {
     if (globalFilter !== "") {
@@ -200,7 +200,7 @@ export default function University() {
     }
   }, [rowsPerPage, pageNumber, globalFilter]);
   useEffect(() => {
-    debouncedListSource();
+    universityList();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
 

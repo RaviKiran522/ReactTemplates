@@ -37,7 +37,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 export default function State() {
   const [openPopup, setOpenPopup] = useState({ flag: false, action: '', stateId: null }); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [rowsPerPage, setRowsPerPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -240,7 +240,6 @@ export default function State() {
       if (update.status) {
         setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
         setIsLoading(false);
-        getStates();
         setTimeout(() => {
           setOpenPopup({ flag: false, action: '', stateId: null });
           setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
@@ -282,7 +281,7 @@ export default function State() {
         updateResult = await updateState(updateRecord);
       });
         setOpen({ flag: false, action: '' });
-        setSuccessBanner({ flag: true, message: updateResult.message, severity: Severity.Success });
+        setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
     }
     getStates();
     setTimeout(() => {
@@ -420,7 +419,7 @@ export default function State() {
               handleClose();
             }}
           >
-            Disable
+            {row.status == 'Enable' ? 'Disable' : 'Enable'}
           </MenuItem>
         </Menu>
       </>

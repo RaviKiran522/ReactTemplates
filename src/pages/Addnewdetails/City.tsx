@@ -37,7 +37,7 @@ import { countryList, statesList, districtList, createCity, cityList, updateCity
 export default function District() {
   const [openPopup, setOpenPopup] = useState({ flag: false, action: '', cityId: null }); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [rowsPerPage, setRowsPerPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -293,7 +293,6 @@ export default function District() {
       if (update.status) {
         setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
         setIsLoading(false);
-        getCityList();
         setTimeout(() => {
           setOpenPopup({ flag: false, action: '', cityId: null });
           setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
@@ -318,7 +317,7 @@ export default function District() {
         updateResult = await updateCity(updateRecord);
       });
       setOpen({ flag: false, action: '' });
-      setSuccessBanner({ flag: true, message: updateResult.message, severity: Severity.Success });
+      setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
     }
     getCityList();
     setTimeout(() => {

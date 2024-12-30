@@ -72,11 +72,8 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate(`/login`, {
-        state: {
-          from: ''
-        }
-      });
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('refToken');
     } catch (err) {
       console.error(err);
     }

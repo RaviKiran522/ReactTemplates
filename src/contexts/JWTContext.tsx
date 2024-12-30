@@ -19,8 +19,8 @@ const chance = new Chance();
 
 // constant
 const initialState: AuthProps = {
-  isLoggedIn: false,
-  isInitialized: false,
+  isLoggedIn: (sessionStorage.getItem("token") !== "" && sessionStorage.getItem("token") !== undefined && sessionStorage.getItem("token") !== null ? true : false) || false,
+  isInitialized: (sessionStorage.getItem("token") !== "" && sessionStorage.getItem("token") !== undefined && sessionStorage.getItem("token") !== null ? true : false) ||false,
   user: null
 };
 
@@ -55,23 +55,20 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const serviceToken = window.localStorage.getItem('serviceToken');
-        if (serviceToken && verifyToken(serviceToken)) {
-          setSession(serviceToken);
-          const response = await axios.get('/api/account/me');
-          const { user } = response.data;
+        const serviceToken = window.sessionStorage.getItem('token');
+        if (serviceToken === "" || serviceToken === undefined || serviceToken === null) {
           dispatch({
             type: LOGIN,
             payload: {
               isLoggedIn: true,
-              user
             }
           });
-        } else {
-          dispatch({
-            type: LOGOUT
-          });
-        }
+        // } else {
+        //   console.log("logou called")
+        //   dispatch({
+        //     type: LOGOUT
+        //   });
+         }
       } catch (err) {
         console.error(err);
         dispatch({

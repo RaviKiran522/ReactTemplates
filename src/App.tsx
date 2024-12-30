@@ -10,7 +10,7 @@ import ScrollTop from 'components/ScrollTop';
 import Customization from 'components/Customization';
 import Snackbar from 'components/@extended/Snackbar';
 import Notistack from 'components/third-party/Notistack';
-
+import AutoLogout from 'ReusableComponents/AutoLogout'
 // auth-provider
 import { JWTProvider as AuthProvider } from 'contexts/JWTContext';
 // import { FirebaseProvider as AuthProvider } from 'contexts/FirebaseContext';
@@ -28,6 +28,7 @@ export default function App() {
             <AuthProvider>
               <>
                 <Notistack>
+                  <AutoLogout />
                   <RouterProvider router={router} />
                   <Customization />
                   <Snackbar />

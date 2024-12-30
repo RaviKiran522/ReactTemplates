@@ -34,7 +34,7 @@ import { Severity } from 'Common/utils';
 export default function Religion() {
   const [openPopup, setOpenPopup] = useState({ flag: false, action: '', religionId: null }); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [rowsPerPage, setRowsPerPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [data, setData] = useState([]);
   const [listLoader, setListLoader] = useState(false);

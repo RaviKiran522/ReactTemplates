@@ -529,6 +529,17 @@ export const createOccuption = async (data: any) => {
     }
 }
 
+
+export const editOccuption = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateOccupation", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
 export const listOccuption = async (data: any) => {
     const response = await httpsPost("admin-settings/occupationList", data)
     if (response) {
@@ -539,8 +550,18 @@ export const listOccuption = async (data: any) => {
     }
 }
 
-export const editOccuption = async (data: any) => {
-    const response = await httpsPost("admin-settings/updateOccupation", data)
+export const createBranch = async (data: any) => {
+    const response = await httpsPost("user-management/branch", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const branchesList = async (data: any) => {
+    const response = await httpsPost("user-management/branchList", data)
     if (response) {
         return response;
     }

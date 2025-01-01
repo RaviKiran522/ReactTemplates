@@ -1,20 +1,61 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable";  // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem } from '@mui/material';
+import {  Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
 import Addpayment from '../ActionsPopUps/Addpayment';
 import BranchCreateInvoice from '../ActionsPopUps/CreateinvoiceBranch';
+import { Severity } from 'Common/utils';
+import Alert from '@mui/material/Alert';
+import { Stack } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+import { branchesList } from 'services/add-new-details/AddNewDetails';
 
 // The UsersList component now passes actions to the ReactTable component
 export default function BranchesList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [show,setShow] = useState(false);
   const [invoice,setInvoice] = useState(false)
-  const [rowsPerPage, setRowsPerPage] = useState(0);
-  const [pageNumber, setPageNumber] = useState(1);
+ const [rowsPerPage, setRowsPerPage] = useState(0);
+   const [pageNumber, setPageNumber] = useState(1);
+   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+   const [isLoading, setIsLoading] = useState(false);
+   const [listLoader, setListLoader] = useState(false);
+   const [listFilter, setListFilter] = useState({ status: null, id: null, search: '', skip: 0, limit: 10 });
+   const [tableData, setTableData] = useState([]);
+   const [rowCount, setRowCount] = useState(0);
+   const [globalFilter, setGlobalFilter] = useState('');
+    const listBranches = async () => {
+       setListLoader(true);
+       const result = await branchesList(listFilter);
+       if (result.status) {
+         setListLoader(false);
+         setRowCount(result.totalCount);
+         if (result.data.length > 0) {
+           const data = result.data.map((item: any, index: any) => ({ empId: "4321", name: item.branchName, officeNumber: item.phoneNumber, role: "poiu", branch: "gfds", status: item.status ? 'Enable' : 'Disable', }));
+           setTableData(data);
+         } else {
+           setTableData([]);
+         }
+       } else {
+         setListLoader(false);
+       }
+     };
+   useEffect(() => {
+    listBranches();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+  console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
+
+  useEffect(() => {
+    if (globalFilter !== '') {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter });
+    } else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter });
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
   const data: any = [
     { empId: "4321", name: "vamsi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "1234", name: "ravi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Complicated" },
@@ -111,11 +152,11 @@ export default function BranchesList() {
 
   const columns = useMemo(
     () => [
-      { header: 'Employee ID', accessorKey: 'empId' },
-      { header: 'Name', accessorKey: 'name' },
+      // { header: 'Employee ID', accessorKey: 'empId' },
+      { header: 'Branch Name', accessorKey: 'name' },
       { header: 'Office Number', accessorKey: 'officeNumber' },
-      { header: 'Role', accessorKey: 'role' },
-      { header: 'Branch', accessorKey: 'branch' },
+      // { header: 'Role', accessorKey: 'role' },
+      // { header: 'Branch', accessorKey: 'branch' },
       {
         header: 'Status',
         accessorKey: 'status',
@@ -146,26 +187,36 @@ export default function BranchesList() {
 
   return (
     <>
+      <Backdrop
+        sx={{
+          color: 'blue',
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     <ReactTable
-      title={"Branches"}
-      data={data}
-      columns={columns}
-      actions={(row: any) => <ActionMenu row={row} />}
-      includeSearch={true}
-      needCSV={true}
-      pagination={'top'}
-      columnVisibility={true}
-      needCheckBoxes={true}
-      needActivateAndSuspendButtons={true}
-      buttonHandler={buttonHandler}
-      open = {open}
-      setOpen = {setOpen}
-      HandleFormInPopup={SampleForm}
-      setRowsPerPage={setRowsPerPage}
-      setPageNumber={setPageNumber}
-      pageNumber={pageNumber}
-      totalPageCount={60}
-      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
+     title={'Braches'}
+     data={tableData}
+     columns={columns}
+     actions={(row: any) => <ActionMenu row={row} />}
+     includeSearch={true}
+     needCSV={true}
+     pagination={'top'}
+     columnVisibility={true}
+     needCheckBoxes={true}
+     needActivateAndSuspendButtons={true}
+     open={open}
+     setOpen={setOpen}
+     setRowsPerPage={setRowsPerPage}
+     setPageNumber={setPageNumber}
+     buttonHandler={buttonHandler}
+     pageNumber={pageNumber}
+     totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+     globalFilter={globalFilter}
+     setGlobalFilter={setGlobalFilter}
+     listSelectButton={{ name1: 'ENABLE', name2: 'DISABLE' }}
     />
 
 

@@ -1,41 +1,38 @@
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Typography } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Severity } from 'Common/utils';
-import { createCaste, updateCaste, casteList } from '../../services/add-new-details/AddNewDetails';
+import Alert from '@mui/material/Alert';
+import { Stack } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from "@mui/material/Backdrop";
+import { createCaste, editCaste, listcaste } from 'services/add-new-details/AddNewDetails';
+
+
 export default function Caste() {
-  const [openPopup, setOpenPopup] = useState({ flag: false, action: '', casteId: null }); // State for dialog visibility
+  const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [listLoader, setListLoader] = useState(false);
-  //const [data, setData] = useState([]);
-  const [listFilter, setListFilter] = useState({
-    search: '',
-    status: null,
-    id: null,
-    countryId: null,
-    stateId: null,
-    districtId: null,
-    skip: 0,
-    limit: 10
-  });
+  const [listFilter, setListFilter] = useState({ status: null, id: null, search: "", skip: 0, limit: 10 });
+  const [tableData, setTableData] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState('');
+  const [isEdit, setIsEdit] = useState(false)
+  const [statusPopup, setStatusPopup] = useState(false)
+  const [rowId, setRowId] = useState(0)
+  const [status, setStatus] = useState("")
+  const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
-  // const [formData, setFormData] = useState({
-
-  //   casteName: '',
-  //   status: true, // Toggle for "Enable"
-  // });
   interface FormField {
     label: any;
     id: any;
@@ -56,7 +53,7 @@ export default function Caste() {
 
   const formFields: FormData = {
     casteName: {
-      label: 'Enter Caste Name',
+      label: 'Enter Your Caste Name',
       id: 'casteName',
       name: 'casteName',
       type: 'text',
@@ -73,9 +70,9 @@ export default function Caste() {
       type: "select",
       options: [
         { id: 1, label: 'ENABLE' },
-        { id: 0, label: 'DISABLE' },
+        { id: 2, label: 'DISABLE' },
       ],
-      value: {id:null,label:''},
+      value: { id: null, label: '' },
       error: false,
       helperText: "",
       mandatory: true,
@@ -99,65 +96,125 @@ export default function Caste() {
     }));
   };
   const validate = (): boolean => {
-    let newFormData = _.cloneDeep(formData); // Clone the current form data
+    let newFormData = _.cloneDeep(formData);
     let isValid = true;
-  
+
+    // Check each form field for validity
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
-  
-        // Validate mandatory fields
+
         if (field.mandatory && (!field.value || field.value === "")) {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else if (field.type === "select" && (field.value === undefined || field.value === "" || field.value.id === null)) {
+        } else if (field.type === "select" && (field.value.id === null || !field.value.id)) {
+          // Handle select validation for status field
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
         } else {
           newFormData[key].error = false;
-          newFormData[key].helperText = '';
+          newFormData[key].helperText = "";
         }
       }
     }
-    console.log("isValid: ", isValid)
-    setFormData(newFormData); // Update the form data with validation errors
+
+    // Set the updated formData
+    setFormData(newFormData);
+
+    // Return the final validation result
     return isValid;
   };
-  
-  
-  
   const handleFormSubmit = async () => {
     if (validate()) {
-      if (openPopup.action === 'create') {
-      console.log("calling")
-      const requestBody = {
+      const newRecord = {
         name: formData.casteName.value,
-        status: formData.statusName.value.id
-      }
-      const response = await createCaste(requestBody);
-      if(response.status) {
-
-      }
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+      };
+      setIsLoading(true);
+      const result = await createCaste(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await castList(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+        }, 1500);
       } else {
-
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
       }
     }
   };
-  
-  
+
+  // console.log("hello",formData);
+
+
+  const castList = async () => {
+    setListLoader(true);
+    const result = await listcaste(listFilter);
+    if (result.status) {
+      setListLoader(false);
+      setRowCount(result.totalCount);
+      if (result.data.length > 0) {
+        const data = result.data.map((item: any, index: any) => ({
+          id: item.id,
+          sno: listFilter.skip + index + 1,
+          caste: item.castName,
+          status: item.status ? 'Enable' : 'Disable',
+        }));
+
+        setTableData(data);
+      } else {
+        setTableData([]);
+      }
+    } else {
+      setListLoader(false);
+    }
+  };
+
+  console.log("tableData", tableData);
+
+  // const debouncedListSource = useCallback(
+  //   debounce(() => castList(), 500), // Adjust debounce time as needed
+  //   []
+  // );
+
+  useEffect(() => {
+    if (globalFilter !== "") {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+    }
+    else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
+
+  useEffect(() => {
+    castList();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
 
   const initailData: any = [
-    { sno: "1", caste: "REDDY", status: "Enable" },
-    { sno: "2", caste: "SETTYBALIJA", status: "Disable" },
-    { sno: "3", caste: "CHOUDARY", status: "Enable" },
-    { sno: "4", caste: "MADHIGA", status: "Disable" },
-    { sno: "5", caste: "MALA", status: "Enable" },
-    { sno: "6", caste: "BRAHMIN", status: "Enable" },
-    { sno: "7", caste: "KAAPU", status: "Enable" },
-    { sno: "8", caste: "BRAHMIN", status: "Enable" },
-    { sno: "9", caste: "CHOUDARY", status: "Enable" }
+    { sno: "1", caste: "Andhara", status: "Enable" },
+    { sno: "2", caste: "Jntu", status: "Disable" },
+    { sno: "3", caste: "AKNU", status: "Enable" },
+    { sno: "4", caste: "BOOKS", status: "Disable" },
+    { sno: "5", caste: "MUSIC", status: "Enable" },
+    { sno: "6", caste: "SELF", status: "Enable" },
+    { sno: "7", caste: "TV", status: "Enable" },
+    { sno: "8", caste: "MOBILE", status: "Enable" },
+    { sno: "9", caste: "LAPTOP", status: "Enable" }
   ];
   const [data, setData] = useState(initailData);
 
@@ -169,13 +226,13 @@ export default function Caste() {
         header: "Status",
         accessorKey: "status",
         cell: (props: Cell<any, any>) => {
-          const status = props.getValue(); // Get the value of the "status" field
+          const status = props.getValue();
           return (
             <Chip
-              color={status === "Enable" ? "success" : "error"} // Use success for "Enable"
+              color={status === "Enable" ? "success" : "error"}
               label={status}
               size="small"
-              variant="outlined" // Optionally change to "filled" for stronger color
+              variant="outlined"
             />
           );
         },
@@ -184,70 +241,73 @@ export default function Caste() {
     []
   );
 
-    const getListCastes = async () => {
-      const result = await casteList(listFilter);
-      if(result.status) {
-        setRowCount(result.totalCount);
-        setData(result.data.length > 0 ? result.data.map((item: any, index: number)=>({ sno: index + 1, caste: item?.castName, id: item?.id, status: item?.status === 1 ? "Enable" : "Disable"})) : []);
-      }
-    };
 
-  const buttonHandler = (action: string, users: any) => {
-    if(action === "disable") {
-      updateCasteHandler(users);
-    } else if(action === "ENABLE") {
-      updateCasteHandler(users, "ENABLE");
-    } else if(action === "DISABLE") {
-      updateCasteHandler(users, "DISABLE");
+  // const [rowId,setRowId] = useState()
+
+
+  const handleEdit = (row: any, action: any) => {
+    setRowId(row.id);
+    setIsLoading(false);
+
+    if (action === 'Status') {
+      let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+      setStatus(checkStatus);
+      setSelectedRow(row); // Set the selected row data
+      setStatusPopup(true);
+      setOpenPopup(false);
+      setIsEdit(false);
+    } else if (action === 'Edit') {
+      setStatusPopup(false);
+      setOpenPopup(true);
+      setIsEdit(true);
+    }
+
+    // Pre-fill formData when editing
+    const newFormData = _.cloneDeep(formData);
+    newFormData.casteName.value = row.caste;
+    newFormData.statusName.value =
+      newFormData.statusName.options.find(
+        (option) => option.label.toUpperCase() === row.status.toUpperCase()
+      ) || { id: null, label: '' };
+
+    setFormData(newFormData);
+  };
+
+
+  const handleEditFormSubmit = async () => {
+    if (validate()) {
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        name: formData.casteName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+        id: rowId
+      };
+      setIsLoading(true);
+      const result = await editCaste(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await castList(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
     }
   }
-
-    const updateCasteHandler = async (updateData: any = {}, multiple = "") => {
-      console.log("updateData: ", updateData)
-        if(!multiple) {
-          let d = Object.keys(updateData).length;
-          const updateRecord = {
-              name: d> 0 ? updateData?.countryId : formData.casteName.value,
-              status: d> 0 ? (updateData?.status === "Disable" ? 1 : 0) : formData.statusName.value.id,
-              id: d> 0 ? updateData?.id : openPopup.casteId
-          }
-          const update = await updateCaste(updateRecord);
-          if (update.status) {
-            setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
-            setIsLoading(false);
-            getListCastes();
-            setTimeout(() => {
-              setOpenPopup({ flag: false, action: '', casteId: null });
-              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
-              setFormData(formFields);
-            }, 1500);
-          }
-          else {
-            setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
-            setIsLoading(false);
-          }
-        }
-        else {
-          updateData?.map(async (item: any) => {
-            const updateRecord = {
-              countryId: item?.countryId,
-              stateId: item?.stateId,
-              districtName: item?.district,
-              status: item?.status === "Disable" ? 1 : 0,
-              id: item?.id
-            }
-            const update = await updateCaste(updateRecord);
-          })
-          setOpen({ flag: false, action: '' });
-          setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
-        }
-        getListCastes();
-        setTimeout(() => {
-          setOpenPopup({ flag: false, action: '', casteId: null });
-          setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
-        }, 1500);
-      }
-  
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -255,18 +315,6 @@ export default function Caste() {
     newFormData[name].helperText = '';
     setFormData(newFormData);
   };
-  const handleEdit = (row: any) => {
-    // Pre-fill formData with the selected row's data
-    const newFormData = _.cloneDeep(formData);
-  
-    // Map row values to formData fields
-    newFormData.casteName.value = row.caste; // Map "country" to "countryName"
-    newFormData.statusName.value = newFormData.statusName.options.find(
-      (option) => option.label.toUpperCase() === row.status.toUpperCase()
-    ) || { id: null, label: '' };
-  
-    setFormData(newFormData); // Update formData state
-    setOpenPopup({ flag: true, action: 'update', casteId: null })  };
 
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -283,34 +331,86 @@ export default function Caste() {
       setAnchorEl(null);
     };
 
-    
 
 
     return (
       <>
         <Button onClick={handleClick}>...</Button>
+        {/* < <Button onClick={handleClick}>...</Button> */}
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem> */}
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row, 'Edit'); handleClose(); }}>Edit</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
         </Menu>
       </>
     );
   };
 
+  const statusConfirmHandler = async () => {
+    if (validate()) {
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        name: formData.casteName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+        id: rowId
+      };
+      setIsLoading(true);
+      const result = await editCaste(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await castList(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+          setStatusPopup(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    }
+  }
+
+  const onPopupCloseHandler = () => {
+    setOpenPopup(false)
+    setFormData(formFields);
+    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    setStatusPopup(false)
+  }
+
   return (
     <>
       {/* Button to Open Popup */}
       <Grid style={{ marginBottom: '20px', textAlign: 'end' }}>
-        <Button variant="contained" color="primary" onClick={() => setOpenPopup({ flag: true, action: 'create', casteId: null })}>
+        <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
           Create Caste
         </Button>
-        </Grid>
+      </Grid>
 
+      <Backdrop
+        sx={{
+          color: "blue",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {/* React Table */}
+
       <ReactTable
-        title={"Caste Management"}
-        data={data}
+        title={'Caste Management'}
+        data={tableData}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
         includeSearch={true}
@@ -325,13 +425,26 @@ export default function Caste() {
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
         totalPageCount={Math.ceil(rowCount / rowsPerPage)}
-        listSelectButton={{ name1: 'ENABLE', name2: 'DISABLE' }}
-        buttonHandler={buttonHandler}
         globalFilter={globalFilter}
-        setGlobalFilter={setGlobalFilter}      />
+        setGlobalFilter={setGlobalFilter}
+        listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
+
+      />
 
       {/* Dialog for Create Form */}
-      <Dialog open={openPopup.flag}  maxWidth="sm" fullWidth>
+      <Dialog open={openPopup} maxWidth="sm" fullWidth>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() => {
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+              }}
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
         <DialogTitle> Create Caste</DialogTitle>
         <DialogContent>
 
@@ -343,17 +456,88 @@ export default function Caste() {
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
 
-
-
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup({ flag: false, action: 'create', casteId: null })}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={handleFormSubmit}>
-            Create
+          <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
+            {isEdit ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>
+
+
+      {/* Dialog for Status popup */}
+      <Dialog open={statusPopup} maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px', padding: '10px',
+            backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle sx={{
+          textAlign: 'center',
+          color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+          borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+        }}> Are you sure you want to {status}?</DialogTitle>
+        <DialogContent >
+          {selectedRow && (
+            <Grid  textAlign={'center'}>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Caste Name:</strong> {selectedRow.caste}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Current Status:</strong> {selectedRow.status}
+              </Typography>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+
+        }}>
+          <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+            sx={{
+              padding: '5px 10px', borderRadius: '8px',
+              fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            sx={{
+              padding: '5px 10px',
+              borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+            variant="contained" color="primary" onClick={statusConfirmHandler}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
     </>
   );
 }
+
+
+
+
+
+
 

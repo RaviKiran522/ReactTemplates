@@ -457,7 +457,7 @@ export default function University() {
         <DialogActions>
           <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
           <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
-            {isEdit ? 'Edit' : 'Create'}
+            {isEdit ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>

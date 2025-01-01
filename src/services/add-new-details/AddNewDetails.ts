@@ -160,7 +160,7 @@ export const createCaste = async (data: any) => {
     }
 }
 
-export const updateCaste = async (data: any) => {
+export const editCaste = async (data: any) => {
     const response = await httpsPost("admin-settings/updateCast", data)
     if(response) {
         return response;
@@ -170,8 +170,39 @@ export const updateCaste = async (data: any) => {
     }
 }
 
-export const casteList = async (data: any) => {
+export const listcaste = async (data: any) => {
     const response = await httpsPost("admin-settings/castList", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+export const createSubCaste = async (data: any) => {
+    const response = await httpsPost("admin-settings/subCast", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editSubCaste = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateSubCast", data)
+    if(response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listSubCaste = async (data: any) => {
+    const response = await httpsPost("admin-settings/getSubCastList", data)
     if(response) {
         return response;
     }
@@ -479,6 +510,37 @@ export const listEducation = async (data: any) => {
 
 export const editEducation = async (data: any) => {
     const response = await httpsPost("admin-settings/updateEducation", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+export const createOccuption = async (data: any) => {
+    const response = await httpsPost("admin-settings/occupation", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listOccuption = async (data: any) => {
+    const response = await httpsPost("admin-settings/occupationList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const editOccuption = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateOccupation", data)
     if (response) {
         return response;
     }

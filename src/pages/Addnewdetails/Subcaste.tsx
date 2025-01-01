@@ -2,20 +2,33 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Backdrop, CircularProgress, Alert } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
-import { height } from '@mui/system';
+import { height, Stack } from '@mui/system';
+import { Severity } from 'Common/utils';
+import { createSubCaste, listcaste, listSubCaste } from 'services/add-new-details/AddNewDetails';
 
 export default function Subcaste() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [listLoader, setListLoader] = useState(false);
+  const [listFilter, setListFilter] = useState({ status: null, id: null, search: "", skip: 0, limit: 10 });
+  const [tableData, setTableData] = useState([]);
+  const [rowCount, setRowCount] = useState(0);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [isEdit, setIsEdit] = useState(false)
+  const [statusPopup, setStatusPopup] = useState(false)
+  const [rowId, setRowId] = useState(0)
+  const [status, setStatus] = useState("")
+  const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
- 
   interface FormField {
     label: any;
     id: any;
@@ -46,17 +59,14 @@ export default function Subcaste() {
       mandatory: true,
       options: []
     },
-    selectName: {
+    castename: {
       label: 'Select Caste Name',
-      id: 'selectName',
-      name: 'selectName',
-      type:'select',
+      id: 'castename',
+      name: 'castename',
+      type: 'select',
       options: [
-        { id: 1, label: 'REDDY' },
-        { id: 2, label: 'CHOUDARY' },
-        { id: 3, label: 'KAAPU' },
-      ],
-      value: {id:null,label:''},
+ ],
+      value: { id: null, label: '' },
       error: false,
       helperText: '',
       mandatory: true,
@@ -71,7 +81,7 @@ export default function Subcaste() {
         { id: 1, label: 'ENABLE' },
         { id: 2, label: 'DISABLE' },
       ],
-      value: {id:null,label:''},
+      value: { id: null, label: '' },
       error: false,
       helperText: "",
       mandatory: true,
@@ -93,8 +103,10 @@ export default function Subcaste() {
         helperText: "", // Clear helper text
       },
     }));
-  };
-  
+  };  
+
+
+
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
@@ -112,7 +124,7 @@ export default function Subcaste() {
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
         }
-        
+
         else {
           newFormData[key].helperText = '';
         }
@@ -123,40 +135,136 @@ export default function Subcaste() {
     return isValid;
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async () => {
     if (validate()) {
-      setOpenPopup(false);
       const newRecord = {
-        sno: (data.length + 1).toString(),
-        caste: formData.selectName.value.label,
-        subcaste: formData.subcasteName.value,
-        status: formData.statusName.value.label 
+        castId: formData.castename.value?.id || 0,
+        castName: formData.subcasteName.value,
+        status: formData.statusName.value?.label === "ENABLE" ? 1 : 0,
       };
   
-      setData((prevData: any) => [...prevData, newRecord]);
+      console.log("Payload being sent to API: ", newRecord); // Debugging
   
-      console.log("Updated Data:", [...data, newRecord]); // Log updated data array
+      setIsLoading(true);
+      const result = await createSubCaste(newRecord);
+      console.log("API Response: ", result); // Debugging
+  
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await subcasteList();
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
     }
   };
   
 
+  const [castes, setCastes] = useState([]); // State for caste list
+
+  const fetchCastList = async () => {
+    const result = await listcaste({ skip: 0, limit: 100 }); // Adjust filter if needed
+    if (result.status) {
+      const casteOptions = result.data.map((caste: any) => ({
+        id: caste.id,
+        label: caste.castName,
+      }));
+      setCastes(casteOptions);
+
+      // Dynamically update formFields with caste options
+      setFormData((prev) => ({
+        ...prev,
+        castename: {
+          ...prev.castename,
+          options: casteOptions,
+        },
+      }));
+    }
+  };
+
+  useEffect(() => {
+    fetchCastList(); // Fetch cast list on component mount
+  }, []);
+
+
+  const subcasteList = async () => {
+    setListLoader(true);
+    const result = await listSubCaste(listFilter);
+    if (result.status) {
+      setListLoader(false);
+      setRowCount(result.totalCount);
+      if (result.data.length > 0) {
+        console.log("Subcaste List: ", result.data);
+        const data = result.data.map((item: any, index: any) => ({
+          // id: item.id,
+          sno: listFilter.skip + index + 1,
+          caste: item.cast.castName,
+          subcaste: item.castName,
+          status: item.status ? 'Enable' : 'Disable',
+           
+          // { sno: "1", caste: "REDDY", subcaste: "OC", status: "Enable" },
+        }));
+
+        setTableData(data);
+      } else {
+        setTableData([]);
+      }
+    } else {
+      setListLoader(false);
+    }
+  };
+
+  console.log("tableData", tableData);
+
+  // const debouncedListSource = useCallback(
+  //   debounce(() => subcasteList(), 500), // Adjust debounce time as needed
+  //   []
+  // );
+
+  useEffect(() => {
+    if (globalFilter !== "") {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+    }
+    else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
+
+  useEffect(() => {
+    subcasteList();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
   const initailData: any = [
-    { sno: "1",caste:"REDDY",subcaste:"OC",status: "Enable" },
-    { sno: "2",caste:"SETTY",subcaste:"OC", status: "Enable" },
-    { sno: "3",caste:"MALA",subcaste:"OC", status: "Enable" },
-    { sno: "4",caste:"KAAPU",subcaste:"OC", status: "Enable" },
-    { sno: "5",caste:"MADHIGA",subcaste:"OC", status: "Enable" },
-    { sno: "6",caste:"REDDY",subcaste:"OC", status: "Disable" },
-    { sno: "7",caste:"REDDY",subcaste:"OC", status: "Enable" },
-    { sno: "8", caste:"REDDY",subcaste:"OC", status: "Disable" },
-    { sno: "9", caste:"REDDY",subcaste:"OC", status: "Enable" }
+    { sno: "1", caste: "REDDY", subcaste: "OC", status: "Enable" },
+    { sno: "2", caste: "SETTY", subcaste: "OC", status: "Enable" },
+    { sno: "3", caste: "MALA", subcaste: "OC", status: "Enable" },
+    { sno: "4", caste: "KAAPU", subcaste: "OC", status: "Enable" },
+    { sno: "5", caste: "MADHIGA", subcaste: "OC", status: "Enable" },
+    { sno: "6", caste: "REDDY", subcaste: "OC", status: "Disable" },
+    { sno: "7", caste: "REDDY", subcaste: "OC", status: "Enable" },
+    { sno: "8", caste: "REDDY", subcaste: "OC", status: "Disable" },
+    { sno: "9", caste: "REDDY", subcaste: "OC", status: "Enable" }
   ];
   const [data, setData] = useState(initailData);
 
   const columns = useMemo(
     () => [
       { header: "S.NO", accessorKey: "sno" },
-     
+
       { header: "Subcaste Name", accessorKey: "subcaste" },
       { header: "Caste Name", accessorKey: "caste" },
       {
@@ -178,19 +286,20 @@ export default function Subcaste() {
     []
   );
   
+
   const handleEdit = (row: any) => {
     // Pre-fill formData with the selected row's data
     const newFormData = _.cloneDeep(formData);
-  
+
     // Map row values to formData
-    newFormData.selectName.value = newFormData.selectName.options.find(
+    newFormData.castename.value = newFormData.castename.options.find(
       (option) => option.label === row.caste
     ) || { id: null, label: '' };
     newFormData.subcasteName.value = row.subcaste;
     newFormData.statusName.value = newFormData.statusName.options.find(
       (option) => option.label.toUpperCase() === row.status.toUpperCase()
     ) || { id: null, label: '' };
-  
+
     setFormData(newFormData); // Update formData state
     setOpenPopup(true); // Open dialog
   };
@@ -217,7 +326,7 @@ export default function Subcaste() {
       setAnchorEl(null);
     };
 
-    
+
 
 
     return (
@@ -239,12 +348,23 @@ export default function Subcaste() {
         <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
           Create Subcaste
         </Button>
-        </Grid>
+      </Grid>
+
+      {/*  Backdrop */}
+      <Backdrop
+        sx={{
+          color: "blue",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       {/* React Table */}
       <ReactTable
         title={"Subcaste Management"}
-        data={data}
+        data={tableData}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
         includeSearch={true}
@@ -258,20 +378,36 @@ export default function Subcaste() {
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
-        totalPageCount={60}
+        totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
       />
 
       {/* Dialog for Create Form */}
-      <Dialog open={openPopup}  maxWidth="sm" fullWidth>
+      <Dialog open={openPopup} maxWidth="sm" fullWidth>
+
+      {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() => {
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+              }}
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
         <DialogTitle> Create subcaste</DialogTitle>
         <DialogContent>
-        <Grid item xs={12} padding={2} >
-            <CommonSelectField inputProps={formData.selectName} onSelectChange={handleSelectChange} />
+          <Grid item xs={12} padding={2} >
+            <CommonSelectField inputProps={formData.castename} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12} padding={2}>
             <CommonInputField inputProps={formData.subcasteName} onChange={handleChange} />
           </Grid>
-        
+
           <Grid item xs={12} padding={2} >
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
@@ -280,8 +416,8 @@ export default function Subcaste() {
 
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" sx={{margin:"1rem"}} onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{margin:"1rem"}} onClick={handleFormSubmit}>
+          <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={handleFormSubmit}>
             Create
           </Button>
         </DialogActions>

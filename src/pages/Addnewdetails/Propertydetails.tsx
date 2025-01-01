@@ -494,6 +494,10 @@ export default function Propertydetails() {
     // Return the final validation result
     return isValid;
   };
+  useEffect(() => {
+    universityList();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
   const handleFormSubmit = async () => {
     if (validate()) {
       const newRecord = {
@@ -509,7 +513,7 @@ export default function Propertydetails() {
           severity: Severity.Success,
         });
         setIsLoading(false);
-        // await univercitylists(); // Explicitly call here
+        await universityList(); // Explicitly call here
         setTimeout(() => {
           setOpenPopup(false);
           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
@@ -539,7 +543,7 @@ export default function Propertydetails() {
         const data = result.data.map((item: any, index: any) => ({
           id: item.id,
           sno: listFilter.skip + index + 1,
-          propertydetails: item.propertydetailsName,
+          propertydetails: item.name,
           status: item.status ? 'Enable' : 'Disable',
         }));
 
@@ -645,7 +649,7 @@ export default function Propertydetails() {
     if (validate()) {
       console.log('roodkoksfodksfodf', rowId)
       const newRecord = {
-        name: formData.name.value,
+        name: formData.propertydetailsName.value,
         status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
         id: rowId
       };
@@ -825,7 +829,7 @@ export default function Propertydetails() {
         <DialogActions>
           <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
           <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
-            {isEdit ? 'Edit' : 'Create'}
+            {isEdit ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>

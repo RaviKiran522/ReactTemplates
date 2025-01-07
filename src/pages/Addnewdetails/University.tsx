@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import { Stack } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from "@mui/material/Backdrop";
-import { createUniversitys, editUniversitys, listUniversitys } from 'services/add-new-details/AddNewDetails';
+import { createUniversitys, editUniversitys, listUniversitys, universityStatus } from 'services/add-new-details/AddNewDetails';
 
 
 export default function University() {
@@ -217,6 +217,59 @@ export default function University() {
   ];
   const [data, setData] = useState(initailData);
 
+  
+     const updateUniversityHandler = async (updateData: any = {}, multiple = "") => {
+            setIsLoading(true);
+            if(!multiple) {
+              let d = Object.keys(updateData).length;
+              const updateRecord = {
+                name: d> 0 ? updateData?.university : formData.univercityName.value,
+                status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+                id: d > 0 ? updateData.id : openPopup
+              }
+              const update = await universityStatus(updateRecord);
+              if (update.status) {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+                setIsLoading(false);
+                setTimeout(() => {
+                  setOpenPopup(false);
+                  setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+                  setFormData(formFields);
+                }, 1500);
+              }
+              else {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+                setIsLoading(false);
+              }
+            }
+            else {
+              let updateResult: any;
+              let updateStatusArray:any = []
+              updateData?.map(async (item: any) => {
+                const updateRecord = {
+                  // name: item?.country,
+                  status: multiple === "ENABLE" ? 1 : 0 ,
+                  id: item.id 
+                }
+                updateStatusArray.push(updateRecord)
+                
+              })
+              let payload = {
+                "data": updateStatusArray
+              }
+              updateResult = await universityStatus(payload);
+        
+                setOpen({ flag: false, action: '' });
+                setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+        
+            }
+            universityList();
+            setTimeout(() => {
+              setOpenPopup(false);
+              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+            }, 1500);
+          }
+
   const columns = useMemo(
     () => [
       { header: "S.NO", accessorKey: "sno" },
@@ -387,6 +440,17 @@ export default function University() {
     setStatusPopup(false)
   }
 
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updateUniversityHandler(users);
+    } else if(action === "ENABLE") {
+      updateUniversityHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updateUniversityHandler(users, "DISABLE");
+    }
+  }
+
   return (
     <>
       {/* Button to Open Popup */}
@@ -418,6 +482,7 @@ export default function University() {
         needActivateAndSuspendButtons={true}
         open={open}
         setOpen={setOpen}
+        buttonHandler={buttonHandler}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}

@@ -8,7 +8,7 @@ import CommonInputField from 'pages/common-components/common-input';
 import _, { debounce } from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Severity } from 'Common/utils';
-import { createDesingation, createHobbies, createInterests, createLanguage, editDesingation, editHobbies, editinterests, languageList, listDesingation, listHobbies, listInterests } from 'services/add-new-details/AddNewDetails';
+import { createDesingation, createHobbies, createInterests, createLanguage, editDesingation, editHobbies, editinterests, hobbiesStatus, languageList, listDesingation, listHobbies, listInterests } from 'services/add-new-details/AddNewDetails';
 import Alert from '@mui/material/Alert';
 import { Stack, textAlign } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -169,6 +169,59 @@ export default function Hobbies() {
     }
   };
 
+
+  
+    const updateHobbiesHandler = async (updateData: any = {}, multiple = "") => {
+        setIsLoading(true);
+        if(!multiple) {
+          let d = Object.keys(updateData).length;
+          const updateRecord = {
+            name: d> 0 ? updateData?.hobbies : formData.hobbiesName.value,
+            status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+            id: d > 0 ? updateData.id : openPopup
+          }
+          const update = await hobbiesStatus(updateRecord);
+          if (update.status) {
+            setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+            setIsLoading(false);
+            setTimeout(() => {
+              setOpenPopup(false);
+              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+              setFormData(formFields);
+            }, 1500);
+          }
+          else {
+            setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+            setIsLoading(false);
+          }
+        }
+        else {
+          let updateResult: any;
+          let updateStatusArray:any = []
+          updateData?.map(async (item: any) => {
+            const updateRecord = {
+              // name: item?.country,
+              status: multiple === "ENABLE" ? 1 : 0 ,
+              id: item.id 
+            }
+            updateStatusArray.push(updateRecord)
+            
+          })
+          let payload = {
+            "data": updateStatusArray
+          }
+          updateResult = await hobbiesStatus(payload);
+    
+            setOpen({ flag: false, action: '' });
+            setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+    
+        }
+        hobbiesList();
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+        }, 1500);
+      }
 
   const columns = useMemo(
     () => [
@@ -358,6 +411,17 @@ export default function Hobbies() {
     }
   }
 
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updateHobbiesHandler(users);
+    } else if(action === "ENABLE") {
+      updateHobbiesHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updateHobbiesHandler(users, "DISABLE");
+    }
+  }
+
 
   return (
     <>
@@ -395,6 +459,7 @@ export default function Hobbies() {
         setOpen={setOpen}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
+        buttonHandler={buttonHandler}
         pageNumber={pageNumber}
         totalPageCount={Math.ceil(rowCount / rowsPerPage)}
         globalFilter={globalFilter}

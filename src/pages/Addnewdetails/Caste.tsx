@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import { Stack } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from "@mui/material/Backdrop";
-import { createCaste, editCaste, listcaste } from 'services/add-new-details/AddNewDetails';
+import { casteStatus, createCaste, editCaste, listcaste } from 'services/add-new-details/AddNewDetails';
 
 
 export default function Caste() {
@@ -204,6 +204,58 @@ export default function Caste() {
     castList();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
+  
+     const updateCasteHandler = async (updateData: any = {}, multiple = "") => {
+            setIsLoading(true);
+            if(!multiple) {
+              let d = Object.keys(updateData).length;
+              const updateRecord = {
+                name: d> 0 ? updateData?.caste : formData.castName.value,
+                status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+                id: d > 0 ? updateData.id : openPopup
+              }
+              const update = await casteStatus(updateRecord);
+              if (update.status) {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+                setIsLoading(false);
+                setTimeout(() => {
+                  setOpenPopup(false);
+                  setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+                  setFormData(formFields);
+                }, 1500);
+              }
+              else {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+                setIsLoading(false);
+              }
+            }
+            else {
+              let updateResult: any;
+              let updateStatusArray:any = []
+              updateData?.map(async (item: any) => {
+                const updateRecord = {
+                  // name: item?.country,
+                  status: multiple === "ENABLE" ? 1 : 0 ,
+                  id: item.id 
+                }
+                updateStatusArray.push(updateRecord)
+                
+              })
+              let payload = {
+                "data": updateStatusArray
+              }
+              updateResult = await casteStatus(payload);
+        
+                setOpen({ flag: false, action: '' });
+                setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+        
+            }
+            castList();
+            setTimeout(() => {
+              setOpenPopup(false);
+              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+            }, 1500);
+          }
 
   const initailData: any = [
     { sno: "1", caste: "Andhara", status: "Enable" },
@@ -388,6 +440,17 @@ export default function Caste() {
     setStatusPopup(false)
   }
 
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updateCasteHandler(users);
+    } else if(action === "ENABLE") {
+      updateCasteHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updateCasteHandler(users, "DISABLE");
+    }
+  }
+
   return (
     <>
       {/* Button to Open Popup */}
@@ -421,6 +484,7 @@ export default function Caste() {
         needActivateAndSuspendButtons={true}
         open={open}
         setOpen={setOpen}
+        buttonHandler={buttonHandler}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}

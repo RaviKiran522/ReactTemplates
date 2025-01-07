@@ -2,15 +2,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Backdrop, CircularProgress, Alert } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Backdrop, CircularProgress, Alert, Typography } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { height, Stack } from '@mui/system';
 import { Severity } from 'Common/utils';
-import { createSubCaste, listcaste, listSubCaste } from 'services/add-new-details/AddNewDetails';
-
+import { createSubCaste, editSubCaste, listcaste, listSubCaste, subcasteStatus } from 'services/add-new-details/AddNewDetails';
 export default function Subcaste() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
   const [open, setOpen] = useState({ flag: false, action: '' });
@@ -26,6 +25,7 @@ export default function Subcaste() {
   const [isEdit, setIsEdit] = useState(false)
   const [statusPopup, setStatusPopup] = useState(false)
   const [rowId, setRowId] = useState(0)
+  const [rowData, setRowData] = useState<any>(null)
   const [status, setStatus] = useState("")
   const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
@@ -65,7 +65,7 @@ export default function Subcaste() {
       name: 'castename',
       type: 'select',
       options: [
- ],
+      ],
       value: { id: null, label: '' },
       error: false,
       helperText: '',
@@ -90,6 +90,8 @@ export default function Subcaste() {
 
   }
 
+
+
   const [formData, setFormData] = useState<FormData>(formFields);
   type FormDataKeys = keyof typeof formData;
 
@@ -103,7 +105,7 @@ export default function Subcaste() {
         helperText: "", // Clear helper text
       },
     }));
-  };  
+  };
 
 
 
@@ -142,13 +144,13 @@ export default function Subcaste() {
         castName: formData.subcasteName.value,
         status: formData.statusName.value?.label === "ENABLE" ? 1 : 0,
       };
-  
+
       console.log("Payload being sent to API: ", newRecord); // Debugging
-  
+
       setIsLoading(true);
       const result = await createSubCaste(newRecord);
       console.log("API Response: ", result); // Debugging
-  
+
       if (result.status) {
         setSuccessBanner({
           flag: true,
@@ -172,7 +174,7 @@ export default function Subcaste() {
       }
     }
   };
-  
+
 
   const [castes, setCastes] = useState([]); // State for caste list
 
@@ -210,12 +212,13 @@ export default function Subcaste() {
       if (result.data.length > 0) {
         console.log("Subcaste List: ", result.data);
         const data = result.data.map((item: any, index: any) => ({
-          // id: item.id,
+          id: item.id,
           sno: listFilter.skip + index + 1,
           caste: item.cast.castName,
           subcaste: item.castName,
           status: item.status ? 'Enable' : 'Disable',
-           
+          castId : item.cast.id
+
           // { sno: "1", caste: "REDDY", subcaste: "OC", status: "Enable" },
         }));
 
@@ -247,6 +250,60 @@ export default function Subcaste() {
   useEffect(() => {
     subcasteList();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
+    const updateSubCasteHandler = async (updateData: any = {}, multiple = "") => {
+              setIsLoading(true);
+              if(!multiple) {
+                let d = Object.keys(updateData).length;
+                const updateRecord = {
+                  // castId: formData.castename.value?.id || 0,
+                  // castName: formData.subcasteName.value,
+                  castId: d> 0 ? updateData?.caste : formData.castename.value,
+                  castName: d> 0 ? updateData?.caste : formData.subcasteName.value,
+                  status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+                  id: d > 0 ? updateData.id : openPopup
+                }
+                const update = await subcasteStatus(updateRecord);
+                if (update.status) {
+                  setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+                  setIsLoading(false);
+                  setTimeout(() => {
+                    setOpenPopup(false);
+                    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+                    setFormData(formFields);
+                  }, 1500);
+                }
+                else {
+                  setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+                  setIsLoading(false);
+                }
+              }
+              else {
+                let updateResult: any;
+                let updateStatusArray:any = []
+                updateData?.map(async (item: any) => {
+                  const updateRecord = {
+                    status: multiple === "ENABLE" ? 1 : 0 ,
+                    id: item.id 
+                  }
+                  updateStatusArray.push(updateRecord)
+                  
+                })
+                let payload = {
+                  "data": updateStatusArray
+                }
+                updateResult = await subcasteStatus(payload);
+          
+                  setOpen({ flag: false, action: '' });
+                  setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+          
+              }
+              subcasteList();
+              setTimeout(() => {
+                setOpenPopup(false);
+                setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+              }, 1500);
+            }
 
   const initailData: any = [
     { sno: "1", caste: "REDDY", subcaste: "OC", status: "Enable" },
@@ -285,12 +342,32 @@ export default function Subcaste() {
     ],
     []
   );
+
+
   
 
-  const handleEdit = (row: any) => {
-    // Pre-fill formData with the selected row's data
-    const newFormData = _.cloneDeep(formData);
 
+
+  const handleEdit = (row: any, action: any) => {
+    setRowId(row.id);
+    setRowData(row)
+    setIsLoading(false);
+
+    if (action === 'Status') {
+      let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+      setStatus(checkStatus);
+      setSelectedRow(row); // Set the selected row data
+      setStatusPopup(true);
+      setOpenPopup(false);
+      setIsEdit(false);
+    } else if (action === 'Edit') {
+      setStatusPopup(false);
+      setOpenPopup(true);
+      setIsEdit(true);
+    }
+
+    // Pre-fill formData when editing
+    const newFormData = _.cloneDeep(formData);
     // Map row values to formData
     newFormData.castename.value = newFormData.castename.options.find(
       (option) => option.label === row.caste
@@ -300,9 +377,54 @@ export default function Subcaste() {
       (option) => option.label.toUpperCase() === row.status.toUpperCase()
     ) || { id: null, label: '' };
 
-    setFormData(newFormData); // Update formData state
-    setOpenPopup(true); // Open dialog
+
+    setFormData(newFormData);
   };
+
+
+  const handleEditFormSubmit = async () => {
+    if (validate()) {
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        
+        // castId: formData.castename.value.id,
+        // castName: formData.subcasteName.value,
+        // status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+         
+
+        castId: rowData.castId,
+        castName: formData.subcasteName.value,
+        status: formData.statusName.value?.label === "ENABLE" ? 1 : 0,
+        id: rowId
+
+      };
+      
+      setIsLoading(true);
+      const result = await editSubCaste(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await subcasteList(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    }
+  }
   const handleSelectChange = (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
     newFormData[name].value = value;
@@ -328,29 +450,82 @@ export default function Subcaste() {
 
 
 
-
     return (
       <>
         <Button onClick={handleClick}>...</Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
-          {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem> */}
-          <MenuItem onClick={() => { setOpen({ flag: true, action: 'disable' }); handleClose(); }}>Disable</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row, 'Edit'); handleClose(); }}>Edit</MenuItem>
+          <MenuItem onClick={() => { handleEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
         </Menu>
       </>
     );
   };
+
+  const statusConfirmHandler = async () => {
+  
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        // name: formData.educationName.value,
+        castId: rowData.castId,
+        castName: formData.subcasteName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+        id: rowId
+      };
+      setIsLoading(true);
+      const result = await editSubCaste(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await subcasteList(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+          setStatusPopup(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    
+  }
+
+  const onPopupCloseHandler = () => {
+    setOpenPopup(false)
+    setFormData(formFields);
+    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    setStatusPopup(false)
+  }
+
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updateSubCasteHandler(users);
+    } else if(action === "ENABLE") {
+      updateSubCasteHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updateSubCasteHandler(users, "DISABLE");
+    }
+  }
+
 
   return (
     <>
       {/* Button to Open Popup */}
       <Grid style={{ marginBottom: '20px', textAlign: 'end' }}>
         <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
-          Create Subcaste
+          Create SubCaste
         </Button>
       </Grid>
-
-      {/*  Backdrop */}
       <Backdrop
         sx={{
           color: "blue",
@@ -360,10 +535,9 @@ export default function Subcaste() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-
       {/* React Table */}
       <ReactTable
-        title={"Subcaste Management"}
+        title={'SubCaste Management'}
         data={tableData}
         columns={columns}
         actions={(row: any) => <ActionMenu row={row} />}
@@ -375,6 +549,7 @@ export default function Subcaste() {
         needActivateAndSuspendButtons={true}
         open={open}
         setOpen={setOpen}
+        buttonHandler={buttonHandler}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
@@ -382,12 +557,12 @@ export default function Subcaste() {
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
         listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
+
       />
 
       {/* Dialog for Create Form */}
       <Dialog open={openPopup} maxWidth="sm" fullWidth>
-
-      {successBanner.flag && (
+        {successBanner.flag && (
           <Stack spacing={2} sx={{ m: 2 }}>
             <Alert
               severity={successBanner.severity}
@@ -399,8 +574,9 @@ export default function Subcaste() {
             </Alert>
           </Stack>
         )}
-        <DialogTitle> Create subcaste</DialogTitle>
+        <DialogTitle> Create SubCaste</DialogTitle>
         <DialogContent>
+
           <Grid item xs={12} padding={2} >
             <CommonSelectField inputProps={formData.castename} onSelectChange={handleSelectChange} />
           </Grid>
@@ -411,18 +587,84 @@ export default function Subcaste() {
           <Grid item xs={12} padding={2} >
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
-
-
-
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={handleFormSubmit}>
-            Create
+          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
+            {isEdit ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>
+
+
+      {/* Dialog for Status popup */}
+      <Dialog open={statusPopup} maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px', padding: '10px',
+            backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle sx={{
+          textAlign: 'center',
+          color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+          borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+        }}> Are you sure you want to {status}?</DialogTitle>
+        <DialogContent >
+          {selectedRow && (
+            <Grid textAlign={'center'}>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>SubCaste Name:</strong> {selectedRow.subcaste}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Caste Name:</strong> {selectedRow.caste}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Current Status:</strong> {selectedRow.status}
+              </Typography>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+
+        }}>
+          <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+            sx={{
+              padding: '5px 10px', borderRadius: '8px',
+              fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            sx={{
+              padding: '5px 10px',
+              borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+            variant="contained" color="primary" onClick={statusConfirmHandler}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
     </>
   );
 }
-

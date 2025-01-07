@@ -59,7 +59,7 @@ import { LabelKeyObject } from 'react-csv/lib/core';
 import { compareItems, rankItem, RankingInfo } from '@tanstack/match-sorter-utils';
 
 import { InputBase } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled, width } from '@mui/system';
 import { forEach } from 'lodash';
 
 interface ReactTableProps {
@@ -456,8 +456,8 @@ export default function ReactTable({
           </Grid>
         </Grid>
       )}
-      <Modal open={open.flag} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description" >
-        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' || open.action === 'disable' || open.action === 'DISABLE' || open.action === 'ENABLE' ? style : style1} style={{width:'300px'}}>
+      <Modal open={open.flag} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description"  >
+        <Box sx={open.action === 'delete' || open.action === 'block' || open.action === 'leave' || open.action === 'disable' || open.action === 'DISABLE' || open.action === 'ENABLE' ? style : style1} style={{width:'600px'}}>
           {open.action === 'edit' ? (
             <>
               <HandleFormInPopup />

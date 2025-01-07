@@ -1,19 +1,619 @@
 
+// import { useCallback, useEffect, useMemo, useState } from 'react';
+// import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
+// import Chip from '@mui/material/Chip';
+// import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Typography } from '@mui/material';
+// import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
+// import CommonInputField from 'pages/common-components/common-input';
+// import _, { debounce } from 'lodash';
+// import CommonSelectField from 'pages/common-components/common-select';
+// import { Severity } from 'Common/utils';
+// import Alert from '@mui/material/Alert';
+// import { Stack } from '@mui/system';
+// import CircularProgress from '@mui/material/CircularProgress';
+// import Backdrop from "@mui/material/Backdrop";
+// import { createEducation, editEducation, educationStatus, listEducation } from 'services/add-new-details/AddNewDetails';
+
+
+// export default function Education() {
+//   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
+//   const [open, setOpen] = useState({ flag: false, action: '' });
+//   const [rowsPerPage, setRowsPerPage] = useState(0);
+//   const [pageNumber, setPageNumber] = useState(1);
+//   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [listLoader, setListLoader] = useState(false);
+//   const [listFilter, setListFilter] = useState({ status: null, id: null, search: "", skip: 0, limit: 10 });
+//   const [tableData, setTableData] = useState([]);
+//   const [rowCount, setRowCount] = useState(0);
+//   const [globalFilter, setGlobalFilter] = useState('');
+//   const [isEdit, setIsEdit] = useState(false)
+//   const [statusPopup, setStatusPopup] = useState(false)
+//   const [rowId, setRowId] = useState(0)
+//   const [status, setStatus] = useState("")
+//   const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
+
+//   interface FormField {
+//     label: any;
+//     id: any;
+//     name: any;
+//     type?: any;
+//     placeholder?: any;
+//     value: any;
+//     error?: boolean;
+//     helperText?: any;
+//     mandatory?: boolean;
+//     options: { id: any; label: any }[];
+//     isMulti?: boolean;
+//   }
+
+//   interface FormData {
+//     [key: string]: FormField;
+//   }
+
+//   const formFields: FormData = {
+//     educationName: {
+//       label: 'Enter Education Name',
+//       id: 'educationName',
+//       name: 'educationName',
+//       type: 'text',
+//       value: '',
+//       error: false,
+//       helperText: '',
+//       mandatory: true,
+//       options: []
+//     },
+//     statusName: {
+//       label: "Status",
+//       id: "statusName",
+//       name: "statusName",
+//       type: "select",
+//       options: [
+//         { id: 1, label: 'ENABLE' },
+//         { id: 2, label: 'DISABLE' },
+//       ],
+//       value: { id: null, label: '' },
+//       error: false,
+//       helperText: "",
+//       mandatory: true,
+//       isMulti: false,
+//     },
+
+//   }
+
+//   const [formData, setFormData] = useState<FormData>(formFields);
+//   type FormDataKeys = keyof typeof formData;
+
+//   const handleChange = (name: FormDataKeys, value: any) => {
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: {
+//         ...prev[name], // Preserve existing properties of the field
+//         value,         // Update the value
+//         error: false,  // Reset error state
+//         helperText: "", // Clear helper text
+//       },
+//     }));
+//   };
+//   const validate = (): boolean => {
+//     let newFormData = _.cloneDeep(formData);
+//     let isValid = true;
+
+//     // Check each form field for validity
+//     for (const key in formData) {
+//       if (formData.hasOwnProperty(key)) {
+//         const field = formData[key];
+
+//         if (field.mandatory && (!field.value || field.value === "")) {
+//           newFormData[key].error = true;
+//           newFormData[key].helperText = `${field.label} is required`;
+//           isValid = false;
+//         } else if (field.type === "select" && (field.value.id === null || !field.value.id)) {
+//           // Handle select validation for status field
+//           newFormData[key].error = true;
+//           newFormData[key].helperText = `${field.label} is required`;
+//           isValid = false;
+//         } else {
+//           newFormData[key].error = false;
+//           newFormData[key].helperText = "";
+//         }
+//       }
+//     }
+
+//     // Set the updated formData
+//     setFormData(newFormData);
+
+//     // Return the final validation result
+//     return isValid;
+//   };
+//   const handleFormSubmit = async () => {
+//     if (validate()) {
+//       const newRecord = {
+//         name: formData.educationName.value,
+//         status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+//       };
+//       setIsLoading(true);
+//       const result = await createEducation(newRecord);
+//       if (result.status) {
+//         setSuccessBanner({
+//           flag: true,
+//           message: result.message,
+//           severity: Severity.Success,
+//         });
+//         setIsLoading(false);
+//         await educationList(); // Explicitly call here
+//         setTimeout(() => {
+//           setOpenPopup(false);
+//           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+//           setFormData(formFields);
+//         }, 1500);
+//       } else {
+//         setSuccessBanner({
+//           flag: true,
+//           message: result.message,
+//           severity: Severity.Error,
+//         });
+//         setIsLoading(false);
+//       }
+//     }
+//   };
+
+//   // console.log("hello",formData);
+
+
+//   const educationList = async () => {
+//     setListLoader(true);
+//     const result = await listEducation(listFilter);
+//     if (result.status) {
+//       setListLoader(false);
+//       setRowCount(result.totalCount);
+//       if (result.data.length > 0) {
+//         const data = result.data.map((item: any, index: any) => ({
+//           id: item.id,
+//           sno: listFilter.skip + index + 1,
+//           education: item.educationName,
+//           status: item.status ? 'Enable' : 'Disable',
+//         }));
+
+//         setTableData(data);
+//       } else {
+//         setTableData([]);
+//       }
+//     } else {
+//       setListLoader(false);
+//     }
+//   };
+
+//   console.log("tableData", tableData);
+
+
+//   useEffect(() => {
+//     if (globalFilter !== "") {
+//       setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+//     }
+//     else {
+//       setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+//     }
+//   }, [rowsPerPage, pageNumber, globalFilter]);
+//   useEffect(() => {
+//     educationList();
+//   }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
+
+//   const initailData: any = [
+//     { sno: "1", education: "Andhara", status: "Enable" },
+//     { sno: "2", education: "Jntu", status: "Disable" },
+//     { sno: "3", education: "AKNU", status: "Enable" },
+//     { sno: "4", education: "BOOKS", status: "Disable" },
+//     { sno: "5", education: "MUSIC", status: "Enable" },
+//     { sno: "6", education: "SELF", status: "Enable" },
+//     { sno: "7", education: "TV", status: "Enable" },
+//     { sno: "8", education: "MOBILE", status: "Enable" },
+//     { sno: "9", education: "LAPTOP", status: "Enable" }
+//   ];
+//   const [data, setData] = useState(initailData);
+
+
+
+
+//      const updateEducationHandler = async (updateData: any = {}, multiple = "") => {
+//             setIsLoading(true);
+//             if(!multiple) {
+//               let d = Object.keys(updateData).length;
+//               const updateRecord = {
+//                 name: d> 0 ? updateData?.education : formData.educationName.value,
+//                 status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+//                 id: d > 0 ? updateData.id : openPopup
+//               }
+//               const update = await educationStatus(updateRecord);
+//               if (update.status) {
+//                 setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+//                 setIsLoading(false);
+//                 setTimeout(() => {
+//                   setOpenPopup(false);
+//                   setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+//                   setFormData(formFields);
+//                 }, 1500);
+//               }
+//               else {
+//                 setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+//                 setIsLoading(false);
+//               }
+//             }
+//             else {
+//               let updateResult: any;
+//               let updateStatusArray:any = []
+//               updateData?.map(async (item: any) => {
+//                 const updateRecord = {
+//                   // name: item?.country,
+//                   status: multiple === "ENABLE" ? 1 : 0 ,
+//                   id: item.id 
+//                 }
+//                 updateStatusArray.push(updateRecord)
+
+//               })
+//               let payload = {
+//                 "data": updateStatusArray
+//               }
+//               updateResult = await educationStatus(payload);
+
+//                 setOpen({ flag: false, action: '' });
+//                 setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+
+//             }
+//             educationList();
+//             setTimeout(() => {
+//               setOpenPopup(false);
+//               setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+//             }, 1500);
+//           }
+
+//   const columns = useMemo(
+//     () => [
+//       { header: "S.NO", accessorKey: "sno" },
+//       { header: "Education Name", accessorKey: "education" },
+//       {
+//         header: "Status",
+//         accessorKey: "status",
+//         cell: (props: Cell<any, any>) => {
+//           const status = props.getValue();
+//           return (
+//             <Chip
+//               color={status === "Enable" ? "success" : "error"}
+//               label={status}
+//               size="small"
+//               variant="outlined"
+//             />
+//           );
+//         },
+//       },
+//     ],
+//     []
+//   );
+
+
+//   // const [rowId,setRowId] = useState()
+
+
+//   const handleEdit = (row: any, action: any) => {
+//     console.log("row", row);
+
+//     setRowId(row.id);
+//     setIsLoading(false);
+
+//     if (action === 'Status') {
+//       let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+//       setStatus(checkStatus);
+//       setSelectedRow(row); // Set the selected row data
+//       setStatusPopup(true);
+//       setOpenPopup(false);
+//       setIsEdit(false);
+//     } else if (action === 'Edit') {
+//       setStatusPopup(false);
+//       setOpenPopup(true);
+//       setIsEdit(true);
+//     }
+
+//     // Pre-fill formData when editing
+//     const newFormData = _.cloneDeep(formData);
+//     newFormData.educationName.value = row.education;
+//     newFormData.statusName.value =
+//       newFormData.statusName.options.find(
+//         (option) => option.label.toUpperCase() === row.status.toUpperCase()
+//       ) || { id: null, label: '' };
+
+//     setFormData(newFormData);
+//   };
+
+
+//   const handleEditFormSubmit = async () => {
+//     if (validate()) {
+//       console.log('roodkoksfodksfodf', rowId)
+//       const newRecord = {
+//         name: formData.educationName.value,
+//         status: formData.statusName.value.label === "ENABLE" ? 1 : 0,
+//         id: rowId
+//       };
+//       setIsLoading(true);
+//       const result = await editEducation(newRecord);
+//       if (result.status) {
+//         setSuccessBanner({
+//           flag: true,
+//           message: result.message,
+//           severity: Severity.Success,
+//         });
+//         setIsLoading(false);
+//         await educationList(); // Explicitly call here
+//         setTimeout(() => {
+//           setOpenPopup(false);
+//           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+//           setFormData(formFields);
+//           setIsEdit(false)
+//         }, 1500);
+//       } else {
+//         setSuccessBanner({
+//           flag: true,
+//           message: result.message,
+//           severity: Severity.Error,
+//         });
+//         setIsLoading(false);
+//       }
+//     }
+//   }
+//   const handleSelectChange = (name: FormDataKeys, value: any) => {
+//     const newFormData = _.cloneDeep(formData);
+//     newFormData[name].value = value;
+//     newFormData[name].error = false;
+//     newFormData[name].helperText = '';
+//     setFormData(newFormData);
+//   };
+
+//   const ActionMenu = ({ row }: { row: any }) => {
+//     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+//     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+//       setAnchorEl(event.currentTarget);
+//     };
+
+//     useEffect(() => {
+//       console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
+//     }, [rowsPerPage, pageNumber]);
+
+//     const handleClose = () => {
+//       setAnchorEl(null);
+//     };
+
+
+
+//     return (
+//       <>
+//         <Button onClick={handleClick}>...</Button>
+//         {/* < <Button onClick={handleClick}>...</Button> */}
+//         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+//           <MenuItem onClick={() => { handleEdit(row, 'Edit'); handleClose(); }}>Edit</MenuItem>
+//           <MenuItem onClick={() => { handleEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
+//         </Menu>
+//       </>
+//     );
+//   };
+
+//   const statusConfirmHandler = async () => {
+//     if (validate()) {
+//       console.log('roodkoksfodksfodf', rowId)
+//       const newRecord = {
+//         name: formData.educationName.value,
+//         status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+//         id: rowId
+//       };
+//       setIsLoading(true);
+//       const result = await editEducation(newRecord);
+//       if (result.status) {
+//         setSuccessBanner({
+//           flag: true,
+//           message: result.message,
+//           severity: Severity.Success,
+//         });
+//         setIsLoading(false);
+//         await educationList(); // Explicitly call here
+//         setTimeout(() => {
+//           setOpenPopup(false);
+//           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+//           setFormData(formFields);
+//           setIsEdit(false)
+//           setStatusPopup(false)
+//         }, 1500);
+//       } else {
+//         setSuccessBanner({
+//           flag: true,
+//           message: result.message,
+//           severity: Severity.Error,
+//         });
+//         setIsLoading(false);
+//       }
+//     }
+//   }
+
+//   const onPopupCloseHandler = () => {
+//     setOpenPopup(false)
+//     setFormData(formFields);
+//     setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+//     setStatusPopup(false)
+//   }
+
+//   const buttonHandler = (action: string, users: any) => {
+//     console.log('users.......',users)
+//     if(action === "disable") {
+//       updateEducationHandler(users);
+//     } else if(action === "ENABLE") {
+//       updateEducationHandler(users, "ENABLE");
+//     } else if(action === "DISABLE") {
+//       updateEducationHandler(users, "DISABLE");
+//     }
+//   }
+
+//   return (
+//     <>
+//       {/* Button to Open Popup */}
+//       <Grid style={{ marginBottom: '20px', textAlign: 'end' }}>
+//         <Button variant="contained" color="primary" onClick={() => setOpenPopup(true)}>
+//           Create Education
+//         </Button>
+//       </Grid>
+//       <Backdrop
+//         sx={{
+//           color: "blue",
+//           zIndex: (theme) => theme.zIndex.drawer + 1,
+//         }}
+//         open={listLoader}
+//       >
+//         <CircularProgress color="inherit" />
+//       </Backdrop>
+//       {/* React Table */}
+//       <ReactTable
+//         title={'Education Management'}
+//         data={tableData}
+//         columns={columns}
+//         actions={(row: any) => <ActionMenu row={row} />}
+//         includeSearch={true}
+//         needCSV={true}
+//         pagination={'top'}
+//         columnVisibility={true}
+//         needCheckBoxes={true}
+//         needActivateAndSuspendButtons={true}
+//         open={open}
+//         setOpen={setOpen}
+//         setRowsPerPage={setRowsPerPage}
+//         setPageNumber={setPageNumber}
+//         buttonHandler={buttonHandler}
+//         pageNumber={pageNumber}
+//         totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+//         globalFilter={globalFilter}
+//         setGlobalFilter={setGlobalFilter}
+//         listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
+
+//       />
+
+//       {/* Dialog for Create Form */}
+//       <Dialog open={openPopup} maxWidth="sm" fullWidth>
+//         {successBanner.flag && (
+//           <Stack spacing={2} sx={{ m: 2 }}>
+//             <Alert
+//               severity={successBanner.severity}
+//               onClose={() => {
+//                 setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+//               }}
+//             >
+//               {successBanner.message}
+//             </Alert>
+//           </Stack>
+//         )}
+//         <DialogTitle> Create Education</DialogTitle>
+//         <DialogContent>
+
+//           <Grid item xs={12} padding={2}>
+//             <CommonInputField inputProps={formData.educationName} onChange={handleChange} />
+//           </Grid>
+
+//           <Grid item xs={12} padding={2} >
+//             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
+//           </Grid>
+
+//         </DialogContent>
+//         <DialogActions>
+//           <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
+//           <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
+//             {isEdit ? 'Update' : 'Create'}
+//           </Button>
+//         </DialogActions>
+//       </Dialog>
+
+
+//       {/* Dialog for Status popup */}
+//       <Dialog open={statusPopup} maxWidth="sm"
+//         fullWidth
+//         sx={{
+//           '& .MuiPaper-root': {
+//             borderRadius: '16px', padding: '10px',
+//             backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+//           },
+//         }}>
+//         {successBanner.flag && (
+//           <Stack spacing={2} sx={{ m: 2 }}>
+//             <Alert
+//               severity={successBanner.severity}
+//               onClose={() =>
+//                 setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+//               }
+//             >
+//               {successBanner.message}
+//             </Alert>
+//           </Stack>
+//         )}
+//         <DialogTitle sx={{
+//           textAlign: 'center',
+//           color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+//           borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+//         }}> Are you sure you want to {status}?</DialogTitle>
+//         <DialogContent >
+//           {selectedRow && (
+//             <Grid textAlign={'center'}>
+//               <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+//                 <strong>Education Name:</strong> {selectedRow.education}
+//               </Typography>
+//               <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+//                 <strong>Current Status:</strong> {selectedRow.status}
+//               </Typography>
+//             </Grid>
+//           )}
+//         </DialogContent>
+//         <DialogActions sx={{
+//           display: 'flex',
+//           justifyContent: 'space-around',
+
+//         }}>
+//           <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+//             sx={{
+//               padding: '5px 10px', borderRadius: '8px',
+//               fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+//             }}
+//           >
+//             Cancel
+//           </Button>
+//           <Button
+//             sx={{
+//               padding: '5px 10px',
+//               borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+//             }}
+//             variant="contained" color="primary" onClick={statusConfirmHandler}
+//             startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+//           >
+//             Confirm
+//           </Button>
+//         </DialogActions>
+//       </Dialog>
+
+
+//     </>
+//   );
+// }
+
+
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable"; // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid, Typography } from '@mui/material';
+import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Switch, FormControlLabel, Select, MenuItem as DropdownItem, FormControl, InputLabel, SelectChangeEvent, RadioGroup, Radio, FormLabel, Grid } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _, { debounce } from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Severity } from 'Common/utils';
+import { createEducation, editEducation, educationStatus, listEducation, } from 'services/add-new-details/AddNewDetails';
 import Alert from '@mui/material/Alert';
-import { Stack } from '@mui/system';
+import { Stack, textAlign } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from "@mui/material/Backdrop";
-import { createEducation, editEducation, listEducation } from 'services/add-new-details/AddNewDetails';
-
+import Typography from '@mui/material/Typography';
 
 export default function Education() {
   const [openPopup, setOpenPopup] = useState(false); // State for dialog visibility
@@ -31,7 +631,6 @@ export default function Education() {
   const [statusPopup, setStatusPopup] = useState(false)
   const [rowId, setRowId] = useState(0)
   const [status, setStatus] = useState("")
-  const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
   interface FormField {
     label: any;
@@ -51,9 +650,10 @@ export default function Education() {
     [key: string]: FormField;
   }
 
+
   const formFields: FormData = {
     educationName: {
-      label: 'Enter Education Name',
+      label: 'Enter Your Education',
       id: 'educationName',
       name: 'educationName',
       type: 'text',
@@ -95,11 +695,11 @@ export default function Education() {
       },
     }));
   };
+
   const validate = (): boolean => {
     let newFormData = _.cloneDeep(formData);
     let isValid = true;
 
-    // Check each form field for validity
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
@@ -108,11 +708,15 @@ export default function Education() {
           newFormData[key].error = true;
           newFormData[key].helperText = `${field.label} is required`;
           isValid = false;
-        } else if (field.type === "select" && (field.value.id === null || !field.value.id)) {
-          // Handle select validation for status field
-          newFormData[key].error = true;
-          newFormData[key].helperText = `${field.label} is required`;
-          isValid = false;
+        } else if (field.type === "select") { // Corrected comparison
+          if (!field.value || field.value.id === null) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} is required`;
+            isValid = false;
+          } else {
+            newFormData[key].error = false;
+            newFormData[key].helperText = "";
+          }
         } else {
           newFormData[key].error = false;
           newFormData[key].helperText = "";
@@ -120,12 +724,16 @@ export default function Education() {
       }
     }
 
-    // Set the updated formData
     setFormData(newFormData);
-
-    // Return the final validation result
     return isValid;
   };
+
+  
+
+  useEffect(() => {
+    educationList();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+
   const handleFormSubmit = async () => {
     if (validate()) {
       const newRecord = {
@@ -158,64 +766,59 @@ export default function Education() {
     }
   };
 
-  // console.log("hello",formData);
 
-
-  const educationList = async () => {
-    setListLoader(true);
-    const result = await listEducation(listFilter);
-    if (result.status) {
-      setListLoader(false);
-      setRowCount(result.totalCount);
-      if (result.data.length > 0) {
-        const data = result.data.map((item: any, index: any) => ({
-          id: item.id,
-          sno: listFilter.skip + index + 1,
-          education: item.educationName,
-          status: item.status ? 'Enable' : 'Disable',
-        }));
-
-        setTableData(data);
-      } else {
-        setTableData([]);
+  const updateeducationHandler = async (updateData: any = {}, multiple = "") => {
+    setIsLoading(true);
+    if (!multiple) {
+      let d = Object.keys(updateData).length;
+      const updateRecord = {
+        name: d > 0 ? updateData?.education : formData.educationName.value,
+        status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0),
+        id: d > 0 ? updateData.id : openPopup
       }
-    } else {
-      setListLoader(false);
-    }
-  };
-
-  console.log("tableData", tableData);
-
-  // const debouncedListSource = useCallback(
-  //   debounce(() => educationList(), 500), // Adjust debounce time as needed
-  //   []
-  // );
-
-  useEffect(() => {
-    if (globalFilter !== "") {
-      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+      const update = await educationStatus(updateRecord);
+      if (update.status) {
+        setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+        setIsLoading(false);
+        setTimeout(() => {
+          setOpenPopup(false);
+          setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+          setFormData(formFields);
+        }, 1500);
+      }
+      else {
+        setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+        setIsLoading(false);
+      }
     }
     else {
-      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+      let updateResult: any;
+      let updateStatusArray: any = []
+      updateData?.map(async (item: any) => {
+        const updateRecord = {
+        
+          status: multiple === "ENABLE" ? 1 : 0,
+          id: item.id
+        }
+        updateStatusArray.push(updateRecord)
+
+      })
+      let payload = {
+        "data": updateStatusArray
+      }
+      updateResult = await educationStatus(payload);
+
+      setOpen({ flag: false, action: '' });
+      setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+
     }
-  }, [rowsPerPage, pageNumber, globalFilter]);
-  useEffect(() => {
     educationList();
-  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+    setTimeout(() => {
+      setOpenPopup(false);
+      setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    }, 1500);
+  }
 
-
-  const initailData: any = [
-    { sno: "1", education: "Andhara", status: "Enable" },
-    { sno: "2", education: "Jntu", status: "Disable" },
-    { sno: "3", education: "AKNU", status: "Enable" },
-    { sno: "4", education: "BOOKS", status: "Disable" },
-    { sno: "5", education: "MUSIC", status: "Enable" },
-    { sno: "6", education: "SELF", status: "Enable" },
-    { sno: "7", education: "TV", status: "Enable" },
-    { sno: "8", education: "MOBILE", status: "Enable" },
-    { sno: "9", education: "LAPTOP", status: "Enable" }
-  ];
-  const [data, setData] = useState(initailData);
 
   const columns = useMemo(
     () => [
@@ -225,13 +828,13 @@ export default function Education() {
         header: "Status",
         accessorKey: "status",
         cell: (props: Cell<any, any>) => {
-          const status = props.getValue();
+          const status = props.getValue(); // Get the value of the "status" field
           return (
             <Chip
               color={status === "Enable" ? "success" : "error"}
               label={status}
               size="small"
-              variant="outlined"
+              variant="outlined" // Changed to "outlined" for better visual distinction
             />
           );
         },
@@ -240,9 +843,15 @@ export default function Education() {
     []
   );
 
+  const handleSelectChange = (name: FormDataKeys, value: any) => {
+    const newFormData = _.cloneDeep(formData);
+    newFormData[name].value = value;
+    newFormData[name].error = false;
+    newFormData[name].helperText = '';
+    setFormData(newFormData);
+  };
 
-  // const [rowId,setRowId] = useState()
-
+  const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
   const handleEdit = (row: any, action: any) => {
     setRowId(row.id);
@@ -271,7 +880,6 @@ export default function Education() {
 
     setFormData(newFormData);
   };
-
 
   const handleEditFormSubmit = async () => {
     if (validate()) {
@@ -307,13 +915,34 @@ export default function Education() {
       }
     }
   }
-  const handleSelectChange = (name: FormDataKeys, value: any) => {
-    const newFormData = _.cloneDeep(formData);
-    newFormData[name].value = value;
-    newFormData[name].error = false;
-    newFormData[name].helperText = '';
-    setFormData(newFormData);
-  };
+  const educationList = async () => {
+    setListLoader(true);
+    const result = await listEducation(listFilter);
+    if (result.status) {
+      setListLoader(false);
+      setRowCount(result.totalCount);
+      if (result.data.length > 0) {
+        const data = result.data.map((item: any, index: any) => ({ id: item.id, sno: listFilter.skip + index + 1, education: item.educationName, status: item.status ? 'Enable' : 'Disable' }));
+        setTableData(data);
+      }
+
+      else {
+        setTableData([]);
+      }
+    }
+    else {
+      setListLoader(false);
+    }
+  }
+  useEffect(() => {
+    if (globalFilter !== "") {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter })
+    }
+    else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter })
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
+
 
   const ActionMenu = ({ row }: { row: any }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -322,20 +951,13 @@ export default function Education() {
       setAnchorEl(event.currentTarget);
     };
 
-    useEffect(() => {
-      console.log("Page Size: ", rowsPerPage, "Page Number: ", pageNumber);
-    }, [rowsPerPage, pageNumber]);
-
     const handleClose = () => {
       setAnchorEl(null);
     };
 
-
-
     return (
       <>
         <Button onClick={handleClick}>...</Button>
-        {/* < <Button onClick={handleClick}>...</Button> */}
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleEdit(row, 'Edit'); handleClose(); }}>Edit</MenuItem>
           <MenuItem onClick={() => { handleEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
@@ -343,6 +965,12 @@ export default function Education() {
       </>
     );
   };
+  const onPopupCloseHandler = () => {
+    setOpenPopup(false)
+    setFormData(formFields);
+    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    setStatusPopup(false)
+  }
 
   const statusConfirmHandler = async () => {
     if (validate()) {
@@ -380,12 +1008,18 @@ export default function Education() {
     }
   }
 
-  const onPopupCloseHandler = () => {
-    setOpenPopup(false)
-    setFormData(formFields);
-    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
-    setStatusPopup(false)
+
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......', users)
+    if (action === "disable") {
+      updateeducationHandler(users);
+    } else if (action === "ENABLE") {
+      updateeducationHandler(users, "ENABLE");
+    } else if (action === "DISABLE") {
+      updateeducationHandler(users, "DISABLE");
+    }
   }
+
 
   return (
     <>
@@ -395,6 +1029,8 @@ export default function Education() {
           Create Education
         </Button>
       </Grid>
+
+      {/* Backdrop */}
       <Backdrop
         sx={{
           color: "blue",
@@ -405,6 +1041,7 @@ export default function Education() {
         <CircularProgress color="inherit" />
       </Backdrop>
       {/* React Table */}
+
       <ReactTable
         title={'Education Management'}
         data={tableData}
@@ -421,11 +1058,11 @@ export default function Education() {
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
+        buttonHandler={buttonHandler}
         totalPageCount={Math.ceil(rowCount / rowsPerPage)}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
         listSelectButton={{ name1: "ENABLE", name2: "DISABLE" }}
-
       />
 
       {/* Dialog for Create Form */}
@@ -444,24 +1081,20 @@ export default function Education() {
         )}
         <DialogTitle> Create Education</DialogTitle>
         <DialogContent>
-
           <Grid item xs={12} padding={2}>
             <CommonInputField inputProps={formData.educationName} onChange={handleChange} />
           </Grid>
-
           <Grid item xs={12} padding={2} >
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
-
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={() => setOpenPopup(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit}>
-            {isEdit ? 'Update' : 'Create'}
+          <Button variant="contained" color="error" sx={{ margin: "1rem" }} onClick={onPopupCloseHandler}>Cancel</Button>
+          <Button variant="contained" color="primary" sx={{ margin: "1rem" }} onClick={!isEdit ? handleFormSubmit : handleEditFormSubmit} startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}>
+            {!isEdit ? 'Create' : 'Update'}
           </Button>
         </DialogActions>
       </Dialog>
-
 
       {/* Dialog for Status popup */}
       <Dialog open={statusPopup} maxWidth="sm"
@@ -491,7 +1124,7 @@ export default function Education() {
         }}> Are you sure you want to {status}?</DialogTitle>
         <DialogContent >
           {selectedRow && (
-            <Grid  textAlign={'center'}>
+            <Grid textAlign={'center'}>
               <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
                 <strong>Education Name:</strong> {selectedRow.education}
               </Typography>
@@ -526,11 +1159,12 @@ export default function Education() {
           </Button>
         </DialogActions>
       </Dialog>
-
-
     </>
   );
 }
+
+
+
 
 
 

@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import { Stack } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from "@mui/material/Backdrop";
-import { createOccuption, editOccuption, listOccuption } from 'services/add-new-details/AddNewDetails';
+import { createOccuption, editOccuption, listOccuption, occuptionStatus } from 'services/add-new-details/AddNewDetails';
 
 
 export default function Occuption() {
@@ -204,6 +204,60 @@ export default function Occuption() {
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
 
+  
+     const updateOccuptionHandler = async (updateData: any = {}, multiple = "") => {
+            setIsLoading(true);
+            if(!multiple) {
+              let d = Object.keys(updateData).length;
+              const updateRecord = {
+                name: d> 0 ? updateData?.occuption : formData.occupationName.value,
+                status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+                id: d > 0 ? updateData.id : openPopup
+              }
+              const update = await occuptionStatus(updateRecord);
+              if (update.status) {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+                setIsLoading(false);
+                setTimeout(() => {
+                  setOpenPopup(false);
+                  setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+                  setFormData(formFields);
+                }, 1500);
+              }
+              else {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+                setIsLoading(false);
+              }
+            }
+            else {
+              let updateResult: any;
+              let updateStatusArray:any = []
+              updateData?.map(async (item: any) => {
+                const updateRecord = {
+                  // name: item?.country,
+                  status: multiple === "ENABLE" ? 1 : 0 ,
+                  id: item.id 
+                }
+                updateStatusArray.push(updateRecord)
+                
+              })
+              let payload = {
+                "data": updateStatusArray
+              }
+              updateResult = await occuptionStatus(payload);
+        
+                setOpen({ flag: false, action: '' });
+                setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+        
+            }
+            occuptionList();
+            setTimeout(() => {
+              setOpenPopup(false);
+              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+            }, 1500);
+          }
+
+
   const initailData: any = [
     { sno: "1", occuption: "Andhara", status: "Enable" },
     { sno: "2", occuption: "Jntu", status: "Disable" },
@@ -387,6 +441,17 @@ export default function Occuption() {
     setStatusPopup(false)
   }
 
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updateOccuptionHandler(users);
+    } else if(action === "ENABLE") {
+      updateOccuptionHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updateOccuptionHandler(users, "DISABLE");
+    }
+  }
+
   return (
     <>
       {/* Button to Open Popup */}
@@ -418,6 +483,7 @@ export default function Occuption() {
         needActivateAndSuspendButtons={true}
         open={open}
         setOpen={setOpen}
+        buttonHandler={buttonHandler}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}

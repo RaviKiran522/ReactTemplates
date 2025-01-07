@@ -380,7 +380,7 @@ import Alert from '@mui/material/Alert';
 import { Stack } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from "@mui/material/Backdrop";
-import { createPropertyDetails,  editPropertyDetails,  listPropertyDetails } from 'services/add-new-details/AddNewDetails';
+import { createPropertyDetails,  editPropertyDetails,  listPropertyDetails, propertyDetailsStatus } from 'services/add-new-details/AddNewDetails';
 
 
 export default function Propertydetails() {
@@ -495,7 +495,7 @@ export default function Propertydetails() {
     return isValid;
   };
   useEffect(() => {
-    universityList();
+    propertyLisrts();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
   const handleFormSubmit = async () => {
@@ -513,7 +513,7 @@ export default function Propertydetails() {
           severity: Severity.Success,
         });
         setIsLoading(false);
-        await universityList(); // Explicitly call here
+        await propertyLisrts(); // Explicitly call here
         setTimeout(() => {
           setOpenPopup(false);
           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
@@ -533,7 +533,7 @@ export default function Propertydetails() {
   // console.log("hello",formData);
 
 
-  const universityList = async () => {
+  const propertyLisrts = async () => {
     setListLoader(true);
     const result = await listPropertyDetails(listFilter);
     if (result.status) {
@@ -559,7 +559,7 @@ export default function Propertydetails() {
   console.log("tableData", tableData);
 
   // const debouncedListSource = useCallback(
-  //   debounce(() => universityList(), 500), // Adjust debounce time as needed
+  //   debounce(() => propertyLisrts(), 500), // Adjust debounce time as needed
   //   []
   // );
 
@@ -572,7 +572,7 @@ export default function Propertydetails() {
     }
   }, [rowsPerPage, pageNumber, globalFilter]);
   useEffect(() => {
-    universityList();
+    propertyLisrts();
   }, [listFilter.search, listFilter.skip, listFilter.limit]);
 
 
@@ -588,6 +588,59 @@ export default function Propertydetails() {
     { sno: "9", propertydetails: "LAPTOP", status: "Enable" }
   ];
   const [data, setData] = useState(initailData);
+
+
+  const updatePropertysHandler = async (updateData: any = {}, multiple = "") => {
+            setIsLoading(true);
+            if(!multiple) {
+              let d = Object.keys(updateData).length;
+              const updateRecord = {
+                name: d> 0 ? updateData?.propertydetails : formData.propertydetailsName.value,
+                status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+                id: d > 0 ? updateData.id : openPopup
+              }
+              const update = await propertyDetailsStatus(updateRecord);
+              if (update.status) {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+                setIsLoading(false);
+                setTimeout(() => {
+                  setOpenPopup(false);
+                  setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+                  setFormData(formFields);
+                }, 1500);
+              }
+              else {
+                setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+                setIsLoading(false);
+              }
+            }
+            else {
+              let updateResult: any;
+              let updateStatusArray:any = []
+              updateData?.map(async (item: any) => {
+                const updateRecord = {
+                  // name: item?.country,
+                  status: multiple === "ENABLE" ? 1 : 0 ,
+                  id: item.id 
+                }
+                updateStatusArray.push(updateRecord)
+                
+              })
+              let payload = {
+                "data": updateStatusArray
+              }
+              updateResult = await propertyDetailsStatus(payload);
+        
+                setOpen({ flag: false, action: '' });
+                setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+        
+            }
+            propertyLisrts();
+            setTimeout(() => {
+              setOpenPopup(false);
+              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+            }, 1500);
+          }
 
   const columns = useMemo(
     () => [
@@ -662,7 +715,7 @@ export default function Propertydetails() {
           severity: Severity.Success,
         });
         setIsLoading(false);
-        await universityList(); // Explicitly call here
+        await propertyLisrts(); // Explicitly call here
         setTimeout(() => {
           setOpenPopup(false);
           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
@@ -733,7 +786,7 @@ export default function Propertydetails() {
           severity: Severity.Success,
         });
         setIsLoading(false);
-        await universityList(); // Explicitly call here
+        await propertyLisrts(); // Explicitly call here
         setTimeout(() => {
           setOpenPopup(false);
           setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
@@ -757,6 +810,17 @@ export default function Propertydetails() {
     setFormData(formFields);
     setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
     setStatusPopup(false)
+  }
+
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updatePropertysHandler(users);
+    } else if(action === "ENABLE") {
+      updatePropertysHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updatePropertysHandler(users, "DISABLE");
+    }
   }
 
   return (
@@ -790,6 +854,7 @@ export default function Propertydetails() {
         needActivateAndSuspendButtons={true}
         open={open}
         setOpen={setOpen}
+        buttonHandler={buttonHandler}
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}

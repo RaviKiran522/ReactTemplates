@@ -8,7 +8,7 @@ import CommonInputField from 'pages/common-components/common-input';
 import _, { debounce } from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Severity } from 'Common/utils';
-import {  createInterests,  editinterests,  listInterests } from 'services/add-new-details/AddNewDetails';
+import {  createInterests,  editinterests,  iterestsStatus,  listInterests } from 'services/add-new-details/AddNewDetails';
 import Alert from '@mui/material/Alert';
 import { Stack, textAlign } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -168,6 +168,59 @@ export default function Interests() {
       }
     }
   };
+
+
+   const updateInterestsHandler = async (updateData: any = {}, multiple = "") => {
+          setIsLoading(true);
+          if(!multiple) {
+            let d = Object.keys(updateData).length;
+            const updateRecord = {
+              name: d> 0 ? updateData?.interests : formData.interestsName.value,
+              status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+              id: d > 0 ? updateData.id : openPopup
+            }
+            const update = await iterestsStatus(updateRecord);
+            if (update.status) {
+              setSuccessBanner({ flag: true, message: update.message, severity: Severity.Success });
+              setIsLoading(false);
+              setTimeout(() => {
+                setOpenPopup(false);
+                setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+                setFormData(formFields);
+              }, 1500);
+            }
+            else {
+              setSuccessBanner({ flag: true, message: update.message, severity: Severity.Error });
+              setIsLoading(false);
+            }
+          }
+          else {
+            let updateResult: any;
+            let updateStatusArray:any = []
+            updateData?.map(async (item: any) => {
+              const updateRecord = {
+                // name: item?.country,
+                status: multiple === "ENABLE" ? 1 : 0 ,
+                id: item.id 
+              }
+              updateStatusArray.push(updateRecord)
+              
+            })
+            let payload = {
+              "data": updateStatusArray
+            }
+            updateResult = await iterestsStatus(payload);
+      
+              setOpen({ flag: false, action: '' });
+              setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+      
+          }
+          intersetsList();
+          setTimeout(() => {
+            setOpenPopup(false);
+            setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+          }, 1500);
+        }
 
 
   const columns = useMemo(
@@ -358,6 +411,18 @@ export default function Interests() {
     }
   }
 
+  
+  const buttonHandler = (action: string, users: any) => {
+    console.log('users.......',users)
+    if(action === "disable") {
+      updateInterestsHandler(users);
+    } else if(action === "ENABLE") {
+      updateInterestsHandler(users, "ENABLE");
+    } else if(action === "DISABLE") {
+      updateInterestsHandler(users, "DISABLE");
+    }
+  }
+
 
   return (
     <>
@@ -396,6 +461,7 @@ export default function Interests() {
         setRowsPerPage={setRowsPerPage}
         setPageNumber={setPageNumber}
         pageNumber={pageNumber}
+        buttonHandler={buttonHandler}
         totalPageCount={Math.ceil(rowCount / rowsPerPage)}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}

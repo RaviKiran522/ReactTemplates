@@ -20,7 +20,10 @@ import {
   RadioGroup,
   Radio,
   FormLabel,
-  Grid
+  Grid,
+  Typography,
+  Stack,
+  Alert
 } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
@@ -43,6 +46,13 @@ export default function Religion() {
   const [isLoading, setIsLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const [listFilter, setListFilter] = useState({ status: null, id: null, search: '', skip: 0, limit: 10 });
+  
+  const [status, setStatus] = useState<string>(''); // Add this line to define status and setStatus
+  const [rowId, setRowId] = useState<number | null>(null); // Add this line to define rowId and setRowId
+  const [selectedRow, setSelectedRow] = useState<any>(null); // Add this line to define selectedRow and setSelectedRow
+  const [statusPopup, setStatusPopup] = useState<boolean>(false); // Add this line to define statusPopup and setStatusPopup
+  const [isEdit, setIsEdit] = useState<boolean>(false); // Add this line to define isEdit and setIsEdit
+
 
   // const [formData, setFormData] = useState({
 
@@ -315,6 +325,28 @@ export default function Religion() {
       setAnchorEl(null);
     };
 
+     const handlehandleEditDisableEdit = (row: any, action: any) => {
+            setRowId(row.id);
+            setIsLoading(false);
+        
+            if (action === 'Status') {
+              let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+              setStatus(checkStatus);
+              setSelectedRow(row); // Set the selected row data
+              setStatusPopup(true);
+              setOpenPopup({ flag: false, action: '', religionId: null });
+              setIsEdit(false);
+            
+            }
+            const newFormData = _.cloneDeep(formData);
+            newFormData.religionName.value = row.religion;
+            newFormData.statusName.value =
+              newFormData.statusName.options.find(
+                (option) => option.label.toUpperCase() === row.status.toUpperCase()
+              ) || { id: null, label: '' };
+        
+            setFormData(newFormData);
+          };
     return (
       <>
         <Button onClick={handleClick}>...</Button>
@@ -328,18 +360,63 @@ export default function Religion() {
             Edit
           </MenuItem>
           {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem> */}
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'disable' });
               handleClose();
             }}
           >
             Disable
-          </MenuItem>
+          </MenuItem> */}
+            <MenuItem onClick={() => { handlehandleEditDisableEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
         </Menu>
       </>
     );
   };
+
+  
+     const statusConfirmHandler = async () => {
+        if (validate()) {
+          console.log('roodkoksfodksfodf', rowId)
+          const newRecord = {
+            name: formData.religionName.value,
+            status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+            id: rowId
+          };
+          setIsLoading(true);
+          const result = await updateReligion(newRecord);
+          if (result.status) {
+            setSuccessBanner({
+              flag: true,
+              message: result.message,
+              severity: Severity.Success,
+            });
+            setIsLoading(false);
+            await getReligionData(); // Explicitly call here
+            setTimeout(() => {
+              setOpenPopup({ flag: false, action: '', religionId: null });
+              setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+              setFormData(formFields);
+              setIsEdit(false)
+              setStatusPopup(false)
+            }, 1500);
+          } else {
+            setSuccessBanner({
+              flag: true,
+              message: result.message,
+              severity: Severity.Error,
+            });
+            setIsLoading(false);
+          }
+        }
+      }
+    
+      const onPopupCloseHandler = () => {
+        setOpenPopup({ flag: false, action: '', religionId: null })
+        setFormData(formFields);
+        setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+        setStatusPopup(false)
+      }
 
   return (
     <>
@@ -386,6 +463,18 @@ export default function Religion() {
 
       {/* Dialog for Create Form */}
       <Dialog open={openPopup.flag} maxWidth="sm" fullWidth>
+      {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
         <DialogTitle> Create Religion</DialogTitle>
         <DialogContent>
           <Grid item xs={12} padding={2}>
@@ -413,6 +502,70 @@ export default function Religion() {
             startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
           >
             {openPopup.action === 'create' ? 'Create' : 'Update'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for Status Update */}
+      <Dialog open={statusPopup} maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px', padding: '10px',
+            backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle sx={{
+          textAlign: 'center',
+          color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+          borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+        }}> Are you sure you want to {status}?</DialogTitle>
+        <DialogContent >
+          {selectedRow && (
+            <Grid  textAlign={'center'}>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Religion Name:</strong> {selectedRow.religion}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Current Status:</strong> {selectedRow.status}
+              </Typography>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+
+        }}>
+          <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+            sx={{
+              padding: '5px 10px', borderRadius: '8px',
+              fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            sx={{
+              padding: '5px 10px',
+              borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+            variant="contained" color="primary" onClick={statusConfirmHandler}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

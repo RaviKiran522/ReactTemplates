@@ -1409,11 +1409,15 @@ export default function InBoundViewProfile() {
             </MainCard>
           </Grid>
         </TabPanel>
+
+        <Grid item xs={12} marginBottom={2} marginTop={2}>
+              <Divider />
+            </Grid>
         <TabPanel value={value} index={4}>
-          <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+          <Grid item xs={12} style={{ marginTop: '5px', display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+            {/* <MainCard > */}
               <List sx={{ py: 0 }}>
-                <ListItem divider={!matchDownMD}>
+                {/* <ListItem divider={!matchDownMD}> */}
                   {/* <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}> */}
@@ -1456,31 +1460,213 @@ export default function InBoundViewProfile() {
                         width: '100%',
                         maxWidth: '100%',
                         borderRadius: '8px',
-                        padding: 2,
+                        padding: 1,
                         marginBottom: 2, // Add spacing here
+                      }}
+                    >
+                      <Grid
+                      marginBottom='2'
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="space-between"
+                      gap={1} // Reduced gap for tighter layout
+                    >
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30, // Small button height
+                          fontSize: '0.65rem', // Very small font size
+                          fontWeight: 400, // Lighter font weight
+                          padding: '4px 6px', // Minimal padding
+                          minWidth: 0, // No extra width
+                          textTransform: 'none', // Keep text as it is/
+                        }}
+                      >
+                        Aadhar Uploaded By
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30,
+                          fontSize: '0.65rem',
+                          fontWeight: 400,
+                          padding: '4px 6px',
+                          minWidth: 0,
+                          textTransform: 'none',
+                        }}
+                      >
+                        Aadhar Verified By
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30,
+                          fontSize: '0.65rem',
+                          fontWeight: 400,
+                          padding: '4px 6px',
+                          minWidth: 0,
+                          textTransform: 'none',
+                        }}
+                      >
+                        Aadhar Verified Date
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30,
+                          fontSize: '0.75rem',
+                          fontWeight: 400,
+                          padding: '4px 6px',
+                          minWidth: 0,
+                          textTransform: 'none',
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </Grid>
+                    </Card>
+
+                    <Card
+                      sx={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        borderRadius: '8px',
+                        padding: 0.5, // Reduced card padding for compact design
+                        marginBottom: 2, // Space between cards
                       }}
                     >
                       <Grid
                         display="flex"
                         flexDirection="row"
                         justifyContent="space-between"
-                        gap={2} // Space between the items
-
+                        gap={1} // Reduced gap for tighter spacing between buttons
                       >
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                        <Button variant='contained' sx={{ padding: 1, flex: 1, backgroundColor: 'primary' }}>Aadhar Uploaded By</Button>
-                        {/* </Card> */}
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                        <Button variant='contained' sx={{ padding: 1, flex: 1 }}>Aadhar Verified By</Button>
-                        {/* </Card> */}
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                        <Button variant='contained' sx={{ padding: 1, flex: 1 }}>Aadhar Verified Date</Button>
-                        {/* </Card> */}
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                        <Button variant='contained' sx={{ padding: 1, flex: 1 }}>Delete</Button>
-                        {/* </Card> */}
+                        <Button
+                          variant="contained"
+                          startIcon={<CheckCircleIcon sx={{ margin: 0 }} />} // Remove icon margin
+                          sx={{
+                            flex: 1,
+                            height: 30, // Small button height
+                            fontSize: '0.65rem', // Small font size
+                            fontWeight: 400, // Lighter font weight
+                            padding: '4px 6px', // Minimal padding
+                            minWidth: 0, // No extra width
+                            textTransform: 'none', // Keep text as is
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0, // Removes default spacing
+                            },
+                          }}
+                        >
+                          AE10062
+                        </Button>
+                        <Button
+                          variant="contained"
+                          startIcon={<CheckCircleIcon sx={{ margin: 0 }} />}
+                          sx={{
+                            flex: 1,
+                            height: 30,
+                            fontSize: '0.65rem',
+                            fontWeight: 400,
+                            padding: '4px 6px',
+                            minWidth: 0,
+                            textTransform: 'none',
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0,
+                            },
+                          }}
+                        >
+                          AEADMIN
+                        </Button>
+                        <Button
+                          variant="contained"
+                          startIcon={<CheckCircleIcon sx={{ margin: 0 }} />}
+                          sx={{
+                            // flex: 1,
+                            height: 30,
+                            fontSize: '0.60rem',
+                            fontWeight: 400,
+                            padding: '4px 6px',
+                            minWidth: 0,
+                            textTransform: 'none',
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0,
+                            },
+                          }}
+                        >
+                          20-12-2024 
+                        </Button>
+                        <Button
+                          variant="contained"
+                          startIcon={<DeleteIcon sx={{ margin: 0 }} />}
+                          sx={{
+                            flex: 1,
+                            height: 30,
+                            fontSize: '0.65rem',
+                            fontWeight: 400,
+                            padding: '4px 6px',
+                            minWidth: 0,
+                            textTransform: 'none',
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0,
+                            },
+                          }}
+                        >
+                          Delete
+                        </Button>
                       </Grid>
                     </Card>
+
+                  </Box>
+                {/* </ListItem> */}
+              </List>
+            {/* </MainCard> */}
+
+            {/* <MainCard > */}
+              <List sx={{ py: 0 }}>
+                {/* <ListItem divider={!matchDownMD}> */}
+                  {/* <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                      <Stack spacing={0.5}> */}
+                  <Box
+                    p={3}
+                    sx={{
+                      width: "80%",
+                      maxWidth: '100%',
+                      margin: "auto",
+                      backgroundColor: "white",
+                      borderRadius: 2,
+                      boxShadow: 3,
+                    }}
+                  >
+                    {/* Image Section */}
+                    <Card
+                      sx={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        borderRadius: '8px',
+                        padding: 1,
+                        marginBottom: 2, // Add spacing here
+                      }}
+                    >
+                      <img
+                        src="https://cdn.pixabay.com/photo/2022/11/09/00/44/aadhaar-card-7579588_1280.png"
+                        alt="Sample"
+                        style={{
+                          width: '100%',
+                          maxWidth: '150%',
+                          borderRadius: '8px',
+                        }}
+                      />
+                    </Card>
+
 
                     <Card
                       sx={{
@@ -1488,64 +1674,176 @@ export default function InBoundViewProfile() {
                         width: '100%',
                         maxWidth: '100%',
                         borderRadius: '8px',
-                        padding: 2,
+                        padding: 1,
                         marginBottom: 2, // Add spacing here
+                      }}
+                    >
+                      <Grid
+                      marginBottom='2'
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="space-between"
+                      gap={1} // Reduced gap for tighter layout
+                    >
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30, // Small button height
+                          fontSize: '0.65rem', // Very small font size
+                          fontWeight: 400, // Lighter font weight
+                          padding: '4px 6px', // Minimal padding
+                          minWidth: 0, // No extra width
+                          textTransform: 'none', // Keep text as it is/
+                        }}
+                      >
+                        Pancard Uploaded By
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30,
+                          fontSize: '0.65rem',
+                          fontWeight: 400,
+                          padding: '4px 6px',
+                          minWidth: 0,
+                          textTransform: 'none',
+                        }}
+                      >
+                        Pancard Verified By
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30,
+                          fontSize: '0.65rem',
+                          fontWeight: 400,
+                          padding: '4px 6px',
+                          minWidth: 0,
+                          textTransform: 'none',
+                        }}
+                      >
+                        Pancard Verified Date
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          // flex: 1,
+                          height: 30,
+                          fontSize: '0.75rem',
+                          fontWeight: 400,
+                          padding: '4px 6px',
+                          minWidth: 0,
+                          textTransform: 'none',
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </Grid>
+                    </Card>
+
+                    <Card
+                      sx={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        borderRadius: '8px',
+                        padding: 0.5, // Reduced card padding for compact design
+                        marginBottom: 2, // Space between cards
                       }}
                     >
                       <Grid
                         display="flex"
                         flexDirection="row"
                         justifyContent="space-between"
-                        gap={2} // Space between the items
-
+                        gap={1} // Reduced gap for tighter spacing between buttons
                       >
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
                         <Button
                           variant="contained"
-
-                          startIcon={<CheckCircleIcon />}
-                          sx={{ padding: 1, flex: 1, backgroundColor: 'green' }}
+                          startIcon={<CheckCircleIcon sx={{ margin: 0 }} />} // Remove icon margin
+                          sx={{
+                            flex: 1,
+                            height: 30, // Small button height
+                            fontSize: '0.65rem', // Small font size
+                            fontWeight: 400, // Lighter font weight
+                            padding: '4px 6px', // Minimal padding
+                            minWidth: 0, // No extra width
+                            textTransform: 'none', // Keep text as is
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0, // Removes default spacing
+                            },
+                          }}
                         >
-                          AE100625
+                          AE10062
                         </Button>
-                        {/* </Card> */}
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
                         <Button
                           variant="contained"
-
-                          startIcon={<CheckCircleIcon />}
-                          sx={{ padding: 1, flex: 1, backgroundColor: 'green' }}
+                          startIcon={<CheckCircleIcon sx={{ margin: 0 }} />}
+                          sx={{
+                            flex: 1,
+                            height: 30,
+                            fontSize: '0.65rem',
+                            fontWeight: 400,
+                            padding: '4px 6px',
+                            minWidth: 0,
+                            textTransform: 'none',
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0,
+                            },
+                          }}
                         >
                           AEADMIN
                         </Button>
-                        {/* </Card> */}
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
                         <Button
                           variant="contained"
-
-                          startIcon={<CheckCircleIcon />}
-                          sx={{ textAlign: 'center', flex: 1, backgroundColor: 'green' }}
+                          startIcon={<CheckCircleIcon sx={{ margin: 0 }} />}
+                          sx={{
+                            // flex: 1,
+                            height: 30,
+                            fontSize: '0.60rem',
+                            fontWeight: 400,
+                            padding: '4px 6px',
+                            minWidth: 0,
+                            textTransform: 'none',
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0,
+                            },
+                          }}
                         >
-                          20-12-2024 01:59:44
+                          20-12-2024 
                         </Button>
-                        {/* </Card> */}
-                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
                         <Button
                           variant="contained"
-
-                          startIcon={<DeleteIcon />}
-                          sx={{ padding: 1, flex: 1, backgroundColor: 'green' }}
+                          startIcon={<DeleteIcon sx={{ margin: 0 }} />}
+                          sx={{
+                            flex: 1,
+                            height: 30,
+                            fontSize: '0.65rem',
+                            fontWeight: 400,
+                            padding: '4px 6px',
+                            minWidth: 0,
+                            textTransform: 'none',
+                            backgroundColor: 'green',
+                            '& .MuiButton-startIcon': {
+                              marginRight: 0,
+                            },
+                          }}
                         >
                           Delete
                         </Button>
-                        {/* </Card> */}
                       </Grid>
                     </Card>
+
                   </Box>
-                </ListItem>
+                {/* </ListItem> */}
               </List>
-            </MainCard>
+            {/* </MainCard> */}
           </Grid>
+          
         </TabPanel>
         <TabPanel value={value} index={5}>
 

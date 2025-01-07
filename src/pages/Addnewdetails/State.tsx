@@ -20,14 +20,15 @@ import {
   RadioGroup,
   Radio,
   FormLabel,
-  Grid
+  Grid,
+  Typography
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
-import { createState, countryList, statesList, updateState } from 'services/add-new-details/AddNewDetails';
+import { createState, countryList, statesList, updateState, stateStatus } from 'services/add-new-details/AddNewDetails';
 import { height } from '@mui/system';
 import { Severity } from 'Common/utils';
 import Alert from '@mui/material/Alert';
@@ -57,6 +58,14 @@ export default function State() {
   //   stateName: '',
   //   status: true, // Toggle for "Enable"
   // });
+
+  const [status, setStatus] = useState<string>(''); // Add this line to define status and setStatus
+  const [rowId, setRowId] = useState<number | null>(null); // Add this line to define rowId and setRowId
+  const [selectedRow, setSelectedRow] = useState<any>(null); // Add this line to define selectedRow and setSelectedRow
+  const [statusPopup, setStatusPopup] = useState<boolean>(false); // Add this line to define statusPopup and setStatusPopup
+  const [isEdit, setIsEdit] = useState<boolean>(false); // Add this line to define isEdit and setIsEdit
+
+
   interface FormField {
     label: any;
     id: any;
@@ -194,7 +203,7 @@ export default function State() {
     }
   };
   console.log('data: ', data);
-  
+
   useEffect(() => {
     getCountries();
   }, []);
@@ -226,7 +235,7 @@ export default function State() {
     setOpenPopup({ flag: true, action: 'update', stateId: row.stateId });
   };
 
-  const updateCountryHandler = async (updateData: any = {}, multiple = '') => {
+  const updatestatehandler = async (updateData: any = {}, multiple = '') => {
     if (!multiple) {
       let d = Object.keys(updateData).length;
       console.log('updateData: ', updateData);
@@ -270,19 +279,26 @@ export default function State() {
         setIsLoading(false);
       }
     } else {
-      let updateResult: any
+      let updateResult: any;
+      let updateStatusArray: any = []
       updateData?.map(async (item: any) => {
         const updateRecord = {
-          stateName: item?.state,
-          status: item?.status === 'Enable' ? 0 : 1,
-          id: item.stateId,
-          countryId: item.countryId
-        };
-        updateResult = await updateState(updateRecord);
-      });
-        setOpen({ flag: false, action: '' });
-        setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
+          // name: item?.country,
+          status: multiple === "ENABLE" ? 1 : 0,
+          id: item.stateId
+        }
+        updateStatusArray.push(updateRecord)
+
+      })
+      let payload = {
+        "data": updateStatusArray
+      }
+      updateResult = await stateStatus(payload);
+
+      setOpen({ flag: false, action: '' });
+      setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
     }
+
     getStates();
     setTimeout(() => {
       setOpenPopup({ flag: false, action: '', stateId: null });
@@ -334,7 +350,7 @@ export default function State() {
           setIsLoading(false);
         }
       } else {
-        updateCountryHandler();
+        updatestatehandler();
       }
     }
   };
@@ -374,11 +390,11 @@ export default function State() {
 
   const buttonHandler = (action: string, users: any) => {
     if (action === 'disable') {
-      updateCountryHandler(users);
+      updatestatehandler(users);
     } else if (action === 'ENABLE') {
-      updateCountryHandler(users, 'ENABLE');
+      updatestatehandler(users, 'ENABLE');
     } else if (action === 'DISABLE') {
-      updateCountryHandler(users, 'DISABLE');
+      updatestatehandler(users, 'DISABLE');
     }
   };
   console.log('rowCount / rowsPerPage: ', rowCount, rowsPerPage);
@@ -392,6 +408,9 @@ export default function State() {
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+    
+
     return (
       <>
         <Button onClick={handleClick}>...</Button>
@@ -404,7 +423,8 @@ export default function State() {
           >
             Edit
           </MenuItem>
-          <MenuItem
+
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'delete' });
 
@@ -412,7 +432,8 @@ export default function State() {
             }}
           >
             Delete
-          </MenuItem>
+          </MenuItem> */}
+
           <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'disable' });
@@ -421,10 +442,15 @@ export default function State() {
           >
             {row.status == 'Enable' ? 'Disable' : 'Enable'}
           </MenuItem>
+        
+
         </Menu>
       </>
     );
   };
+
+
+ 
 
   return (
     <>
@@ -508,29 +534,7 @@ export default function State() {
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
 
-          {/* <FormControl component="fieldset" sx={{margin:"1rem"}}>
-            <FormLabel component="legend">Status</FormLabel>
-            <RadioGroup
-              row
-              name="status"
-              value={formData.status.value ? "Enable" : "Disable"} // Correctly accessing formData.status.value
-              onChange={(e) =>
-                handleChange("status", e.target.value === "Enable") // Use a consistent update handler
-              }
-            >
-              <FormControlLabel
-                value="Enable"
-                control={<Radio color="success" />}
-                label="Enable"
-              />
-              <FormControlLabel
-                value="Disable"
-                control={<Radio color="error" />}
-                label="Disable"
-              />
-            </RadioGroup>
 
-          </FormControl> */}
         </DialogContent>
         <DialogActions>
           <Button
@@ -575,6 +579,8 @@ export default function State() {
           </Button>
         </DialogActions>
       </Dialog>
+
+     
     </>
   );
 }

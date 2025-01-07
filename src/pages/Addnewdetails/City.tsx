@@ -32,7 +32,7 @@ import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { height } from '@mui/system';
 import { Severity } from 'Common/utils';
-import { countryList, statesList, districtList, createCity, cityList, updateCity } from '../../services/add-new-details/AddNewDetails';
+import { countryList, statesList, districtList, createCity, cityList, updateCity, cityStatus } from '../../services/add-new-details/AddNewDetails';
 
 export default function District() {
   const [openPopup, setOpenPopup] = useState({ flag: false, action: '', cityId: null }); // State for dialog visibility
@@ -305,19 +305,24 @@ export default function District() {
       }
     } else {
       let updateResult: any;
+      let updateStatusArray: any = []
       updateData?.map(async (item: any) => {
         const updateRecord = {
-          countryId: item?.counrtyId,
-          stateId: item?.stateId,
-          districtId: item?.districtId,
-          cityName: item?.city,
-          status: item?.status === 'Disable' ? 1 : 0,
-          id: item?.id
-        };
-        updateResult = await updateCity(updateRecord);
-      });
+          // name: item?.country,
+          status: multiple === "ENABLE" ? 1 : 0,
+          id: item.id
+        }
+        updateStatusArray.push(updateRecord)
+
+      })
+      let payload = {
+        "data": updateStatusArray
+      }
+      updateResult = await cityStatus(payload);
+
       setOpen({ flag: false, action: '' });
-      setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
+      setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+
     }
     getCityList();
     setTimeout(() => {
@@ -473,14 +478,14 @@ export default function District() {
             Edit
           </MenuItem>
           {/* <MenuItem onClick={() => handleDelete(row)}>Delete</MenuItem> */}
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'delete' });
               handleClose();
             }}
           >
             Delete
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'disable' });
@@ -602,6 +607,8 @@ export default function District() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      
     </>
   );
 }

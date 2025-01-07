@@ -32,7 +32,7 @@ import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
 import { height } from '@mui/system';
-import { createDistrict, countryList, statesList, districtList, updateDistrict } from '../../services/add-new-details/AddNewDetails';
+import { createDistrict, countryList, statesList, districtList, updateDistrict, districtStatus } from '../../services/add-new-details/AddNewDetails';
 
 export default function District() {
   const [openPopup, setOpenPopup] = useState({ flag: false, action: '', districtId: null }); // State for dialog visibility
@@ -216,18 +216,25 @@ export default function District() {
         setIsLoading(false);
       }
     } else {
+      let updateResult: any;
+      let updateStatusArray: any = []
       updateData?.map(async (item: any) => {
         const updateRecord = {
-          countryId: item?.countryId,
-          stateId: item?.stateId,
-          districtName: item?.district,
-          status: item?.status === 'Disable' ? 1 : 0,
-          id: item?.id
-        };
-        const update = await updateDistrict(updateRecord);
-      });
+          // name: item?.country,
+          status: multiple === "ENABLE" ? 1 : 0,
+          id: item.id
+        }
+        updateStatusArray.push(updateRecord)
+
+      })
+      let payload = {
+        "data": updateStatusArray
+      }
+      updateResult = await districtStatus(payload);
+
       setOpen({ flag: false, action: '' });
-      setSuccessBanner({ flag: true, message: 'success', severity: Severity.Success });
+      setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+
     }
     listDistricts();
     setTimeout(() => {
@@ -265,15 +272,15 @@ export default function District() {
       setDistrictData(
         result.data.length > 0
           ? result.data.map((item: any) => ({
-              sno: item?.id,
-              id: item?.id,
-              district: item?.districtName,
-              counrty: item?.country?.countryName,
-              countryId: item?.country?.id,
-              state: item?.state?.stateName,
-              stateId: item?.state?.id,
-              status: item?.status === 1 ? 'Enable' : 'Disable'
-            }))
+            sno: item?.id,
+            id: item?.id,
+            district: item?.districtName,
+            counrty: item?.country?.countryName,
+            countryId: item?.country?.id,
+            state: item?.state?.stateName,
+            stateId: item?.state?.id,
+            status: item?.status === 1 ? 'Enable' : 'Disable'
+          }))
           : []
       );
       setListLoader(false);
@@ -400,14 +407,14 @@ export default function District() {
           >
             Edit
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'delete' });
               handleClose();
             }}
           >
             Delete
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'disable' });
@@ -504,31 +511,6 @@ export default function District() {
           <Grid item xs={12} padding={2}>
             <CommonSelectField inputProps={formData.statusName} onSelectChange={handleSelectChange} />
           </Grid>
-
-          {/* 
-          <FormControl component="fieldset" sx={{margin:"1rem"}}>
-            <FormLabel component="legend">Status</FormLabel>
-            <RadioGroup
-              row
-              name="status"
-              value={formData.status.value ? "Enable" : "Disable"} // Correctly accessing formData.status.value
-              onChange={(e) =>
-                handleChange("status", e.target.value === "Enable") // Use a consistent update handler
-              }
-            >
-              <FormControlLabel
-                value="Enable"
-                control={<Radio color="success" />}
-                label="Enable"
-              />
-              <FormControlLabel
-                value="Disable"
-                control={<Radio color="error" />}
-                label="Disable"
-              />
-            </RadioGroup>
-
-          </FormControl> */}
         </DialogContent>
         <DialogActions>
           <Button

@@ -569,3 +569,178 @@ export const branchesList = async (data: any) => {
         return null;
     }
 }
+
+
+export const professionStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateProfessionStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const hobbiesStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateHobbiesStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+export const iterestsStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateInterestStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const blockedReasonsStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateReasonStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const propertyDetailsStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updatePropertyStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const designationStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateDesignationStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const universityStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateUniversitiesStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+export const sourceStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateSourceStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+export const languagesStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateLanguageStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const educationStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateEducationStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+export const occuptionStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateOccupationStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const casteStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateCastStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const subcasteStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateSubCastStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const stateStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateStateStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+
+
+export const countryStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateCountryStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const districtStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateDistrictStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const cityStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/updateCityStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}

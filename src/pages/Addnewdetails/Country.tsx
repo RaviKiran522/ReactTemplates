@@ -23,13 +23,14 @@ import {
   RadioGroup,
   Radio,
   FormLabel,
-  Grid
+  Grid,
+  Typography
 } from '@mui/material';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import CommonInputField from 'pages/common-components/common-input';
 import _ from 'lodash';
 import CommonSelectField from 'pages/common-components/common-select';
-import { createCountry, countryList, updateCountry } from '../../services/add-new-details/AddNewDetails';
+import { createCountry, countryList, updateCountry, countryStatus } from '../../services/add-new-details/AddNewDetails';
 import Alert from '@mui/material/Alert';
 import { Stack } from '@mui/system';
 export default function Country() {
@@ -44,6 +45,12 @@ export default function Country() {
   const [tableData, setTableData] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [globalFilter, setGlobalFilter] = useState('');
+
+  const [status, setStatus] = useState<string>(''); // Add this line to define status and setStatus
+  const [rowId, setRowId] = useState<number | null>(null); // Add this line to define rowId and setRowId
+  const [selectedRow, setSelectedRow] = useState<any>(null); // Add this line to define selectedRow and setSelectedRow
+  const [statusPopup, setStatusPopup] = useState<boolean>(false); // Add this line to define statusPopup and setStatusPopup
+  const [isEdit, setIsEdit] = useState<boolean>(false); // Add this line to define isEdit and setIsEdit
 
   interface FormField {
     label: any;
@@ -136,7 +143,7 @@ export default function Country() {
   const handleFormSubmit = async () => {
     if (validate()) {
       setIsLoading(true);
-      if(openPopup.action === "create") {
+      if (openPopup.action === "create") {
         const newRecord = {
           name: formData.countryName.value, // Defaulting religion to B.tech
           status: formData.statusName.value.label === 'ENABLE' ? 1 : 0 // Defaulting status to Enable
@@ -163,11 +170,11 @@ export default function Country() {
 
   const updateCountryHandler = async (updateData: any = {}, multiple = "") => {
     setIsLoading(true);
-    if(!multiple) {
+    if (!multiple) {
       let d = Object.keys(updateData).length;
       const updateRecord = {
-        name: d> 0 ? updateData?.country : formData.countryName.value,
-        status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0) ,
+        name: d > 0 ? updateData?.country : formData.countryName.value,
+        status: d > 0 ? (updateData?.status === "Enable" ? 0 : 1) : (formData.statusName.value.label === 'ENABLE' ? 1 : 0),
         id: d > 0 ? updateData.id : openPopup.countryID
       }
       const update = await updateCountry(updateRecord);
@@ -187,17 +194,24 @@ export default function Country() {
     }
     else {
       let updateResult: any;
+      let updateStatusArray: any = []
       updateData?.map(async (item: any) => {
         const updateRecord = {
-          name: item?.country,
-          status: multiple === "ENABLE" ? 1 : 0 ,
-          id: item.id 
+          // name: item?.country,
+          status: multiple === "ENABLE" ? 1 : 0,
+          id: item.id
         }
-        updateResult = await updateCountry(updateRecord);
-      })
+        updateStatusArray.push(updateRecord)
 
-        setOpen({ flag: false, action: '' });
-        setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+      })
+      let payload = {
+        "data": updateStatusArray
+      }
+      updateResult = await countryStatus(payload);
+
+      setOpen({ flag: false, action: '' });
+      setSuccessBanner({ flag: true, message: "success", severity: Severity.Success });
+
 
     }
     listCountries();
@@ -284,12 +298,14 @@ export default function Country() {
     setOpenPopup({ flag: true, action: 'update', countryID: row.id });
   };
 
+
   const buttonHandler = (action: string, users: any) => {
-    if(action === "disable") {
+    console.log('users.......', users)
+    if (action === "disable") {
       updateCountryHandler(users);
-    } else if(action === "ENABLE") {
+    } else if (action === "ENABLE") {
       updateCountryHandler(users, "ENABLE");
-    } else if(action === "DISABLE") {
+    } else if (action === "DISABLE") {
       updateCountryHandler(users, "DISABLE");
     }
   }
@@ -305,6 +321,36 @@ export default function Country() {
       setAnchorEl(null);
     };
 
+    const handlehandleEditDisableEdit = (row: any, action: any) => {
+      setRowId(row.id);
+      setIsLoading(false);
+
+      if (action === 'Status') {
+        let checkStatus = row.status === 'Disable' ? 'Enable' : 'Disable';
+        setStatus(checkStatus);
+        setSelectedRow(row); // Set the selected row data
+        setStatusPopup(true);
+        setOpenPopup({ flag: false, action: '', countryID: null });
+        setIsEdit(false);
+        // } else if (action === 'Edit') {
+        //   setStatusPopup(false);
+        //   setOpenPopup(true);
+        //   setIsEdit(true);
+      }
+
+      // Pre-fill formData when editing
+      const newFormData = _.cloneDeep(formData);
+      newFormData.countryName.value = row.country;
+      newFormData.statusName.value =
+        newFormData.statusName.options.find(
+          (option) => option.label.toUpperCase() === row.status.toUpperCase()
+        ) || { id: null, label: '' };
+
+      setFormData(newFormData);
+    };
+
+
+
     return (
       <>
         <Button onClick={handleClick}>...</Button>
@@ -318,27 +364,65 @@ export default function Country() {
             Edit
           </MenuItem>
           {/* <MenuItem onClick={() => { setOpen({ flag: true, action: 'edit' }); handleClose(); }}>Edit</MenuItem> */}
-          <MenuItem
-            onClick={() => {
-              setOpen({ flag: true, action: 'delete' });
-              handleClose();
-            }}
-          >
-            Delete
-          </MenuItem>
-          <MenuItem
+
+          {/* <MenuItem
             onClick={() => {
               setOpen({ flag: true, action: 'disable' });
               handleClose();
             }}
           >
             {row.status == 'Enable' ? 'Disable' : 'Enable'}
-          </MenuItem>
+          </MenuItem> */}
+          
+          <MenuItem onClick={() => { handlehandleEditDisableEdit(row, 'Status'); handleClose() }}>{row.status == 'Disable' ? 'Enable' : 'Disable'}</MenuItem>
         </Menu>
       </>
     );
   };
 
+
+  const statusConfirmHandler = async () => {
+    if (validate()) {
+      console.log('roodkoksfodksfodf', rowId)
+      const newRecord = {
+        name: formData.countryName.value,
+        status: formData.statusName.value.label === "ENABLE" ? 0 : 1,
+        id: rowId
+      };
+      setIsLoading(true);
+      const result = await updateCountry(newRecord);
+      if (result.status) {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Success,
+        });
+        setIsLoading(false);
+        await listCountries(); // Explicitly call here
+        setTimeout(() => {
+          setOpenPopup({ flag: false, action: '', countryID: null });
+          setSuccessBanner({ flag: false, message: "", severity: Severity.Success });
+          setFormData(formFields);
+          setIsEdit(false)
+          setStatusPopup(false)
+        }, 1500);
+      } else {
+        setSuccessBanner({
+          flag: true,
+          message: result.message,
+          severity: Severity.Error,
+        });
+        setIsLoading(false);
+      }
+    }
+  }
+
+  const onPopupCloseHandler = () => {
+    setOpenPopup({ flag: false, action: '', countryID: null })
+    setFormData(formFields);
+    setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+    setStatusPopup(false)
+  }
   return (
     <>
       {/* Button to Open Popup */}
@@ -348,17 +432,17 @@ export default function Country() {
         </Button>
       </Grid>
       {successBanner.flag && (
-          <Stack spacing={2} sx={{ m: 2 }}>
-            <Alert
-              severity={successBanner.severity}
-              onClose={() => {
-                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
-              }}
-            >
-              {successBanner.message}
-            </Alert>
-          </Stack>
-        )}
+        <Stack spacing={2} sx={{ m: 2 }}>
+          <Alert
+            severity={successBanner.severity}
+            onClose={() => {
+              setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+            }}
+          >
+            {successBanner.message}
+          </Alert>
+        </Stack>
+      )}
       {/* React Table */}
       <Backdrop
         sx={{
@@ -436,6 +520,70 @@ export default function Country() {
             startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
           >
             {openPopup.action === 'create' ? 'Create' : 'Update'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for Status Update */}
+      <Dialog open={statusPopup} maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px', padding: '10px',
+            backgroundColor: '#f9fafb', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}>
+        {successBanner.flag && (
+          <Stack spacing={2} sx={{ m: 2 }}>
+            <Alert
+              severity={successBanner.severity}
+              onClose={() =>
+                setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' })
+              }
+            >
+              {successBanner.message}
+            </Alert>
+          </Stack>
+        )}
+        <DialogTitle sx={{
+          textAlign: 'center',
+          color: '#374151', fontWeight: 600, fontSize: '1.25rem',
+          borderBottom: '1px solid #e5e7eb', marginBottom: '10px',
+        }}> Are you sure you want to {status}?</DialogTitle>
+        <DialogContent >
+          {selectedRow && (
+            <Grid textAlign={'center'}>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Country Name:</strong> {selectedRow.country}
+              </Typography>
+              <Typography sx={{ fontWeight: 400, fontSize: '1rem', marginBottom: '5px' }}>
+                <strong>Current Status:</strong> {selectedRow.status}
+              </Typography>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+
+        }}>
+          <Button variant="contained" color="error" onClick={onPopupCloseHandler}
+            sx={{
+              padding: '5px 10px', borderRadius: '8px',
+              fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            sx={{
+              padding: '5px 10px',
+              borderRadius: '8px', fontSize: '0.875rem', textTransform: 'capitalize', boxShadow: 'none',
+            }}
+            variant="contained" color="primary" onClick={statusConfirmHandler}
+            startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

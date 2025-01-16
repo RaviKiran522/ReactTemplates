@@ -139,7 +139,7 @@ export default function UpdateBasicSitesetting() {
       label: 'Service Tax (%)',
       id: 'serviceTax',
       name: 'serviceTax',
-      type: 'text',
+      type: 'number',
       value: '',
       error: false,
       helperText: '',
@@ -230,13 +230,13 @@ export default function UpdateBasicSitesetting() {
       websiteDescription:formData.websiteDes.value,
       contactNo:formData.contactNumber.value,
       fullAddress:formData.fullAddress.value, 
-      taxApplicable:formData.taxApplicable.value.id, 
+      taxApplicable:formData.taxApplicable.value.id == 1 ? true : false, 
       taxName: formData.taxName.value,
-      serviceTax:formData.serviceTax.value, 
-      defaultCountryCode:formData.defaultCountryCode.value.id,
+      serviceTax:Number(formData.serviceTax.value), 
+      defaultCountryCode:String(formData.defaultCountryCode.value.id),
 
     };
-  //  const result = await basicSetup(sampleObject);
+   const result = await basicSetup(sampleObject);
     
     console.log('sampleObject.........', sampleObject);
     if (validate()) {

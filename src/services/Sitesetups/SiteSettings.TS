@@ -1,6 +1,6 @@
 
 
-import { httpsPost } from '../../services/HttpsCalls';
+import { httpsPost } from '../HttpsCalls';
 
 export  const  basicSetup = async (data: any) => {
         const response = await httpsPost("site-settings/basic",data );

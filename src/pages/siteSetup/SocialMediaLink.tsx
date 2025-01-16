@@ -162,7 +162,7 @@ const SocialMediaLink: React.FC = () => {
       twitterLink : formData.twitterLink.value,
       linkedinLink : formData.linkedinLink.value,
       youtubeLink : formData.youtubeLink.value,
-      instaLink : formData.instaLink.value,
+      instagramLink : formData.instaLink.value,
       skypeId : formData.skypeId.value,
       
     }

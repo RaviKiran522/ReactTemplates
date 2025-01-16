@@ -98,6 +98,7 @@ const AppLink: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     // console.log('Form Submitted', formData);
     const sampleObject = {
+      
       iosAppLink : formData.iosAppLink.value,
       androidAppLink : formData.androidAppLink.value
       

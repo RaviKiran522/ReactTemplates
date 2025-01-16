@@ -6,6 +6,8 @@ import _ from 'lodash';
 import CommonDatePicker from 'pages/common-components/common-date';
 import moment from "moment"
 import MainCard from 'components/MainCard';
+import { Severity } from 'Common/utils';
+import { martiprefixSetup } from 'services/Sitesetups/SiteSettings';
 
 const UpdateMetricPrefix: React.FC = () => {
   // Define the structure of form data for type safety
@@ -133,18 +135,27 @@ const UpdateMetricPrefix: React.FC = () => {
     setFormData(newFormData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+    const [isLoading, setIsLoading] = useState(false);
+    const [listLoader, setListLoader] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     // console.log('Form Submitted', formData);
+    if (validate()) {
+
     const sampleObject = {
-      customerPrefix : formData.customerPrefix.value,
-      branchPrefix : formData.branchPrefix.value,
-      franchisePrefix : formData.franchisePrefix.value,
-      agentPrefix : formData.agentPrefix.value,
+      customerMatriPrefix : formData.customerPrefix.value,
+      branchMatriPrefix : formData.branchPrefix.value,
+      franchiseMatriPrefix : formData.franchisePrefix.value,
+      agentMatriPrefix : formData.agentPrefix.value,
       
     }
+    
+        // const result = await martiprefixSetup(sampleObject);
+  
+        // console.log('result.........',result)
     console.log('sampleObject.........',sampleObject)
     e.preventDefault();
-    if (validate()) {
       console.log('Form Submitted', formData);
     }
   };

@@ -88,7 +88,7 @@ const GoogleAnalyticsCode: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     // console.log('Form Submitted', formData);
     const sampleObject = {
-      googleCode : formData.googleCode.value
+      googleAnalyticsCode : formData.googleCode.value
       
     }
     console.log('sampleObject.........',sampleObject)

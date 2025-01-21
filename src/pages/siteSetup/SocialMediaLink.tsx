@@ -6,6 +6,7 @@ import _ from 'lodash';
 import CommonDatePicker from 'pages/common-components/common-date';
 import moment from "moment"
 import MainCard from 'components/MainCard';
+import { socialmediaSetup } from 'services/Sitesetups/SiteSettings';
 
 const SocialMediaLink: React.FC = () => {
   // Define the structure of form data for type safety
@@ -155,20 +156,23 @@ const SocialMediaLink: React.FC = () => {
     setFormData(newFormData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     // console.log('Form Submitted', formData);
-    const sampleObject = {
-      facebookLink : formData.facebookLink.value,
-      twitterLink : formData.twitterLink.value,
-      linkedinLink : formData.linkedinLink.value,
-      youtubeLink : formData.youtubeLink.value,
-      instagramLink : formData.instaLink.value,
-      skypeId : formData.skypeId.value,
-      
-    }
-    console.log('sampleObject.........',sampleObject)
     e.preventDefault();
     if (validate()) {
+    const sampleObject = {
+      facebookLink :String(formData.facebookLink.value),
+      twitterLink :String(formData.twitterLink.value),
+      linkedinLink :String(formData.linkedinLink.value),
+      youtubeLink :String(formData.youtubeLink.value),
+      instagramLink :String(formData.instaLink.value),
+      skypeId :String(formData.skypeId.value),
+      
+    }
+        const result = await socialmediaSetup(sampleObject);
+    
+    console.log('sampleObject.........',sampleObject)
+    
       console.log('Form Submitted', formData);
     }
   };

@@ -89,7 +89,7 @@ export default function UpdateBasicSitesetting() {
       name: 'contactNumber',
       type: 'text',
       options: [
-       
+
       ],
       value: '',
       error: false,
@@ -152,7 +152,7 @@ export default function UpdateBasicSitesetting() {
       name: 'defaultCountryCode',
       type: 'select',
       options: [
-        { id: 1, label:'+91' },
+        { id: 1, label: '+91' },
         { id: 2, label: '+44' },
         // { id: 3, label: 'Female' }
       ],
@@ -224,22 +224,23 @@ export default function UpdateBasicSitesetting() {
     console.log("checking.......")
     // console.log('Form Submitted', formData);
     e.preventDefault();
-    const sampleObject = {
-      webName: formData.webName.value,
-      websiteTitle: formData.webTitle.value,
-      websiteDescription:formData.websiteDes.value,
-      contactNo:formData.contactNumber.value,
-      fullAddress:formData.fullAddress.value, 
-      taxApplicable:formData.taxApplicable.value.id == 1 ? true : false, 
-      taxName: formData.taxName.value,
-      serviceTax:Number(formData.serviceTax.value), 
-      defaultCountryCode:String(formData.defaultCountryCode.value.id),
-
-    };
-   const result = await basicSetup(sampleObject);
-    
-    console.log('sampleObject.........', sampleObject);
     if (validate()) {
+
+      const sampleObject = {
+        webName: formData.webName.value,
+        websiteTitle: formData.webTitle.value,
+        websiteDescription: formData.websiteDes.value,
+        contactNo: formData.contactNumber.value,
+        fullAddress: formData.fullAddress.value,
+        taxApplicable: formData.taxApplicable.value.id == 1 ? true : false,
+        taxName: formData.taxName.value,
+        serviceTax: Number(formData.serviceTax.value),
+        defaultCountryCode: String(formData.defaultCountryCode.value.id),
+
+      };
+      const result = await basicSetup(sampleObject);
+
+      console.log('sampleObject.........', sampleObject);
       console.log('Form Submitted', formData);
     }
   };
@@ -256,7 +257,7 @@ export default function UpdateBasicSitesetting() {
       <Typography variant="h3" marginBottom={2} sx={{ padding: "15px 0px" }}>Update basic site setting</Typography>
       <MainCard border={true} sx={{ padding: "10px 20px" }}>
 
-      {successBanner.flag && (
+        {successBanner.flag && (
           <Stack spacing={2} sx={{ m: 2 }}>
             <Alert
               severity={successBanner.severity}

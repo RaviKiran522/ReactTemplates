@@ -22,6 +22,7 @@ import {
   // IconButton,
   FormHelperText
 } from '@mui/material';
+import { deafualtImage } from 'services/Sitesetups/SiteSettings';
 
 const SiteDefaultImage = () => {
   const uploadCertificatesFormData: any = {
@@ -47,14 +48,16 @@ const SiteDefaultImage = () => {
     }
   };
   const [certificatesUploadFormData, setCertificatesUploadFormData] = useState<any>(uploadCertificatesFormData);
-  const handleUploadCertificatesSubmit = (e: React.FormEvent) => {
+  const handleUploadCertificatesSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log('passbook', certificatesUploadFormData);
     const sampleObject = {
-      ssccertificate: certificatesUploadFormData.male?.value || '',
-      female: certificatesUploadFormData.female?.value || ''
+      malePlaceholder: certificatesUploadFormData.male?.value || '',
+      femalePlaceholder: certificatesUploadFormData.female?.value || ''
     };
+
+    // const result = await deafualtImage(sampleObject);
 
     console.log('Form Submitted:', sampleObject);
     // const validation = validate(formData)

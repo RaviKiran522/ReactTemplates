@@ -1,21 +1,62 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactTable from "ReusableComponents/ReactTable";  // Ensure this is the correct import for ReactTable
 import Chip from '@mui/material/Chip';
-import { Menu, MenuItem } from '@mui/material';
+import {  Menu, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Cell } from '@tanstack/react-table'; // Import Cell type for typing
 import SampleForm from 'pages/dashboard/sampleForm';
 import Addpayment from '../ActionsPopUps/Addpayment';
 import BranchCreateInvoice from '../ActionsPopUps/CreateinvoiceBranch';
-import FranchiseCreateInvoice from '../ActionsPopUps/CreateinvoiceFranchise copy';
+import { Severity } from 'Common/utils';
+import Alert from '@mui/material/Alert';
+import { Stack } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+// import { branchesList } from 'services/add-new-details/AddNewDetails';
+import { listFranchise } from 'services/franchise/franchise';
 
 // The UsersList component now passes actions to the ReactTable component
 export default function FranchiseList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
-  const [show,setShow] = useState(false)
+  const [show,setShow] = useState(false);
   const [invoice,setInvoice] = useState(false)
-  const [rowsPerPage, setRowsPerPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [listLoader, setListLoader] = useState(false);
+  const [listFilter, setListFilter] = useState({ status: null, id: null, search: '', skip: 0, limit: 10 });
+  const [tableData, setTableData] = useState([]);
+  const [rowCount, setRowCount] = useState(0);
+  const [globalFilter, setGlobalFilter] = useState('');
+    const frnachisesList = async () => {
+       setListLoader(true);
+       const result = await listFranchise(listFilter);
+       if (result.status) {
+         setListLoader(false);
+         setRowCount(result.totalCount);
+         if (result.data.length > 0) {
+           const data = result.data.map((item: any, index: any) => ({  id:item.id,name: item.name, officeNumber: item.phoneNumber, status: item.status ? 'Enable' : 'Disable', }));
+           setTableData(data);
+         } else {
+           setTableData([]);
+         }
+       } else {
+         setListLoader(false);
+       }
+     };
+   useEffect(() => {
+    frnachisesList();
+  }, [listFilter.search, listFilter.skip, listFilter.limit]);
+  console.log("rowCount / rowsPerPage: ", rowCount, rowsPerPage)
+
+  useEffect(() => {
+    if (globalFilter !== '') {
+      setListFilter({ ...listFilter, skip: 0, limit: rowsPerPage, search: globalFilter });
+    } else {
+      setListFilter({ ...listFilter, skip: (pageNumber - 1) * rowsPerPage, limit: rowsPerPage, search: globalFilter });
+    }
+  }, [rowsPerPage, pageNumber, globalFilter]);
   const data: any = [
     { empId: "4321", name: "vamsi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" },
     { empId: "1234", name: "ravi", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Complicated" },
@@ -33,12 +74,13 @@ export default function FranchiseList() {
     { empId: "1210", name: "vinay", officeNumber: "0987654", role: "poiu", branch: "gfds", status: "Single" }]
 
   const handleEdit = (row: any) => {
-    const newUrl = '/react/userManagement/Franchise';
-    sessionStorage.setItem('editData',JSON.stringify(row))
+    const newUrl = '/react/userManagement/Branch';
+    sessionStorage.setItem('branchUser',JSON.stringify(row))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
 
+ 
   const handleDelete = (row: any) => {
     console.log('delete row.........',row)
   };
@@ -46,6 +88,7 @@ export default function FranchiseList() {
   const handleView = (row: any) => {
     console.log('row.........',row)
     const newUrl = '/admin/userManagement/Franchise';
+    sessionStorage.setItem('id',JSON.stringify(row.id))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -55,10 +98,12 @@ export default function FranchiseList() {
   };
 
   const handleLeave = (row: any) => {
-    console.log('leave row.........',row)
+    console.log('leave row.........',show)
   };
   
   const buttonHandler = (action: string, users: any) => {
+    console.log(action,88);
+    
     if(action === "delete") {
       handleDelete(users)
     }
@@ -83,11 +128,10 @@ export default function FranchiseList() {
       setAnchorEl(event.currentTarget);
     };
 
-   
     useEffect(()=>{
       console.log("page size: ", rowsPerPage, "pageNumber: ", pageNumber)
     }, [rowsPerPage, pageNumber])
-
+    
     const handleClose = () => {
       setShow(false);
       setInvoice(false);
@@ -98,7 +142,7 @@ export default function FranchiseList() {
         <IconButton onClick={handleClick}>...</IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+          {/* <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem> */}
           <MenuItem onClick={() => { setInvoice(true); }}>Create InVoice</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
           <MenuItem onClick={() => { setShow(true); }}>Add Payment</MenuItem>
@@ -109,27 +153,27 @@ export default function FranchiseList() {
 
   const columns = useMemo(
     () => [
-      { header: 'Employee ID', accessorKey: 'empId' },
-      { header: 'Name', accessorKey: 'name' },
+      // { header: 'Employee ID', accessorKey: 'empId' },
+      { header: 'Franchise Name', accessorKey: 'name' },
       { header: 'Office Number', accessorKey: 'officeNumber' },
-      { header: 'Role', accessorKey: 'role' },
-      { header: 'Branch', accessorKey: 'branch' },
+      // { header: 'Role', accessorKey: 'role' },
+      // { header: 'Branch', accessorKey: 'branch' },
       {
         header: 'Status',
         accessorKey: 'status',
         // Typing the props parameter
         cell: (props: Cell<any, any>) => {
-          const status = props.getValue();  // Use getValue() to get the cell value
-
-          switch (status) {
-            case 'Complicated':
-              return <Chip color="error" label="Complicated" size="small" variant="light" />;
-            case 'Relationship':
-              return <Chip color="success" label="Relationship" size="small" variant="light" />;
-            default:
-              return <Chip color="info" label="Single" size="small" variant="light" />;
-          }
-        }
+          const status = props.getValue(); // Get the value of the "status" field
+          return (
+            <Chip
+              color={status === "Enable" ? "success" : "error"}
+              label={status}
+              size="small"
+              variant="outlined" // Changed to "outlined" for better visual distinction
+            />
+          );
+        },
+      
       }
     ],
     []
@@ -144,9 +188,18 @@ export default function FranchiseList() {
 
   return (
     <>
+      <Backdrop
+        sx={{
+          color: 'blue',
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}
+        open={listLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     <ReactTable
-      title={"Franchises"}
-      data={data}
+      title={'Franchise'}
+      data={tableData}
       columns={columns}
       actions={(row: any) => <ActionMenu row={row} />}
       includeSearch={true}
@@ -155,17 +208,20 @@ export default function FranchiseList() {
       columnVisibility={true}
       needCheckBoxes={true}
       needActivateAndSuspendButtons={true}
-      buttonHandler={buttonHandler}
-      open = {open}
-      setOpen = {setOpen}
-      HandleFormInPopup={SampleForm}
+      open={open}
+      setOpen={setOpen}
       setRowsPerPage={setRowsPerPage}
       setPageNumber={setPageNumber}
+      buttonHandler={buttonHandler}
       pageNumber={pageNumber}
-      totalPageCount={10}
-      listSelectButton={{name1: "ENABLE", name2: "DISABLE"}}
+      totalPageCount={Math.ceil(rowCount / rowsPerPage)}
+      globalFilter={globalFilter}
+      setGlobalFilter={setGlobalFilter}
+      listSelectButton={{ name1: 'ENABLE', name2: 'DISABLE' }}
     />
-    {show && (
+
+
+   {show && (
         <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
           <Addpayment open={show} onClose={handlePayementClose} />
         </div>
@@ -173,9 +229,12 @@ export default function FranchiseList() {
 
 {invoice && (
         <div style={{ position: 'fixed', top: '10%', right: '10%', zIndex: 1000 }}>
-          <FranchiseCreateInvoice open={invoice} onClose={handleInvoiceClose} />
+          <BranchCreateInvoice open={invoice} onClose={handleInvoiceClose} />
         </div>
       )}
     </>
+    
+    
+    
   );
 } 

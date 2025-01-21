@@ -20,7 +20,7 @@ import Occuption from 'pages/Addnewdetails/Occuption';
 import Education from 'pages/Addnewdetails/Education';
 import Languages from 'pages/Addnewdetails/Languages';
 // import ViewUser from 'pages/user-management/branches/ViewUser';
-import BranchProfile from 'pages/user-management/branches/BranchStaffProfile'
+import BranchProfile from 'pages/user-management/branches/BranchProfile'
 import EditUser from 'pages/user-management/branches/EditUser';
 import CreateStaff from 'pages/user-management/agents/CreateAgent';
 import CreateBranch from 'pages/user-management/branches/CreateBranch';
@@ -100,6 +100,7 @@ import BranchUserReports from 'pages/Reports/Userreports/Branchreports';
 import CareersList from 'pages/Careers/Listcareers';
 import CreerViewProfile from 'pages/Careers/Creerviewprofile';
 import BlockedList from 'pages/Careers/Blockedlist';
+import FranchiseProfile from 'pages/user-management/franchise/franchiseProfile';
 // import Careetabfile from 'pages/Careers/Tabfile';
 
 // render - dashboard
@@ -348,7 +349,7 @@ const MainRoutes = {
             },
             {
               path: 'Franchise',
-              element: <FranchiseStaffProfile />
+              element: <FranchiseProfile />
             },
             {
               path: 'Agent',

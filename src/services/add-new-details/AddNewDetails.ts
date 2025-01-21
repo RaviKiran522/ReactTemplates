@@ -580,6 +580,15 @@ export const professionStatus = async (data: any) => {
         return null;
     }
 }
+export const updateBranch = async (data: any) => {
+    const response = await httpsPost("user-management/updateBranch", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
 
 export const hobbiesStatus = async (data: any) => {
     const response = await httpsPost("admin-settings/updateHobbiesStatus", data)
@@ -737,6 +746,16 @@ export const districtStatus = async (data: any) => {
 
 export const cityStatus = async (data: any) => {
     const response = await httpsPost("admin-settings/updateCityStatus", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const rolesList = async (data: any) => {
+    const response = await httpsPost("admin-settings/roleList", data)
     if (response) {
         return response;
     }

@@ -326,6 +326,9 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                 </Formik>
               </Grid>
               <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={6}>
+                  <CommonSelectField inputProps={formData.branch} onSelectChange={handleSelectChange} />
+                </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonSelectField inputProps={formData.role} onSelectChange={handleSelectChange} />
                 </Grid>
@@ -373,15 +376,19 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formData.personalemail} onChange={handleChange} />
                 </Grid>
+                <Grid item xs={6}>
+                    <CommonSelectField inputProps={formData.countryName} onSelectChange={handleSelectChange} />
+                </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonSelectField inputProps={formData.state} onSelectChange={handleSelectChange} />
+                </Grid>
+                <Grid item xs={6}>
+                    <CommonSelectField inputProps={formData.district} onSelectChange={handleSelectChange} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonSelectField inputProps={formData.city} onSelectChange={handleSelectChange} />
                 </Grid>
-                <Grid item xs={12} sm={6} md={6}>
-                  <CommonSelectField inputProps={formData.branch} onSelectChange={handleSelectChange} />
-                </Grid>
+               
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonSelectField inputProps={formData.religion} onSelectChange={handleSelectChange} />
                 </Grid>

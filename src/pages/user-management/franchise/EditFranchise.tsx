@@ -21,11 +21,12 @@ import {
   FormHelperText
 } from '@mui/material';
 import GoogleMaps from '../GoogleMaps';
-import { cityList, countryList, createBranch, districtList, statesList } from 'services/add-new-details/AddNewDetails';
+import { branchesList, cityList, countryList, createBranch, districtList, statesList, updateBranch } from 'services/add-new-details/AddNewDetails';
 import { Severity } from 'Common/utils';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
-const CreateBranch: React.FC = () => {
+import { editFranchise, listFranchise } from 'services/franchise/franchise';
+const EditFranchise: React.FC = () => {
   // Define the structure of form data for type safety
   interface FormField {
     label: any;
@@ -167,16 +168,6 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       options: []
     },
-    // date: {
-    //   label: 'Date',
-    //   id: 'date',
-    //   name: 'date',
-    //   value: '',
-    //   error: false,
-    //   helperText: 'Please select date',
-    //   mandatory: true,
-    //   options: []
-    // },
     mapUrl: {
       label: 'Map Url',
       id: 'mapUrl',
@@ -188,15 +179,48 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       options: []
     },
+    wallet: {
+        label: 'Wallet Balance',
+        id: 'wallet',
+        name: 'wallet',
+        type: 'number',
+        value: '',
+        error: false,
+        helperText: '',
+        mandatory: true,
+        options: []
+      },
+   
   };
 
   const [formData, setFormData] = useState<FormData>(formFields);
   const [isLoading, setIsLoading] = useState(false);
-    const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const branchId = sessionStorage.getItem('id')
   
 
   type FormDataKeys = keyof typeof formData;
+  const getFranchiseDetails = async() =>{
+    const newFormFields = _.cloneDeep(formData)
+    let franchiseDetails = await listFranchise({id:branchId})
+      if(franchiseDetails.status){
+        newFormFields.branchName.value = franchiseDetails.data.name ? franchiseDetails.data.name : ""
+        newFormFields.phoneNumber.value = franchiseDetails.data.phoneNumber ? franchiseDetails.data.phoneNumber : ""
+        newFormFields.email.value = franchiseDetails.data.emailId ? franchiseDetails.data.emailId : ""
+        newFormFields.countryName.value ={id:franchiseDetails.data?.city?.country.id,label:franchiseDetails.data?.city?.country.countryName}
+        newFormFields.statename.value = {id:franchiseDetails.data?.city?.state.id,label:franchiseDetails?.data.city?.state.stateName}
+        newFormFields.district.value ={id:franchiseDetails.data?.city?.district.id,label:franchiseDetails?.data.city?.district.districtName}
+        newFormFields.cityname.value = {id:franchiseDetails.data?.city.id,label:franchiseDetails.data?.city.cityName}
+        newFormFields.status.value ={id:franchiseDetails.data.status,label:franchiseDetails.data.status ? "Enable" : "Disable"}
+        newFormFields.address.value = franchiseDetails.data.address ? franchiseDetails.data.address : ""
+        newFormFields.pincode.value = franchiseDetails.data.pincode ?  franchiseDetails.data.pincode : ""
+        newFormFields.mapUrl.value = franchiseDetails.data.mapUrl ? franchiseDetails.data.mapUrl : ""
 
+        newFormFields.wallet.value = franchiseDetails.data.walletBalance ? franchiseDetails.data.walletBalance : ""
+      }
+      setFormData(newFormFields)
+  }
+  
   useEffect(()=>{
     const selectionApiFunction = async() =>{
       const newFormFields = _.cloneDeep(formData)
@@ -206,6 +230,7 @@ const CreateBranch: React.FC = () => {
         newFormFields.countryName.options = countryoptions
         setFormData(newFormFields)
       }
+      await getFranchiseDetails()
     }
     selectionApiFunction()
    
@@ -320,21 +345,10 @@ const CreateBranch: React.FC = () => {
   };
 
   const handleFormSubmit = async(e: React.FormEvent) => {
-    // console.log('Form Submitted', formData);
     e.preventDefault();
-    // const sampleObject = {
-    //   branchName: formData.branchName.value,
-    //   phoneNumber: formData.phoneNumber.value,
-    //   email: formData.email.value,
-    //   statename: formData.statename.value,
-    //   adress: formData.adress.value,
-    //   cityname: formData.cityname.value,
-    //   status: formData.status.value,
-    //   pincode: formData.pincode.value
-    // };
-    console.log('formData........',formData)
     let object = {
-      "branchName": formData.branchName.value,
+      "id":Number(branchId),
+      "name": formData.branchName.value,
       "phoneNumber": formData.phoneNumber.value,
       "emailId": formData.email.value,
       "address": formData.address.value,
@@ -344,20 +358,20 @@ const CreateBranch: React.FC = () => {
       "cityId": formData.cityname.value?.id,
       "pincode": formData.pincode.value,
       "mapUrl": formData.mapUrl.value,
-      "status": formData.status.value?.id
+      "status": formData.status.value?.id,
+      "walletBalance" : formData.wallet.value
     }
-    console.log('object.......',object)
-    console.log('validate()........',validate())
+
     if (validate()) {
        setIsLoading(true);
            
-              const result = await createBranch(object);
+              const result = await editFranchise(object);
               if (result.status) {
                 setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
                 setIsLoading(false);
                 setTimeout(() => {
                   setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
-                  setFormData(formFields);
+                  getFranchiseDetails()
                 }, 2000);
               } else {
                 setSuccessBanner({ flag: true, message: result.message, severity: Severity.Error });
@@ -377,7 +391,7 @@ const CreateBranch: React.FC = () => {
       }}
     >
       <Typography variant="h3" marginBottom={2}>
-        Create Branch
+      Edit Franchise
       </Typography>
       {successBanner.flag && (
           <Stack spacing={2} sx={{ m: 2 }}>
@@ -428,6 +442,9 @@ const CreateBranch: React.FC = () => {
             <CommonInputField inputProps={formData.mapUrl} onChange={handleChange} />
           </Grid>
           <Grid item xs={6}>
+            <CommonInputField inputProps={formData.wallet} onChange={handleChange} />
+          </Grid>
+          <Grid item xs={6}>
             <CommonSelectField inputProps={formData.status} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12}style={{display:'flex',justifyContent:'flex-end'}}>
@@ -448,4 +465,4 @@ const CreateBranch: React.FC = () => {
   );
 };
 
-export default CreateBranch;
+export default EditFranchise;

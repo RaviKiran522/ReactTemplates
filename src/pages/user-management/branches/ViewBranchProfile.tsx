@@ -28,49 +28,76 @@ import { CallCalling, Gps, Link1, Profile, Setting, Sms } from 'iconsax-react';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button } from '@mui/material';
 import { useNavigate } from 'react-router';
 import UserHistory from '../UserHistory';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { branchesList } from 'services/add-new-details/AddNewDetails';
 
 // ==============================|| ACCOUNT PROFILE - BASIC ||============================== //
-let detailsObject = {
-  personalDetails: {
-    name: 'saraswathi',
-    gender: 'Male',
-    maritalStatus: 'Married',
-    status: 'Active',
-    educationalQualification: 'MCA',
-    state: 'AP',
-    city: 'Visakhapatnam',
-    branch: "Vizag",
-    religion: "Hindu",
-    cast: "kamma",
-    dob: '16-03-1995',
-    adharNumber: '49689579133',
-    joiningDate: '27-01-2018',
-    experienceInyears: 4,
-    tempAddress: 'guntur',
-  },
-  fatherDetails: {
-    fathername: 'anjaneyulu',
-    number: '9963838871',
-    address: 'pedhakancharla vinukonda(m) guntur(d)'
-  },
-  husbandDetails: {
-    name: 'movva umesh',
-    number: '8367055588',
-    address: 'pedhakancharla vinukonda(m) guntur(d)'
-  },
-  referDetails: {
-    name: 'ashok',
-    number: '9642670464',
-    address: 'anjaneyulu,9963838871,pedhakancharla,vinukomda(m),guntur(d)'
-  }
-}
+// let detailsObject = {
+//   personalDetails: {
+//     name: 'saraswathi',
+//     gender: 'Male',
+//     maritalStatus: 'Married',
+//     status: 'Active',
+//     educationalQualification: 'MCA',
+//     state: 'AP',
+//     city: 'Visakhapatnam',
+//     branch: "Vizag",
+//     religion: "Hindu",
+//     cast: "kamma",
+//     dob: '16-03-1995',
+//     adharNumber: '49689579133',
+//     joiningDate: '27-01-2018',
+//     experienceInyears: 4,
+//     tempAddress: 'guntur',
+//   },
+//   fatherDetails: {
+//     fathername: 'anjaneyulu',
+//     number: '9963838871',
+//     address: 'pedhakancharla vinukonda(m) guntur(d)'
+//   },
+//   husbandDetails: {
+//     name: 'movva umesh',
+//     number: '8367055588',
+//     address: 'pedhakancharla vinukonda(m) guntur(d)'
+//   },
+//   referDetails: {
+//     name: 'ashok',
+//     number: '9642670464',
+//     address: 'anjaneyulu,9963838871,pedhakancharla,vinukomda(m),guntur(d)'
+//   }
+// }
+
 
 
 interface FranchiseViewProfileProps {
   onActivateTab: () => void;
 }
 export default function BranchViewProfile({onActivateTab}:FranchiseViewProfileProps ) {
+  const [detailsObject, setDetailsObject] = useState<any>({});
+const [checkData,setCheckData] = useState(false)
+
+
+
+const branchId = sessionStorage.getItem('id')
+  
+  const getbranchDetails = async() =>{
+   
+    let branchDetails = await branchesList({id:branchId})
+    if(branchDetails.status){
+      setDetailsObject(branchDetails.data)
+      setCheckData(true)
+    }
+      
+  }
+  
+  useEffect(()=>{
+    const selectionApiFunction = async() =>{
+      await getbranchDetails()
+    }
+    selectionApiFunction()
+   
+  },[])
+
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const [currentTab, setCurrentTab] = React.useState("home");
 
@@ -96,15 +123,7 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
-  // const handleNavigation = () => {
-  //   navigate('/branches/listStaff');// Use the route path defined in your router
-  // };
-  // const handleInactiveNavigation = () => {
-  //   navigate('/branches/suspendedStaff');// Use the route path defined in your router
-  // };
-  // const handleBlockedNavigation = () => {
-  //   navigate('/branches/blockedStaff');// Use the route path defined in your router
-  // };
+ 
 
 
   const handleListCustomersNavigation = (row: any) => {
@@ -150,28 +169,7 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
     window.open(fullPath, '_blank');
   };
 
-  // const handleListCustomersNavigation = () => {
-  //   navigate('/customerManagement/listCustomers');// Use the route path defined in your router
-  // };
-  // const handleConvertedCustomersNavigation = () => {
-  //   navigate('/customerManagement/convertedCustomers');// Use the route path defined in your router
-  // };
-  // const handleExpiredCustomersNavigation = () => {
-  //   navigate('/customerManagement/planExpiredCustomers');// Use the route path defined in your router
-  // };
-  // const handleBlockedRequesCustomersNavigation = () => {
-  //   navigate('/customerManagement/blockedRequests');// Use the route path defined in your router
-  // };
-  // const handleFreeCustomersNavigation = () => {
-  //   navigate('/customerManagement/freeCustomers');// Use the route path defined in your router
-  // };
-  // const handlePaidCustomersNavigation = () => {
-  //   navigate('/customerManagement/paidCustomers');// Use the route path defined in your router
-  // };
-  // const handleBlockedCustomersNavigation = () => {
-  //   navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
-  // };
-
+ 
 
   const handleListInboundNavigation = (row: any) => {
     console.log('row.........', row)
@@ -197,18 +195,71 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
-//   const handleListInboundNavigation = () => {
-//     navigate('/staffCalling/inbound/listinbound');// Use the route path defined in your router
-//   };
-//   const handleFreeInboundNavigation = () => {
-//     navigate('/staffCalling/inbound/freeinbound');// Use the route path defined in your router
-//   };
-//   const handlePaidInboundNavigation = () => {
-//     navigate('/staffCalling/inbound/paidinbound');// Use the route path defined in your router
-//   };
-//   const handleBlockedInboundNavigation = () => {
-//     navigate('/staffCalling/inbound/blockedinbound');// Use the route path defined in your router
-//   };
+  // {
+  //   "status": true,
+  //   "message": "Branch retrieved successfully.",
+  //   "data": {
+  //       "id": 6,
+  //       "branchName": "edited branch",
+  //       "phoneNumber": "7545454354",
+  //       "emailId": "kaasu22koppisetti@gmail.com",
+  //       "address": "chinthalapalem,sidhantham",
+  //       "pincode": "534326",
+  //       "mapUrl": "asdeefewrewrew",
+  //       "status": 1,
+  //       "createdAt": "2025-01-04T10:37:52.520Z",
+  //       "updatedAt": "2025-01-04T11:21:47.000Z",
+  //       "country": {
+  //           "id": 30,
+  //           "countryName": "Australia",
+  //           "status": 1,
+  //           "createdAt": "2024-12-29T07:04:42.916Z",
+  //           "updatedAt": "2025-01-03T12:56:25.000Z"
+  //       },
+  //       "state": {
+  //           "id": 18,
+  //           "stateName": "sydney",
+  //           "status": 1,
+  //           "createdAt": "2024-12-29T07:05:04.318Z",
+  //           "updatedAt": "2025-01-02T13:02:07.000Z"
+  //       },
+  //       "district": {
+  //           "id": 19,
+  //           "districtName": "hayden",
+  //           "status": 1,
+  //           "createdAt": "2024-12-29T07:06:39.638Z",
+  //           "updatedAt": "2024-12-30T15:47:32.000Z"
+  //       },
+  //       "city": {
+  //           "id": 18,
+  //           "cityName": "Adam gilchrist",
+  //           "status": 1,
+  //           "createdAt": "2024-12-29T07:07:19.371Z",
+  //           "updatedAt": "2024-12-29T07:07:19.371Z",
+  //           "country": {
+  //               "id": 30,
+  //               "countryName": "Australia",
+  //               "status": 1,
+  //               "createdAt": "2024-12-29T07:04:42.916Z",
+  //               "updatedAt": "2025-01-03T12:56:25.000Z"
+  //           },
+  //           "state": {
+  //               "id": 18,
+  //               "stateName": "sydney",
+  //               "status": 1,
+  //               "createdAt": "2024-12-29T07:05:04.318Z",
+  //               "updatedAt": "2025-01-02T13:02:07.000Z"
+  //           },
+  //           "district": {
+  //               "id": 19,
+  //               "districtName": "hayden",
+  //               "status": 1,
+  //               "createdAt": "2024-12-29T07:06:39.638Z",
+  //               "updatedAt": "2024-12-30T15:47:32.000Z"
+  //           }
+  //       }
+  //   }
+  // }
   const handleSalesNavigation = () => {
     // Trigger the callback to activate the 4th tab
     onActivateTab();
@@ -216,9 +267,12 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
 };
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={5} md={4} xl={3}>
-        <Grid container spacing={3}>
+    <div>
+
+    
+    {checkData == true ? <Grid container spacing={3}>
+      <Grid item xs={12} sm={5} md={4} xl={4}>
+        <Grid container spacing={4}>
           <Grid item xs={12}>
             <MainCard>
               <Grid container spacing={3}>
@@ -229,12 +283,51 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
                   <Stack spacing={2.5} alignItems="center">
                     <Avatar alt="Avatar 1" size="xl" src={defaultImages} />
                     <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">Anshan H.</Typography>
-                      <Typography color="secondary">AE100057</Typography>
-                      <Typography color="secondary">Project Manager</Typography>
-                      <Typography color="secondary">Password : 34354343</Typography>
+                      <Typography variant="h5">{detailsObject?.branchName}</Typography>
+                      {/* <Typography color="secondary">AE100057</Typography> */}
+                      {/* <Typography color="secondary">Project Manager</Typography> */}
+                      {/* <Typography color="secondary">Password : 34354343</Typography> */}
                     </Stack>
                   </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Sms size={18} />
+                      </ListItemIcon>
+                      <ListItemSecondaryAction>
+                        <Typography align="right">{detailsObject?.emailId}</Typography>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CallCalling size={18} />
+                      </ListItemIcon>
+                      <ListItemSecondaryAction>
+                        <Typography align="right">{detailsObject?.phoneNumber}</Typography>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Gps size={18} />
+                      </ListItemIcon>
+                      <ListItemSecondaryAction>
+                        <Typography align="right">{detailsObject?.country?.countryName}</Typography>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Link1 size={18} />
+                      </ListItemIcon>
+                      <ListItemSecondaryAction>
+                        <Link align="right" href="https://google.com" target="_blank">
+                          {detailsObject?.mapUrl}
+                        </Link>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+
+                  </List>
                 </Grid>
 
                 <Grid item xs={12}>
@@ -484,209 +577,12 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
                 <Grid item xs={12}>
                   <Divider />
                 </Grid>
-                <Grid item xs={12}>
-                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Sms size={18} />
-                      </ListItemIcon>
-                      <ListItemSecondaryAction>
-                        <Typography align="right">anshan.dh81@gmail.com</Typography>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <CallCalling size={18} />
-                      </ListItemIcon>
-                      <ListItemSecondaryAction>
-                        <Typography align="right"> 8654 239 581</Typography>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Gps size={18} />
-                      </ListItemIcon>
-                      <ListItemSecondaryAction>
-                        <Typography align="right">New York</Typography>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <ListItemSecondaryAction>
-                        <Link align="right" href="https://google.com" target="_blank">
-                          https://anshan.dh.url
-                        </Link>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-
-                  </List>
-                </Grid>
-                {/* <Grid item xs={12}>
-                  <Divider />
-                </Grid>
-                <Grid item xs={12} >
-                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Profile size={18} />
-                      </ListItemIcon>
-
-                      <Typography align="left">Profile</Typography>
-
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Setting size={18} />
-                      </ListItemIcon>
-
-                      <Typography align="left">Profile Settings</Typography>
-
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Gps size={18} />
-                      </ListItemIcon>
-
-                      <Typography align="left">Shortlisted Profiles</Typography>
-
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Blocked Profiles</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Profiles I Viewed</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Viewed My Profile</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Interest Sent</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Interest Received</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Viewed Contacts</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">My Contacts Viewed</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">mobile Request Sent</Typography>
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Link1 size={18} />
-                      </ListItemIcon>
-                      <Typography align="left">Mobile Requests Received</Typography>
-                    </ListItem>
-
-                  </List>
-                </Grid>
+                
+               
                 <Grid item xs={12}>
                   <Divider />
                 </Grid>
-                <Grid item xs={12} >
-                  <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                    <ListItem>
-                      <ListItemIcon>
-                        <Sms size={18} />
-                      </ListItemIcon>
-
-                      <Typography align="left">anshan.dh81@gmail.com</Typography>
-
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <CallCalling size={18} />
-                      </ListItemIcon>
-
-                      <Typography align="left">8654 239 581</Typography>
-
-                    </ListItem>
-                    <ListItem>
-
-
-                      <Typography align="left">Branch : Hyderabad</Typography>
-
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Date of Birth : 09-12-1982</Typography>
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Inbond Date : 09-12-1982</Typography>
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Registered Date : 09-12-1982</Typography>
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Created By : 09-12-1982</Typography>
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Blocked By : 09-12-1982</Typography>
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Invoice date : 09-12-1982</Typography>
-                    </ListItem>
-                    <ListItem>
-
-                      <Typography align="left">Approved date : 09-12-1982</Typography>
-                    </ListItem>
-                  </List>
-                </Grid> */}
-                <Grid item xs={12}>
-                  <Divider />
-                </Grid>
-                {/* <Grid item xs={12}>
-                  <Stack direction="row" justifyContent="space-around" alignItems="center">
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">86</Typography>
-                      <Typography color="secondary">Post</Typography>
-                    </Stack>
-                    <Divider orientation="vertical" flexItem />
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">40</Typography>
-                      <Typography color="secondary">Project</Typography>
-                    </Stack>
-                    <Divider orientation="vertical" flexItem />
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography variant="h5">4.5K</Typography>
-                      <Typography color="secondary">Members</Typography>
-                    </Stack>
-                  </Stack>
-                </Grid> */}
+                
 
 
 
@@ -694,76 +590,28 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
               </Grid>
             </MainCard>
           </Grid>
-          {/* <Grid item xs={12}>
-            <MainCard title="Skills">
-              <Grid container spacing={1.25}>
-                <Grid item xs={6}>
-                  <Typography color="secondary">Junior</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <LinearWithLabel value={30} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography color="secondary">UX Reseacher</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <LinearWithLabel value={80} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography color="secondary">Wordpress</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <LinearWithLabel value={90} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography color="secondary">HTML</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <LinearWithLabel value={30} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography color="secondary">Graphic Design</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <LinearWithLabel value={95} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography color="secondary">Code Style</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <LinearWithLabel value={75} />
-                </Grid>
-              </Grid>
-            </MainCard>
-          </Grid> */}
+        
         </Grid>
       </Grid>
-      <Grid item xs={12} sm={7} md={8} xl={9}>
+      <Grid item xs={12} sm={7} md={8} xl={8}>
         <Grid container spacing={3}>
-          {/* <Grid item xs={12}>
-            <MainCard title="About me">
-              <Typography color="secondary">
-                Hello, I’m Anshan Handgun Creative Graphic Designer & User Experience Designer based in Website, I create digital Products a
-                more Beautiful and usable place. Morbid accusant ipsum. Nam nec tellus at.
-              </Typography>
-            </MainCard>
-          </Grid> */}
-          <Grid item xs={12}>
-            <MainCard title="PERSONAL DETAILS">
+         
+           <Grid item xs={12}>
+            <MainCard title="BRANCH DETAILS">
               <List sx={{ py: 0 }}>
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
 
                       <Stack spacing={0.5}>
-                        <Typography color="secondary">Full Name</Typography>
-                        <Typography>{detailsObject.personalDetails.name}</Typography>
+                        <Typography color="secondary">Branch Name</Typography>
+                        <Typography>{detailsObject?.branchName}</Typography>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
-                        <Typography color="secondary">Marital Status</Typography>
-                        <Typography>{detailsObject.personalDetails.maritalStatus}</Typography>
+                        <Typography color="secondary">Mobile Number</Typography>
+                        <Typography>{detailsObject?.phoneNumber}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -773,14 +621,14 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
                     <Grid item xs={12} md={6}>
 
                       <Stack spacing={0.5}>
-                        <Typography color="secondary">Status</Typography>
-                        <Typography>{detailsObject.personalDetails.status}</Typography>
+                        <Typography color="secondary">Address</Typography>
+                        <Typography>{detailsObject?.address}</Typography>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
-                        <Typography color="secondary">Educational Qualification</Typography>
-                        <Typography>{detailsObject.personalDetails.educationalQualification}</Typography>
+                        <Typography color="secondary">Pincode</Typography>
+                        <Typography>{detailsObject?.pincode}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -789,66 +637,66 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
 
+                      <Stack spacing={0.5}>
+                        <Typography color="secondary">Country</Typography>
+                        <Typography>{detailsObject?.country.countryName}</Typography>
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">State</Typography>
-                        <Typography>{detailsObject.personalDetails.state}</Typography>
+                        <Typography>{detailsObject?.state?.stateName}</Typography>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+                <ListItem divider={!matchDownMD}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+
+                      <Stack spacing={0.5}>
+                        <Typography color="secondary">District</Typography>
+                        <Typography>{detailsObject?.district?.districtName}</Typography>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">City</Typography>
-                        <Typography>{detailsObject.personalDetails.city}</Typography>
+                        <Typography>{detailsObject?.city?.cityName}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
                 </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Branch</Typography>
-                        <Typography>{detailsObject.personalDetails.branch}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Religion</Typography>
-                        <Typography>{detailsObject.personalDetails.religion}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
+                {/* <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
 
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Cast</Typography>
-                        <Typography>{detailsObject.personalDetails.cast}</Typography>
+                        <Typography>{detailsObject?.cast}</Typography>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Date of Birth</Typography>
-                        <Typography>{detailsObject.personalDetails.dob}</Typography>
+                        <Typography>{detailsObject?.dob}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
+                </ListItem> */}
+                {/* <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
 
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Aadhar Number</Typography>
-                        <Typography>{detailsObject.personalDetails.adharNumber}</Typography>
+                        <Typography>{detailsObject?.adharNumber}</Typography>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Joining Date</Typography>
-                        <Typography>{detailsObject.personalDetails.joiningDate}</Typography>
+                        <Typography>{detailsObject?.joiningDate}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -859,24 +707,24 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
 
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Experience (in years)</Typography>
-                        <Typography>{detailsObject.personalDetails.experienceInyears}</Typography>
+                        <Typography>{detailsObject?.experienceInyears}</Typography>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Temporary Address</Typography>
-                        <Typography>{detailsObject.personalDetails.tempAddress}</Typography>
+                        <Typography>{detailsObject?.tempAddress}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
-                </ListItem>
+                </ListItem> */}
 
 
 
               </List>
             </MainCard>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <MainCard title="FATHER DETAILS">
               <List sx={{ py: 0 }}>
                 <ListItem divider>
@@ -977,50 +825,10 @@ export default function BranchViewProfile({onActivateTab}:FranchiseViewProfilePr
 
               </List>
             </MainCard>
-          </Grid>
-          {/* <Grid item xs={12}>
-            <MainCard title="Emplyment">
-              <List sx={{ py: 0 }}>
-                <ListItem divider>
-                  <Grid container spacing={matchDownMD ? 0.5 : 3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Senior UI/UX designer (Year)</Typography>
-                        <Typography>2019-Current</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Job Responsibility</Typography>
-                        <Typography>
-                          Perform task related to project manager with the 100+ team under my observation. Team management is key role in
-                          this company.
-                        </Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem>
-                  <Grid container spacing={matchDownMD ? 0.5 : 3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Trainee cum Project Manager (Year)</Typography>
-                        <Typography>2017-2019</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Job Responsibility</Typography>
-                        <Typography>Team management is key role in this company.</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-              </List>
-            </MainCard>
-          </Grid> */}
+          </Grid>  */}
         </Grid>
       </Grid>
-    </Grid>
+    </Grid> : <p>Loading...</p>}
+    </div>
   );
 }

@@ -19,15 +19,15 @@ export default function BranchesList() {
   const [open, setOpen] = useState({ flag: false, action: '' });
   const [show,setShow] = useState(false);
   const [invoice,setInvoice] = useState(false)
- const [rowsPerPage, setRowsPerPage] = useState(0);
-   const [pageNumber, setPageNumber] = useState(1);
-   const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
-   const [isLoading, setIsLoading] = useState(false);
-   const [listLoader, setListLoader] = useState(false);
-   const [listFilter, setListFilter] = useState({ status: null, id: null, search: '', skip: 0, limit: 10 });
-   const [tableData, setTableData] = useState([]);
-   const [rowCount, setRowCount] = useState(0);
-   const [globalFilter, setGlobalFilter] = useState('');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [listLoader, setListLoader] = useState(false);
+  const [listFilter, setListFilter] = useState({ status: null, id: null, search: '', skip: 0, limit: 10 });
+  const [tableData, setTableData] = useState([]);
+  const [rowCount, setRowCount] = useState(0);
+  const [globalFilter, setGlobalFilter] = useState('');
     const listBranches = async () => {
        setListLoader(true);
        const result = await branchesList(listFilter);
@@ -35,7 +35,7 @@ export default function BranchesList() {
          setListLoader(false);
          setRowCount(result.totalCount);
          if (result.data.length > 0) {
-           const data = result.data.map((item: any, index: any) => ({ empId: "4321", name: item.branchName, officeNumber: item.phoneNumber, role: "poiu", branch: "gfds", status: item.status ? 'Enable' : 'Disable', }));
+           const data = result.data.map((item: any, index: any) => ({ id:item.id, name: item.branchName, officeNumber: item.phoneNumber, role: "poiu", branch: "gfds", status: item.status ? 'Enable' : 'Disable', }));
            setTableData(data);
          } else {
            setTableData([]);
@@ -87,7 +87,7 @@ export default function BranchesList() {
   const handleView = (row: any) => {
     console.log('row.........',row)
     const newUrl = '/admin/userManagement/Branch';
-    sessionStorage.setItem('branchUser',JSON.stringify(row))
+    sessionStorage.setItem('id',JSON.stringify(row.id))
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
@@ -141,10 +141,10 @@ export default function BranchesList() {
         <IconButton onClick={handleClick}>...</IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <MenuItem onClick={() => { handleView(row); handleClose(); }}>View Profile</MenuItem>
-          <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem>
+          {/* <MenuItem onClick={() => { handleEdit(row); handleClose(); }}>Edit</MenuItem> */}
           <MenuItem onClick={() => { setInvoice(true); }}>Create InVoice</MenuItem>
           <MenuItem onClick={() => { setOpen({ flag: true, action: 'block' }); handleClose(); }}>Block</MenuItem>
-          <MenuItem onClick={() => { setShow(true); }}>Add Payment</MenuItem>
+          {/* <MenuItem onClick={() => { setShow(true); }}>Add Payment</MenuItem> */}
         </Menu>
       </>
     );

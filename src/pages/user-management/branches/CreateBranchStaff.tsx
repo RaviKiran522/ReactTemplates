@@ -1,4 +1,4 @@
-import React, { useState, SyntheticEvent } from 'react';
+import React, { useState, SyntheticEvent, useEffect } from 'react';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import {
@@ -35,6 +35,7 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Create from '../Create';
+import { cityList, countryList, districtList, listcaste, religionList, rolesList, statesList } from 'services/add-new-details/AddNewDetails';
 // import SvgIcon from '@mui/joy/SvgIcon';
 // import style from '@mui/material'
 
@@ -535,7 +536,32 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       helperText: '',
       mandatory: true,
       isMulti: false
-    }
+    },
+    countryName: {
+      label: 'Select Country Name',
+      id: 'countryName',
+      name: 'countryName',
+      type:'select',
+      options: [],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false,
+    },
+    district: {
+      label: 'Select District Name',
+      id: 'district',
+      name: 'district',
+      type:'select',
+      options: [],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false,
+    },
+     
   };
 
   const months = ['January', 'February', 'March'];
@@ -548,6 +574,37 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
   const [list, setList] = useState(false);
 
   type FormDataKeys = keyof typeof formData;
+   useEffect(()=>{
+      const selectionApiFunction = async() =>{
+        const newFormFields = _.cloneDeep(formData)
+        let countryDetails = await countryList({meta:true,status:1})
+        let religionDetails = await religionList({meta:true,status:1})
+        let roleslist = await rolesList({meta:true,status:1})
+        let castList = await listcaste({meta:true,status:1})
+        if(countryDetails.status){
+          let countryoptions = countryDetails.data.map((each:any)=>({ id: each.id, label: each.countryName }))
+          newFormFields.countryName.options = countryoptions
+          setFormData(newFormFields)
+        }
+        if(religionDetails.status){
+          let religionOptions = religionDetails.data.map((each:any)=>({ id: each.id, label: each.religionName }))
+          newFormFields.religion.options = religionOptions
+          setFormData(newFormFields)
+        }
+        if(roleslist.status){
+          let roleOptions = roleslist.data.map((each:any)=>({ id: each.id, label: each.name }))
+          newFormFields.role.options = roleOptions
+          setFormData(newFormFields)
+        }
+        if(castList.status){
+          let castOptions = castList.data.map((each:any)=>({ id: each.id, label: each.name }))
+          newFormFields.caste.options = castOptions
+          setFormData(newFormFields)
+        }
+      }
+      selectionApiFunction()
+     
+    },[])
 
   const validate = (formData: any) => {
     let newFormData = _.cloneDeep(formData);
@@ -610,13 +667,37 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     setFormData(newFormData);
   };
 
-  const handleSelectChange = (name: FormDataKeys, value: any) => {
+  const handleSelectChange = async(name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(formData);
-    newFormData[name].value = value;
-    newFormData[name].error = false;
-    newFormData[name].helperText = '';
+        if(name == 'countryName'){
+          let stateList = await statesList({meta:true,status:1,countryId:value?.id})
+          if(stateList.status){
+            let stateOptions = stateList.data.map((each:any)=>({ id: each.id, label: each.stateName }))
+            newFormData.statename.options = stateOptions
+          }
+          
+        }else if(name == 'statename'){
+          let districtLists = await districtList({meta:true,status:1,stateId:value?.id})
+          if(districtLists.status){
+            let districtoptions = districtLists.data.map((each:any)=>({ id: each.id, label: each.districtName }))
+            newFormData.district.options = districtoptions
+          }
+          
+        }else if(name == 'district'){
+          let cityLists = await cityList({meta:true,status:1,districtId:value?.id})
+          if(cityLists.status){
+            let cityOptions = cityLists.data.map((each:any)=>({ id: each.id, label: each.cityName }))
+            newFormData.cityname.options = cityOptions
+          }
+          
+        }
+        
+          
+        newFormData[name].value = value;
+        newFormData[name].error = false;
+        newFormData[name].helperText = '';
+        setFormData(newFormData);
 
-    setFormData(newFormData);
   };
 
   const handleDateChange = (name: keyof FormData, value: Date | null) => {

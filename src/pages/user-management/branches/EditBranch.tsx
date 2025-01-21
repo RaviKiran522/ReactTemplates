@@ -21,11 +21,11 @@ import {
   FormHelperText
 } from '@mui/material';
 import GoogleMaps from '../GoogleMaps';
-import { cityList, countryList, createBranch, districtList, statesList } from 'services/add-new-details/AddNewDetails';
+import { branchesList, cityList, countryList, createBranch, districtList, statesList, updateBranch } from 'services/add-new-details/AddNewDetails';
 import { Severity } from 'Common/utils';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
-const CreateBranch: React.FC = () => {
+const EditBranch: React.FC = () => {
   // Define the structure of form data for type safety
   interface FormField {
     label: any;
@@ -167,16 +167,6 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       options: []
     },
-    // date: {
-    //   label: 'Date',
-    //   id: 'date',
-    //   name: 'date',
-    //   value: '',
-    //   error: false,
-    //   helperText: 'Please select date',
-    //   mandatory: true,
-    //   options: []
-    // },
     mapUrl: {
       label: 'Map Url',
       id: 'mapUrl',
@@ -188,15 +178,36 @@ const CreateBranch: React.FC = () => {
       mandatory: true,
       options: []
     },
+   
   };
 
   const [formData, setFormData] = useState<FormData>(formFields);
   const [isLoading, setIsLoading] = useState(false);
-    const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
+  const branchId = sessionStorage.getItem('id')
   
 
   type FormDataKeys = keyof typeof formData;
-
+  const getbranchDetails = async() =>{
+    const newFormFields = _.cloneDeep(formData)
+    let branchDetails = await branchesList({id:branchId})
+      if(branchDetails.status){
+        newFormFields.branchName.value = branchDetails.data.branchName ? branchDetails.data.branchName : ""
+        newFormFields.phoneNumber.value = branchDetails.data.phoneNumber ? branchDetails.data.phoneNumber : ""
+        newFormFields.email.value = branchDetails.data.emailId ? branchDetails.data.emailId : ""
+        newFormFields.countryName.value ={id:branchDetails.data.country.id,label:branchDetails.data.country.countryName}
+        newFormFields.statename.value = {id:branchDetails.data.state.id,label:branchDetails.data.state.stateName}
+        newFormFields.district.value ={id:branchDetails.data.district.id,label:branchDetails.data.district.districtName}
+        newFormFields.cityname.value = {id:branchDetails.data.city.id,label:branchDetails.data.city.cityName}
+        newFormFields.status.value ={id:branchDetails.data.status,label:branchDetails.data.status ? "Enable" : "Disable"}
+        newFormFields.address.value = branchDetails.data.address ? branchDetails.data.address : ""
+        newFormFields.pincode.value = branchDetails.data.pincode ?  branchDetails.data.pincode : ""
+        newFormFields.mapUrl.value = branchDetails.data.mapUrl ? branchDetails.data.mapUrl : ""
+        
+      }
+      setFormData(newFormFields)
+  }
+  
   useEffect(()=>{
     const selectionApiFunction = async() =>{
       const newFormFields = _.cloneDeep(formData)
@@ -206,6 +217,7 @@ const CreateBranch: React.FC = () => {
         newFormFields.countryName.options = countryoptions
         setFormData(newFormFields)
       }
+      await getbranchDetails()
     }
     selectionApiFunction()
    
@@ -320,20 +332,10 @@ const CreateBranch: React.FC = () => {
   };
 
   const handleFormSubmit = async(e: React.FormEvent) => {
-    // console.log('Form Submitted', formData);
     e.preventDefault();
-    // const sampleObject = {
-    //   branchName: formData.branchName.value,
-    //   phoneNumber: formData.phoneNumber.value,
-    //   email: formData.email.value,
-    //   statename: formData.statename.value,
-    //   adress: formData.adress.value,
-    //   cityname: formData.cityname.value,
-    //   status: formData.status.value,
-    //   pincode: formData.pincode.value
-    // };
     console.log('formData........',formData)
     let object = {
+      "id":Number(branchId),
       "branchName": formData.branchName.value,
       "phoneNumber": formData.phoneNumber.value,
       "emailId": formData.email.value,
@@ -346,18 +348,17 @@ const CreateBranch: React.FC = () => {
       "mapUrl": formData.mapUrl.value,
       "status": formData.status.value?.id
     }
-    console.log('object.......',object)
-    console.log('validate()........',validate())
     if (validate()) {
        setIsLoading(true);
            
-              const result = await createBranch(object);
+              const result = await updateBranch(object);
+              debugger
               if (result.status) {
                 setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
                 setIsLoading(false);
                 setTimeout(() => {
                   setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
-                  setFormData(formFields);
+                  getbranchDetails()
                 }, 2000);
               } else {
                 setSuccessBanner({ flag: true, message: result.message, severity: Severity.Error });
@@ -377,7 +378,7 @@ const CreateBranch: React.FC = () => {
       }}
     >
       <Typography variant="h3" marginBottom={2}>
-        Create Branch
+      Edit Branch
       </Typography>
       {successBanner.flag && (
           <Stack spacing={2} sx={{ m: 2 }}>
@@ -448,4 +449,4 @@ const CreateBranch: React.FC = () => {
   );
 };
 
-export default CreateBranch;
+export default EditBranch;

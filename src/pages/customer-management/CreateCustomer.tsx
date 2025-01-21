@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 
 // material-ui
@@ -8,7 +8,7 @@ import Stepper from '@mui/material/Stepper';
 import StepLabel from '@mui/material/StepLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-
+import _ from 'lodash';
 // project-imports
 
 import MainCard from 'components/MainCard';
@@ -18,13 +18,22 @@ import EducationDetails from './EducationDetails';
 import FamilyDetails from './FamilyDetails';
 import PartnerDetails from './PartnerDetails';
 import Confirm from './Confirm';
-
+import { bloodGroups, heights, mobileCountryCodes, visaType, ageRange } from '../../Common/utils';
+import {
+  createPersonalDetails,
+  createCustomer,
+  createPartnerDetails,
+  createFamilyDetails,
+  createEducationDetails,
+  getCustomerDetails
+} from '../../services/customer-management/CustomerManagement';
 // step options
 const steps = ['Personal Details', 'Education Details', 'Family Details', 'Partner Details', 'Confirm'];
 
 // ==============================|| FORMS WIZARD - BASIC ||============================== //
 
-export default function CreateCustomer({edit}: any) {
+export default function CreateCustomer({ edit }: any) {
+  const [customerId, setCustomerId] = useState(0);
   const personalDetails: any = {
     fullName: {
       label: 'Full Name',
@@ -54,11 +63,22 @@ export default function CreateCustomer({edit}: any) {
       name: 'gender',
       type: 'select',
       options: [
-        { id: 0, label: 'Please Select' },
         { id: 1, label: 'Male' },
         { id: 2, label: 'Female' }
       ],
-      value: { id: 0, label: 'Please Select' },
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    countryCode: {
+      label: 'Country Code',
+      id: 'countryCode',
+      name: 'countryCode',
+      type: 'select',
+      options: mobileCountryCodes,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -83,7 +103,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: false,
+      mandatory: true,
       options: []
     },
     aadharNumber: {
@@ -110,7 +130,11 @@ export default function CreateCustomer({edit}: any) {
     },
     timeOfBirth: {
       label: 'Time of Birth',
-      value: null
+      type: 'time',
+      value: null,
+      error: false,
+      helperText: '',
+      mandatory: true
     },
     birthPlace: {
       label: 'Birth Place',
@@ -128,12 +152,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectReligion',
       name: 'selectReligion',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -144,12 +164,23 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectCaste',
       name: 'selectCaste',
       type: 'select',
+      options: [],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
+    },
+    isConvertedCaste: {
+      label: 'Are you converted your Caste',
+      id: 'isConvertedCaste',
+      name: 'isConvertedCaste',
+      type: 'select',
       options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' }
       ],
-      value: { id: 1, label: 'AP' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -160,12 +191,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectStar',
       name: 'selectStar',
       type: 'select',
-      options: [
-        { id: 1, label: 'Bharani' },
-        { id: 2, label: 'Aswini' },
-        { id: 3, label: 'Bharani' }
-      ],
-      value: { id: null, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -176,12 +203,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selecselectRassitMoonsign',
       name: 'selectRassi',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: 'mesha' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -195,9 +218,10 @@ export default function CreateCustomer({edit}: any) {
       options: [
         { id: 1, label: '1' },
         { id: 2, label: '2' },
-        { id: 3, label: '3' }
+        { id: 3, label: '3' },
+        { id: 4, label: '4' }
       ],
-      value: { id: 1, label: '1' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -224,7 +248,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'No' },
         { id: 3, label: "Don't know" }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -235,12 +259,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectheight',
       name: 'selectheight',
       type: 'select',
-      options: [
-        { id: 1, label: '4.0' },
-        { id: 2, label: '5.5' },
-        { id: 3, label: '6' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: heights,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -251,12 +271,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectbloodgroup',
       name: 'selectbloodgroup',
       type: 'select',
-      options: [
-        { id: 1, label: 'A' },
-        { id: 2, label: 'B+' },
-        { id: 3, label: 'AB+' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: bloodGroups,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -267,12 +283,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectmothertounge',
       name: 'selectmothertounge',
       type: 'select',
-      options: [
-        { id: 1, label: 'Telugu' },
-        { id: 2, label: 'Hindi' },
-        { id: 3, label: 'English' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -284,15 +296,29 @@ export default function CreateCustomer({edit}: any) {
       name: 'selecthealthcodition',
       type: 'select',
       options: [
-        { id: 1, label: 'Better' },
+        { id: 1, label: 'Good' },
+        { id: 2, label: 'Better' },
         { id: 2, label: 'Healthy' },
-        { id: 3, label: 'Average' }
+        { id: 4, label: 'Physically Challenged' },
+        { id: 5, label: 'Mentally Challenged' },
+        { id: 6, label: 'Average' }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false
+    },
+    handicappedInfo: {
+      label: 'Handicapped Info',
+      id: 'handicappedInfo',
+      name: 'handicappedInfo',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      options: []
     },
     selectcomplexion: {
       label: 'Select complexion',
@@ -300,11 +326,12 @@ export default function CreateCustomer({edit}: any) {
       name: 'selectcomplexion',
       type: 'select',
       options: [
-        { id: 1, label: 'Fair' },
-        { id: 2, label: 'Medium' },
-        { id: 3, label: 'Dark' }
+        { id: 1, label: 'Very Fair' },
+        { id: 2, label: 'Fair' },
+        { id: 3, label: 'Medium' },
+        { id: 4, label: 'Dark' }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -322,7 +349,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 4, label: 'Waiting for Divorce' },
         { id: 5, label: 'No Divorce' }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -335,7 +362,7 @@ export default function CreateCustomer({edit}: any) {
       type: 'file',
       value: [],
       error: false,
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     dateOfMarriage: {
@@ -346,7 +373,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     dateOfDeath: {
@@ -357,7 +384,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     havingChildren: {
@@ -369,10 +396,10 @@ export default function CreateCustomer({edit}: any) {
         { id: 1, label: 'Yes' },
         { id: 2, label: 'No' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     divorceCertificate: {
@@ -382,7 +409,7 @@ export default function CreateCustomer({edit}: any) {
       type: 'file',
       value: [],
       error: false,
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     dateOfDivorce: {
@@ -393,7 +420,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     reasonForDivorce: {
@@ -404,7 +431,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     uploadAcknowledgement: {
@@ -414,7 +441,7 @@ export default function CreateCustomer({edit}: any) {
       type: 'file',
       value: [],
       error: false,
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     selectsmoke: {
@@ -424,10 +451,10 @@ export default function CreateCustomer({edit}: any) {
       type: 'select',
       options: [
         { id: 1, label: 'No' },
-        { id: 2, label: 'Regular' },
-        { id: 3, label: 'Occasional' }
+        { id: 2, label: 'Occasional' },
+        { id: 3, label: 'Regular' }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -440,10 +467,10 @@ export default function CreateCustomer({edit}: any) {
       type: 'select',
       options: [
         { id: 1, label: 'No' },
-        { id: 2, label: 'Regular' },
-        { id: 3, label: 'Occasional' }
+        { id: 3, label: 'Occasional' },
+        { id: 2, label: 'Regular' }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -457,19 +484,22 @@ export default function CreateCustomer({edit}: any) {
       options: [
         { id: 1, label: 'Vegtarian' },
         { id: 2, label: 'Non-vegtarian' },
-        { id: 3, label: 'Not Particular' }
+        { id: 3, label: 'Eggetarian' },
+        { id: 4, label: 'Not Particular' }
       ],
-      value: { id: 1, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false
     },
     about: {
-      label: 'About',
+      label: 'About me',
       id: 'about',
       name: 'about',
       type: 'text',
+      multiline: true,
+      rows: 4,
       value: '',
       error: false,
       helperText: '',
@@ -481,29 +511,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'hobbies',
       name: 'hobbies',
       type: 'select',
-      options: [
-        { id: 1, label: 'playing cricket' },
-        { id: 2, label: 'Playing chess' },
-        { id: 3, label: 'Playing carroms' },
-        { id: 4, label: 'Playing kabbadi' },
-        { id: 5, label: 'Reading books ' },
-        { id: 6, label: 'Reading news' },
-        { id: 7, label: 'sketching' },
-        { id: 8, label: 'singing' },
-        { id: 9, label: 'Dancing' },
-        { id: 10, label: 'cooking' },
-        { id: 11, label: 'Collecting coins' },
-        { id: 12, label: 'Collecting Art work' },
-        { id: 13, label: 'Drawing' },
-        { id: 14, label: 'Painting' },
-        { id: 15, label: 'pets' },
-        { id: 16, label: 'Gardening' },
-        { id: 17, label: 'puzzles' },
-        { id: 18, label: 'Handicraft' },
-        { id: 19, label: 'playing Games' },
-        { id: 20, label: 'Volley ball' }
-      ],
-      value: [{ id: 1, label: 'Please select' }],
+      options: [],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -514,25 +523,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'intrests',
       name: 'intrests',
       type: 'select',
-      options: [
-        { id: 1, label: 'Learning new Languages' },
-        { id: 2, label: 'Sports' },
-        { id: 3, label: 'Movies' },
-        { id: 4, label: 'Music' },
-        { id: 5, label: 'Social service' },
-        { id: 6, label: 'Internet' },
-        { id: 7, label: 'Travel' },
-        { id: 8, label: 'Reading' },
-        { id: 9, label: 'Watching tv' },
-        { id: 10, label: 'Listening Music' },
-        { id: 11, label: 'Passion of changing phones' },
-        { id: 12, label: 'Elploring new things' },
-        { id: 13, label: 'Poems' },
-        { id: 14, label: 'Vexing games' },
-        { id: 15, label: 'Meditation' },
-        { id: 16, label: 'Swimming' }
-      ],
-      value: [{ id: 1, label: 'Please select' }],
+      options: [],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -543,12 +535,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'favouritemusic',
       name: 'favouritemusic',
       type: 'select',
-      options: [
-        { id: 1, label: 'Film songs' },
-        { id: 2, label: 'western' },
-        { id: 3, label: 'Clasical' }
-      ],
-      value: [{ id: 1, label: 'Please select' }],
+      options: [],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -559,16 +547,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'sports',
       name: 'sports',
       type: 'select',
-      options: [
-        { id: 1, label: 'Badmintion' },
-        { id: 2, label: 'Volleyball' },
-        { id: 3, label: 'Chess' },
-        { id: 4, label: 'Cricket' },
-        { id: 5, label: 'Kabbadi' },
-        { id: 6, label: 'Fighting' },
-        { id: 7, label: 'Photo design' }
-      ],
-      value: [{ id: 1, label: 'Please select' }],
+      options: [],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -579,8 +559,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'favouritecuisne',
       name: 'favouritecuisne',
       type: 'select',
-      options: [{ id: 1, label: 'South India' }],
-      value: [{ id: 1, label: 'Please select' }],
+      options: [],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -591,20 +571,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'favouritereads',
       name: 'favouritereads',
       type: 'select',
-      options: [
-        { id: 1, label: 'Comics' },
-        { id: 2, label: 'Thriller' },
-        { id: 3, label: 'Fantasy' },
-        { id: 4, label: 'Biographies' },
-        { id: 5, label: 'History' },
-        { id: 6, label: 'Self-help' },
-        { id: 7, label: 'writing lyrics' },
-        { id: 8, label: 'Doing Religious Activities' },
-        { id: 9, label: 'Preparation for groups' },
-        { id: 10, label: 'photgraphy' },
-        { id: 11, label: 'nature lover' }
-      ],
-      value: [{ id: 1, label: 'Please select' }],
+      options: [],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -624,7 +592,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 6, label: 'Visiting new places ' },
         { id: 7, label: 'respects to parents' }
       ],
-      value: [{ id: 1, label: 'Please select' }],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -640,7 +608,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 2, label: 'Designer wear ' },
         { id: 3, label: 'Indian / Ethnic wear' }
       ],
-      value: [{ id: 1, label: 'Please select' }],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -658,7 +626,7 @@ export default function CreateCustomer({edit}: any) {
         { id: 4, label: 'Kannada ' },
         { id: 5, label: 'Tamil' }
       ],
-      value: [{ id: 1, label: 'Please select' }],
+      value: [],
       error: false,
       helperText: '',
       mandatory: true,
@@ -670,12 +638,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectcountry',
       name: 'selectcountry',
       type: 'select',
-      options: [
-        { id: 1, label: 'India' },
-        { id: 2, label: 'America' },
-        { id: 3, label: 'UK' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -686,12 +650,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectstate',
       name: 'selectstate',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TGS' },
-        { id: 3, label: 'Kerela' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -702,12 +662,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'selectdistrict',
       name: 'selectdistrict',
       type: 'select',
-      options: [
-        { id: 1, label: 'Srikakulam' },
-        { id: 2, label: 'Vijayawada' },
-        { id: 3, label: 'Bobili' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -715,29 +671,11 @@ export default function CreateCustomer({edit}: any) {
     },
     city: {
       label: 'Select City',
-      id: 'address',
-      name: 'address',
-      options: [
-        { id: 1, label: 'hyderabad' },
-        { id: 2, label: 'vizag' },
-        { id: 3, label: 'chennai' }
-      ],
-      value: { id: 1, label: 'hyderabad' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    status: {
-      label: 'Status',
-      id: 'status',
-      name: 'status',
-      options: [
-        { id: 1, label: 'hyderabad' },
-        { id: 2, label: 'vizag' },
-        { id: 3, label: 'chennai' }
-      ],
-      value: { id: 0, label: 'Select' },
+      id: 'city',
+      name: 'city',
+      type: 'select',
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -748,15 +686,25 @@ export default function CreateCustomer({edit}: any) {
       id: 'address',
       name: 'address',
       type: 'text',
+      multiline: true,
+      rows: 4,
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
-      options: [
-        { id: 1, label: 'hyderabad' },
-        { id: 2, label: 'vizag' },
-        { id: 3, label: 'chennai' }
-      ]
+      options: []
+    },
+    altcountryCode: {
+      label: 'Country Code',
+      id: 'altcountryCode',
+      name: 'altcountryCode',
+      type: 'select',
+      options: mobileCountryCodes,
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
     },
     altmobile: {
       label: 'Alt.mobile',
@@ -773,7 +721,7 @@ export default function CreateCustomer({edit}: any) {
       label: 'Alt.Email',
       id: 'altemail',
       name: 'altemail',
-      type: 'text',
+      type: 'email',
       value: '',
       error: false,
       helperText: '',
@@ -782,54 +730,65 @@ export default function CreateCustomer({edit}: any) {
     },
     timeToCall: {
       label: 'Time to call',
-      value: null
-    },
-    pincode: {
-      label: 'Pincode',
-      id: 'pincode',
-      name: 'pincode',
-      type: 'number',
-      value: '',
+      value: null,
+      type: 'time',
       error: false,
       helperText: '',
-      mandatory: true,
-      options: []
-    },
-    date: {
-      label: 'Date',
-      id: 'date',
-      name: 'date',
-      value: '',
-      error: false,
-      helperText: 'Please select date',
-      mandatory: true,
-      options: []
+      mandatory: true
     },
     applicationfor: {
       label: 'Application for',
       id: 'applicationfor',
       name: 'applicationfor',
-      options: [
-        { id: 1, label: 'Myself' },
-        { id: 2, label: 'son' },
-        { id: 3, label: 'daughter' }
-      ],
-      value: { id: 0, label: 'Select' },
+      type: 'select',
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false
     },
+    applicationFillingPersonName: {
+      label: 'Application filling Person Name',
+      id: 'applicationFillingPersonName',
+      name: 'applicationFillingPersonName',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      options: []
+    },
+    applicationFillingPersonCountryCode: {
+      label: 'Country Code',
+      id: 'applicationFillingPersonCountryCode',
+      name: 'applicationFillingPersonCountryCode',
+      type: 'select',
+      options: mobileCountryCodes,
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      isMulti: false
+    },
+    applicationFillingPersonMobile: {
+      label: 'Application filling Person Mobile No',
+      id: 'applicationFillingPersonMobile',
+      name: 'applicationFillingPersonMobile',
+      type: 'text',
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      options: []
+    },
     source: {
       label: 'Source',
       id: 'source',
       name: 'source',
-      options: [
-        { id: 1, label: 'Friend' },
-        { id: 2, label: 'News Paper' },
-        { id: 3, label: 'Self' }
-      ],
-      value: { id: 0, label: 'Select' },
+      type: 'select',
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -839,12 +798,13 @@ export default function CreateCustomer({edit}: any) {
       label: 'Nearest Branch',
       id: 'nearestbranch',
       name: 'nearestbranch',
+      type: 'select',
       options: [
         { id: 1, label: 'Vijayawada' },
         { id: 2, label: 'srikakulam' },
         { id: 3, label: 'TS' }
       ],
-      value: { id: 0, label: 'Select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -857,12 +817,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'education',
       name: 'education',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please Select' },
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
-      ],
-      value: { id: 0, label: 'Please Select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -873,12 +829,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'university',
       name: 'university',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -889,12 +841,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'employedin',
       name: 'employedin',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -905,12 +853,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'designation',
       name: 'designation',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
-      ],
-      value: { id: 0, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -921,12 +865,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'profession',
       name: 'profession',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: '' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -938,11 +878,10 @@ export default function CreateCustomer({edit}: any) {
       name: 'workingLocation',
       type: 'select',
       options: [
-        { id: 1, label: 'Please select' },
-        { id: 2, label: 'Abroad' },
-        { id: 3, label: 'India' }
+        { id: 1, label: 'Abroad' },
+        { id: 2, label: 'India' }
       ],
-      value: {id: 2, label: 'Abroad'},
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -953,15 +892,11 @@ export default function CreateCustomer({edit}: any) {
       id: 'country',
       name: 'country',
       type: 'select',
-      options: [
-        { id: 1, label: 'Yes' },
-        { id: 2, label: 'No' },
-        { id: 3, label: "Don't know" }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     state: {
@@ -969,15 +904,23 @@ export default function CreateCustomer({edit}: any) {
       id: 'state',
       name: 'state',
       type: 'select',
-      options: [
-        { id: 1, label: '4.0' },
-        { id: 2, label: '5.5' },
-        { id: 3, label: '6' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
+      isMulti: false
+    },
+    selectdistrict: {
+      label: 'Select District',
+      id: 'selectdistrict',
+      name: 'selectdistrict',
+      type: 'select',
+      options: [],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
       isMulti: false
     },
     visaType: {
@@ -985,15 +928,11 @@ export default function CreateCustomer({edit}: any) {
       id: 'visaType',
       name: 'visaType',
       type: 'select',
-      options: [
-        { id: 1, label: 'A' },
-        { id: 2, label: 'B+' },
-        { id: 3, label: 'AB+' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: visaType,
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     passportNumber: {
@@ -1004,7 +943,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     validFrom: {
@@ -1015,7 +954,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     validTill: {
@@ -1026,7 +965,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     workingCompanyName: {
@@ -1037,18 +976,18 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     companyAddress: {
-      label: 'Company\'s Present Address',
+      label: "Company's Present Address",
       id: 'companyAddress',
       name: 'companyAddress',
       type: 'text',
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     propertyDetails: {
@@ -1078,15 +1017,11 @@ export default function CreateCustomer({edit}: any) {
       id: 'workingState',
       name: 'workingState',
       type: 'select',
-      options: [
-        { id: 1, label: 'A' },
-        { id: 2, label: 'B+' },
-        { id: 3, label: 'AB+' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     city: {
@@ -1094,15 +1029,11 @@ export default function CreateCustomer({edit}: any) {
       id: 'city',
       name: 'city',
       type: 'select',
-      options: [
-        { id: 1, label: 'A' },
-        { id: 2, label: 'B+' },
-        { id: 3, label: 'AB+' }
-      ],
-      value: { id: 1, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     locationAdd: {
@@ -1113,7 +1044,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     compName: {
@@ -1124,7 +1055,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     workingSince: {
@@ -1135,7 +1066,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     totalExp: {
@@ -1146,7 +1077,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     passNumber: {
@@ -1157,20 +1088,20 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     collegueName: {
-      label: 'Colleague\'s Name & Mobile No',
+      label: "Colleague's Name & Mobile No",
       id: 'collegueName',
       name: 'collegueName',
       type: 'text',
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
-    },
+    }
   };
   const familyDetails: any = {
     familyStatus: {
@@ -1178,12 +1109,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'familyStatus',
       name: 'familyStatus',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please Select' },
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
-      ],
-      value: { id: 0, label: 'Please Select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1194,12 +1121,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'familyType',
       name: 'familyType',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1221,12 +1144,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'freligion',
       name: 'freligion',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1237,20 +1156,27 @@ export default function CreateCustomer({edit}: any) {
       id: 'fcaste',
       name: 'fcaste',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
-      ],
-      value: { id: 0, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false
     },
-    fatherConvertedCaste: {
-      label: "Is converted Caste",
-      value: false
+    fIsConvertedCaste: {
+      label: 'Is convertd Caste',
+      id: 'fIsConvertedCaste',
+      name: 'fIsConvertedCaste',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' }
+      ],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
     },
     fatherStatus: {
       label: 'Father Status',
@@ -1258,11 +1184,10 @@ export default function CreateCustomer({edit}: any) {
       name: 'fatherStatus',
       type: 'select',
       options: [
-        { id: 1, label: 'select status' },
-        { id: 2, label: 'Late' },
-        { id: 3, label: 'Alive' }
+        { id: 1, label: 'Late' },
+        { id: 2, label: 'Alive' }
       ],
-      value: { id: 1, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1273,15 +1198,11 @@ export default function CreateCustomer({edit}: any) {
       id: 'fhealthCondition',
       name: 'fhealthCondition',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: '' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     workingSector: {
@@ -1292,8 +1213,20 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
+    },
+    fatherMobileNumberCountryCode: {
+      label: 'Country code',
+      id: 'fatherMobileNumberCountryCode',
+      name: 'fatherMobileNumberCountryCode',
+      type: 'select',
+      options: mobileCountryCodes,
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
     },
     fmobile: {
       label: 'Mobile Number',
@@ -1303,19 +1236,20 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     fprofession: {
       label: 'Profession',
       id: 'fprofession',
       name: 'fprofession',
-      type: 'text',
+      type: 'select',
+      options: [],
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
-      options: []
+      isMulti: false
     },
     faddress: {
       label: 'Address',
@@ -1325,7 +1259,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     fannualIncome: {
@@ -1336,7 +1270,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     fproperty: {
@@ -1347,7 +1281,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     pension: {
@@ -1373,7 +1307,7 @@ export default function CreateCustomer({edit}: any) {
       options: []
     },
     mmaidenName: {
-      label: 'Mother\'s Maiden Name',
+      label: "Mother's Maiden Name",
       id: 'mmaidenName',
       name: 'mmaidenName',
       type: 'text',
@@ -1388,12 +1322,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'mreligion',
       name: 'mreligion',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1404,20 +1334,27 @@ export default function CreateCustomer({edit}: any) {
       id: 'mcaste',
       name: 'mcaste',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
-      ],
-      value: { id: 0, label: 'Please select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false
     },
-    motherConvertedCaste: {
-      label: "Is converted Caste",
-      value: false
+    mIsConvertedCaste: {
+      label: 'Is convertd Caste',
+      id: 'mIsConvertedCaste',
+      name: 'mIsConvertedCaste',
+      type: 'select',
+      options: [
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' }
+      ],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false
     },
     motherStatus: {
       label: 'Mother Status',
@@ -1425,11 +1362,10 @@ export default function CreateCustomer({edit}: any) {
       name: 'motherStatus',
       type: 'select',
       options: [
-        { id: 1, label: 'select status' },
-        { id: 2, label: 'Late' },
-        { id: 3, label: 'Alive' }
+        { id: 1, label: 'Late' },
+        { id: 2, label: 'Alive' }
       ],
-      value: { id: 1, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1440,12 +1376,20 @@ export default function CreateCustomer({edit}: any) {
       id: 'mhealthCondition',
       name: 'mhealthCondition',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: '' },
+      options: [],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      isMulti: false
+    },
+    motherMobileNumberCountryCode: {
+      label: 'Country code',
+      id: 'motherMobileNumberCountryCode',
+      name: 'motherMobileNumberCountryCode',
+      type: 'select',
+      options: mobileCountryCodes,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1459,19 +1403,20 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     mprofession: {
       label: 'Profession',
       id: 'mprofession',
       name: 'mprofession',
-      type: 'text',
+      type: 'select',
+      options: [],
       value: '',
       error: false,
       helperText: '',
       mandatory: true,
-      options: []
+      isMulti: false
     },
     mannualIncome: {
       label: 'Annual Income',
@@ -1481,7 +1426,7 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     mproperty: {
@@ -1492,14 +1437,16 @@ export default function CreateCustomer({edit}: any) {
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     permanentAddress: {
-      label: 'Family\'s Permanent Address',
+      label: "Family's Permanent Address",
       id: 'permanentAddress',
       name: 'permanentAddress',
       type: 'text',
+      multiline: true,
+      rows: 4,
       value: '',
       error: false,
       helperText: '',
@@ -1507,14 +1454,16 @@ export default function CreateCustomer({edit}: any) {
       options: []
     },
     isAddressSame: {
-      label: "Check this box if Permanent Address and Present Address are the same.",
+      label: 'Check this box if Permanent Address and Present Address are the same.',
       value: false
     },
     presentAddress: {
-      label: 'Family\'s Present Address',
+      label: "Family's Present Address",
       id: 'presentAddress',
       name: 'presentAddress',
       type: 'text',
+      multiline: true,
+      rows: 4,
       value: '',
       error: false,
       helperText: '',
@@ -1570,12 +1519,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'relation',
       name: 'relation',
       type: 'select',
-      options: [
-        { id: 1, label: 'Please select' },
-        { id: 2, label: 'Abroad' },
-        { id: 3, label: 'India' }
-      ],
-      value: {id: 2, label: 'Abroad'},
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1599,12 +1544,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'lookingFor',
       name: 'lookingFor',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please Select' },
-        { id: 1, label: 'Male' },
-        { id: 2, label: 'Female' }
-      ],
-      value: { id: 0, label: 'Please Select' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1615,12 +1556,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'ageFrom',
       name: 'ageFrom',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: ageRange,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1631,12 +1568,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'ageTo',
       name: 'ageTo',
       type: 'select',
-      options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
-      ],
-      value: { id: 1, label: 'AP' },
+      options: ageRange,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1647,12 +1580,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'heightFrom',
       name: 'heightFrom',
       type: 'select',
-      options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
-      ],
-      value: { id: 0, label: 'Please select' },
+      options: heights,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1663,12 +1592,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'heightTo',
       name: 'heightTo',
       type: 'select',
-      options: [
-        { id: 1, label: 'select status' },
-        { id: 2, label: 'Late' },
-        { id: 3, label: 'Alive' }
-      ],
-      value: { id: 1, label: '' },
+      options: heights,
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1679,12 +1604,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'familyStatus',
       name: 'familyStatus',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: '' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1696,46 +1617,43 @@ export default function CreateCustomer({edit}: any) {
       name: 'interCasteMarriage',
       type: 'select',
       options: [
-        { id: 1, label: 'Please select' },
-        { id: 2, label: 'Yes' },
-        { id: 3, label: 'No' }
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' }
       ],
-      value: { id: 1, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
       isMulti: false
     },
     interReligion: {
-      label: 'Whether interested to marry inter-religion parent\'s child',
+      label: "Whether interested to marry inter-religion parent's child",
       id: 'interReligion',
       name: 'interReligion',
       type: 'select',
       options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' }
       ],
-      value: { id: 1, label: '' },
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     interCasteChild: {
-      label: 'Whether interested to marry inter-caste parent\'s child',
+      label: "Whether interested to marry inter-caste parent's child",
       id: 'interCasteChild',
       name: 'interCasteChild',
       type: 'select',
       options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
+        { id: 1, label: 'Yes' },
+        { id: 1, label: 'No' }
       ],
-      value: { id: 1, label: '' },
+      value: '',
       error: false,
       helperText: '',
-      mandatory: true,
+      mandatory: false,
       isMulti: false
     },
     caste: {
@@ -1743,27 +1661,24 @@ export default function CreateCustomer({edit}: any) {
       id: 'caste',
       name: 'caste',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: '' },
-      error: false,
-      helperText: '',
-      mandatory: true,
-      isMulti: false
-    },
-    subCaste: {
-      label: 'Sub-caste',
-      id: 'subCaste',
-      name: 'subCaste',
-      type: 'text',
+      options: [],
       value: '',
       error: false,
       helperText: '',
-      mandatory: true,
-      options: []
+      mandatory: false,
+      isMulti: false
+    },
+    subCaste: {
+      label: 'Select Sub Caste',
+      id: 'subCaste',
+      name: 'subCaste',
+      type: 'select',
+      options: [],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: false,
+      isMulti: false
     },
     khujaDhosam: {
       label: 'Khuja Dhosham',
@@ -1771,11 +1686,11 @@ export default function CreateCustomer({edit}: any) {
       name: 'khujaDhosam',
       type: 'select',
       options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' },
+        { id: 3, label: 'Any' }
       ],
-      value: { id: 1, label: 'AP' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1787,11 +1702,13 @@ export default function CreateCustomer({edit}: any) {
       name: 'complexion',
       type: 'select',
       options: [
-        { id: 1, label: 'AP' },
-        { id: 2, label: 'TS' },
-        { id: 3, label: 'UP' }
+        { id: 1, label: 'Fair' },
+        { id: 2, label: 'Very Fair' },
+        { id: 3, label: 'Medium' },
+        { id: 4, label: 'Dark' },
+        { id: 5, label: 'Any' }
       ],
-      value: { id: 1, label: 'AP' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1803,11 +1720,12 @@ export default function CreateCustomer({edit}: any) {
       name: 'smoke',
       type: 'select',
       options: [
-        { id: 0, label: 'Please select' },
-        { id: 1, label: 'Aswini' },
-        { id: 2, label: 'Bharani' }
+        { id: 1, label: 'No' },
+        { id: 2, label: 'Occasional' },
+        { id: 3, label: 'Regular' },
+        { id: 4, label: 'Any' }
       ],
-      value: { id: 0, label: 'Please select' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1819,11 +1737,12 @@ export default function CreateCustomer({edit}: any) {
       name: 'drink',
       type: 'select',
       options: [
-        { id: 1, label: 'select status' },
-        { id: 2, label: 'Late' },
-        { id: 3, label: 'Alive' }
+        { id: 1, label: 'No' },
+        { id: 2, label: 'Occasional' },
+        { id: 3, label: 'Regular' },
+        { id: 4, label: 'Any' }
       ],
-      value: { id: 1, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1834,12 +1753,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'education',
       name: 'education',
       type: 'select',
-      options: [
-        { id: 1, label: 'mesha' },
-        { id: 2, label: 'Tula' },
-        { id: 3, label: 'Gemini' }
-      ],
-      value: { id: 1, label: '' },
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1850,12 +1765,8 @@ export default function CreateCustomer({edit}: any) {
       id: 'profession',
       name: 'profession',
       type: 'select',
-      options: [
-        { id: 1, label: 'Please select' },
-        { id: 2, label: 'Abroad' },
-        { id: 3, label: 'India' }
-      ],
-      value: {id: 2, label: 'Abroad'},
+      options: [],
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1867,11 +1778,11 @@ export default function CreateCustomer({edit}: any) {
       name: 'passport',
       type: 'select',
       options: [
-        { id: 1, label: 'Please select' },
-        { id: 2, label: 'Abroad' },
-        { id: 3, label: 'India' }
+        { id: 1, label: 'Yes' },
+        { id: 2, label: 'No' },
+        { id: 3, label: 'Any' }
       ],
-      value: {id: 2, label: 'Abroad'},
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -1886,23 +1797,678 @@ export default function CreateCustomer({edit}: any) {
       error: false,
       mandatory: true,
       options: []
-    },
+    }
   };
   const [personalDetailsFormData, setPersonalDetailsFormData] = useState<any>(personalDetails);
   const [educationDetailsFormData, setEducationDetailsFormData] = useState<any>(educationDetails);
   const [familyDetailsFormData, setFamilyDetailsFormData] = useState<any>(familyDetails);
   const [partnerDetailsFormData, setPartnerDetailsFormData] = useState<any>(partnerDetails);
+  const [customerDetails, setCustomerDetails] = useState<any>({});
   const [activeStep, setActiveStep] = useState(0);
   const location = useLocation();
-  let locationState = sessionStorage.getItem("customer");
+  console.log('personalDetailsFormData: ', personalDetailsFormData);
+  let locationState = sessionStorage.getItem('customer');
   locationState = locationState ? JSON.parse(locationState) : null;
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
+  console.log('locationState: ', locationState);
+  const handleNext = async () => {
+    if (activeStep === 0) {
+      //if (validate(personalDetailsFormData, setPersonalDetailsFormData)) {
+      const personalDetailsrequestBody = {
+        fullname: personalDetailsFormData.fullName.value ? personalDetailsFormData.fullName.value : '',
+        surname: personalDetailsFormData.surname.value ? personalDetailsFormData.surname.value : '',
+        gender: personalDetailsFormData.gender.value.id ? personalDetailsFormData.gender.value.id : '',
+        mobileCountryCode: personalDetailsFormData.countryCode.value.id ? personalDetailsFormData.countryCode.value.id : '',
+        mobileNumber: personalDetailsFormData.mobileNumber.value ? personalDetailsFormData.mobileNumber.value : '',
+        email: personalDetailsFormData.email.value ? personalDetailsFormData.email.value : '',
+        aadharNumber: personalDetailsFormData.aadharNumber.value ? personalDetailsFormData.aadharNumber.value : '',
+        dateOfBirth: personalDetailsFormData.dateOfBirth.value ? personalDetailsFormData.dateOfBirth.value : '',
+        timeOfBirth: personalDetailsFormData.timeOfBirth.value ? personalDetailsFormData.timeOfBirth.value : '',
+        birthPlace: personalDetailsFormData.birthPlace.value ? personalDetailsFormData.birthPlace.value : '',
+        religion: personalDetailsFormData.selectReligion.value.id ? personalDetailsFormData.selectReligion.value.id : '',
+        caste: personalDetailsFormData.selectCaste.value.id ? personalDetailsFormData.selectCaste.value.id : '',
+        convertedCaste: personalDetailsFormData.isConvertedCaste.value.id ? personalDetailsFormData.isConvertedCaste.value.id : '',
+        star: personalDetailsFormData.selectStar.value.id ? personalDetailsFormData.selectStar.value.id : '',
+        moonsign: personalDetailsFormData.selectRassi.value.id ? personalDetailsFormData.selectRassi.value.id : '',
+        padam: personalDetailsFormData.selectPadam.value.id ? personalDetailsFormData.selectPadam.value.id : '',
+        gothram: personalDetailsFormData.gothram.value ? personalDetailsFormData.gothram.value : '',
+        khujaDhosam: personalDetailsFormData.selectkujadosham.value.id ? personalDetailsFormData.selectkujadosham.value.id : '',
+        height: personalDetailsFormData.selectheight.value.id ? Number(personalDetailsFormData.selectheight.value.id) : '',
+        bloodGroup: personalDetailsFormData.selectbloodgroup.value.id ? personalDetailsFormData.selectbloodgroup.value.id : '',
+        motherTongue: personalDetailsFormData.selectmothertounge.value.id ? personalDetailsFormData.selectmothertounge.value.id : '',
+        healthCondition: personalDetailsFormData.selecthealthcodition.value.id ? personalDetailsFormData.selecthealthcodition.value.id : '',
+        handicappedInfo: personalDetailsFormData.handicappedInfo.value ? personalDetailsFormData.handicappedInfo.value : '',
+        complexion: personalDetailsFormData.selectcomplexion.value.id ? personalDetailsFormData.selectcomplexion.value.id : '',
+        maritalStatus: personalDetailsFormData.selectmaritalstatus.value.id ? personalDetailsFormData.selectmaritalstatus.value.id : '',
+        havingChildren: personalDetailsFormData.havingChildren.value.id ? personalDetailsFormData.havingChildren.value.id : 0,
+        deathCertificate: personalDetailsFormData.deathCertificate.value ? personalDetailsFormData.deathCertificate.value.id : '',
+        dateOfMarriage: personalDetailsFormData.dateOfMarriage.value ? personalDetailsFormData.dateOfMarriage.value : '',
+        dateOfDeath: personalDetailsFormData.dateOfDeath.value ? personalDetailsFormData.dateOfDeath.value : '',
+        divorceCertificate: personalDetailsFormData.divorceCertificate.value ? personalDetailsFormData.divorceCertificate.value : [],
+        dateOfdivorce: personalDetailsFormData.dateOfDivorce.value ? personalDetailsFormData.dateOfDivorce.value : '',
+        reasonForDivorce: personalDetailsFormData.reasonForDivorce.value ? personalDetailsFormData.reasonForDivorce.value : '',
+        divorceAcknowledgeCertificate: personalDetailsFormData.uploadAcknowledgement.value
+          ? personalDetailsFormData.uploadAcknowledgement.value
+          : [],
+        smoke: personalDetailsFormData.selectsmoke.value.id ? personalDetailsFormData.selectsmoke.value.id : '',
+        drink: personalDetailsFormData.selectdrink.value.id ? personalDetailsFormData.selectdrink.value.id : '',
+        food: personalDetailsFormData.selectfood.value.id ? personalDetailsFormData.selectfood.value.id : '',
+        aboutMe: personalDetailsFormData.about.value ? personalDetailsFormData.about.value : '',
+        hobbies: personalDetailsFormData.hobbies.value ? personalDetailsFormData.hobbies.value.map((item: any) => item.id) : [],
+        interests: personalDetailsFormData.intrests.value ? personalDetailsFormData.intrests.value.map((item: any) => item.id) : [],
+        favouriteMusic: personalDetailsFormData.favouritemusic.value
+          ? personalDetailsFormData.favouritemusic.value.map((item: any) => item.id)
+          : [],
+        sports: personalDetailsFormData.sports.value ? personalDetailsFormData.sports.value.map((item: any) => item.id) : [],
+        favouriteCuisine: personalDetailsFormData.favouritecuisne.value
+          ? personalDetailsFormData.favouritecuisne.value.map((item: any) => item.id)
+          : [],
+        favouriteReads: personalDetailsFormData.favouritereads.value
+          ? personalDetailsFormData.favouritereads.value.map((item: any) => item.id)
+          : [],
+        preferredMovies: personalDetailsFormData.preferedmovies.value
+          ? personalDetailsFormData.preferedmovies.value.map((item: any) => item.id)
+          : [],
+        preferredDressStyle: personalDetailsFormData.prefereddressingstyle.value
+          ? personalDetailsFormData.prefereddressingstyle.value.map((item: any) => item.id)
+          : [],
+        spokenLanguages: personalDetailsFormData.spokenlanguages.value
+          ? personalDetailsFormData.spokenlanguages.value.map((item: any) => item.id)
+          : [],
+        country: personalDetailsFormData.selectcountry.value.id ? personalDetailsFormData.selectcountry.value.id : '',
+        state: personalDetailsFormData.selectstate.value.id ? personalDetailsFormData.selectstate.value.id : '',
+        district: personalDetailsFormData.selectdistrict.value.id ? personalDetailsFormData.selectdistrict.value.id : '',
+        city: personalDetailsFormData.city.value.id ? personalDetailsFormData.city.value.id : '',
+        address: personalDetailsFormData.address.value ? personalDetailsFormData.address.value : '',
+        alternateMobileCountryCode: personalDetailsFormData.altcountryCode.value.id ? personalDetailsFormData.altcountryCode.value.id : '',
+        alternateMobile: personalDetailsFormData.altmobile.value ? personalDetailsFormData.altmobile.value : '',
+        alternateEmail: personalDetailsFormData.altemail.value ? personalDetailsFormData.altemail.value : '',
+        timeToCall: personalDetailsFormData.timeToCall.value ? personalDetailsFormData.timeToCall.value : '',
+        applicationFor: personalDetailsFormData.applicationfor.value.id ? personalDetailsFormData.applicationfor.value.id : '',
+        applicationFillingPersonName: personalDetailsFormData.applicationFillingPersonName.value
+          ? personalDetailsFormData.applicationFillingPersonName.value
+          : '',
+        applicationFillingPersonMobileCountryCode: personalDetailsFormData.applicationFillingPersonCountryCode.value.id
+          ? personalDetailsFormData.applicationFillingPersonCountryCode.value.id
+          : '',
+        applicationFillingPersonMobile: personalDetailsFormData.applicationFillingPersonMobile.value
+          ? personalDetailsFormData.applicationFillingPersonMobile.value
+          : '',
+        source: personalDetailsFormData.source.value.id ? personalDetailsFormData.source.value.id : '',
+        nearestBranch: personalDetailsFormData.nearestbranch.value.id ? personalDetailsFormData.nearestbranch.value.id : ''
+      };
+      const createCustomerRequestBody = {
+        mobileNumber: personalDetailsFormData.mobileNumber.value
+      };
+      // const createCustomerRes = await createCustomer(createCustomerRequestBody);
+      // console.log('res: ', createCustomerRes);
+      // if (createCustomerRes.status) {
+      //   setCustomerId(createCustomerRes.id);
+      //   console.log('personalDetailsrequestBody: ', personalDetailsrequestBody);
+      //   const response = await createPersonalDetails(personalDetailsrequestBody, createCustomerRes.id);
+      //   console.log('response: ', response);
+      //   setActiveStep(activeStep + 1);
+      // }
+      setActiveStep(activeStep + 1);
+      //}
+      setActiveStep(activeStep + 1);
+    } else if (activeStep === 1) {
+      if (validate(educationDetailsFormData, setEducationDetailsFormData)) {
+        const educationRequestBody = {
+          education: educationDetailsFormData.education.value.id ? educationDetailsFormData.education.value.id : '',
+          university: educationDetailsFormData.university.value.id ? educationDetailsFormData.university.value.id : '',
+          employedIn: educationDetailsFormData.employedin.value.id ? educationDetailsFormData.employedin.value.id : '',
+          designation: educationDetailsFormData.designation.value.id ? educationDetailsFormData.designation.value.id : '',
+          profession: educationDetailsFormData.profession.value.id ? educationDetailsFormData.profession.value.id : '',
+          workingLocation: educationDetailsFormData.workingLocation.value.id ? educationDetailsFormData.workingLocation.value.id : '',
+          abroadSelectCountry: educationDetailsFormData.country.value.id ? educationDetailsFormData.country.value.id : '',
+          abroadSelectState: educationDetailsFormData.state.value.id ? educationDetailsFormData.state.value.id : '',
+          abroadVisaType: educationDetailsFormData.visaType.value.id ? educationDetailsFormData.visaType.value.id : '',
+          abroadPassportNumber: educationDetailsFormData.passportNumber.value ? educationDetailsFormData.passportNumber.value : '',
+          abroadValidFrom: educationDetailsFormData.validFrom.value ? educationDetailsFormData.validFrom.value : '',
+          abroadValidTill: educationDetailsFormData.validTill.value ? educationDetailsFormData.validTill.value : '',
+          abroadWorkingCompanyName: educationDetailsFormData.workingCompanyName.value
+            ? educationDetailsFormData.workingCompanyName.value
+            : '',
+          abroadCompanysPresentAddress: educationDetailsFormData.companyAddress.value ? educationDetailsFormData.companyAddress.value : '',
+          indiaWorkingState: educationDetailsFormData.state.value.id ? educationDetailsFormData.state.value.id : '',
+          indiaCity: educationDetailsFormData.city.value.id ? educationDetailsFormData.city.value.id : '',
+          indiaLocationAddress: educationDetailsFormData.locationAdd.value ? educationDetailsFormData.locationAdd.value : '',
+          indiaCompanyName: educationDetailsFormData.compName.value ? educationDetailsFormData.compName.value : '',
+          indiaWorkingSince: educationDetailsFormData.workingSince.value ? educationDetailsFormData.workingSince.value : '',
+          indiaTotalExperience: educationDetailsFormData.totalExp.value ? educationDetailsFormData.totalExp.value : '',
+          indiaPassportNumber: educationDetailsFormData.passNumber.value ? educationDetailsFormData.passNumber.value : '',
+          indiaColleaguesNameAndMobileNo: educationDetailsFormData.collegueName.value ? educationDetailsFormData.collegueName.value : '',
+          propertyDetails: educationDetailsFormData.propertyDetails.value ? educationDetailsFormData.propertyDetails.value : '',
+          annualIncome: educationDetailsFormData.annualIncome.value ? educationDetailsFormData.annualIncome.value : ''
+        };
+        const createEducationRes = await createEducationDetails(educationRequestBody, customerId);
+      }
+      setActiveStep(activeStep + 1);
+    } else if (activeStep === 2) {
+      if (validate(familyDetailsFormData, setFamilyDetailsFormData)) {
+        const familyDetailsRequestBody = {
+          familyStatus: familyDetailsFormData.familyStatus.value.id ? familyDetailsFormData.familyStatus.value.id : '',
+          familyType: familyDetailsFormData.familyType.value.id ? familyDetailsFormData.familyType.value.id : '',
+          fatherName: familyDetailsFormData.fatherName.value ? familyDetailsFormData.fatherName.value : '',
+          fatherReligion: familyDetailsFormData.freligion.value.id ? familyDetailsFormData.freligion.value.id : '',
+          fatherCaste: familyDetailsFormData.fcaste.value.id ? familyDetailsFormData.fcaste.value.id : '',
+          isFatherConvertedCaste: familyDetailsFormData.fIsConvertedCaste.value.id ? familyDetailsFormData.fIsConvertedCaste.value.id : '',
+          fatherStatus: familyDetailsFormData.fatherStatus.value.id ? familyDetailsFormData.fatherStatus.value.id : '',
+          fatherHealthCondition: familyDetailsFormData.fhealthCondition.value.id ? familyDetailsFormData.fhealthCondition.value.id : '',
+          fatherWorkingSector: familyDetailsFormData.workingSector.value ? familyDetailsFormData.workingSector.value : '',
+          fatherMobileNumberCountryCode: familyDetailsFormData.fatherMobileNumberCountryCode.value.id
+            ? familyDetailsFormData.fatherMobileNumberCountryCode.value.id
+            : '',
+          fatherMobileNumber: familyDetailsFormData.fmobile.value ? familyDetailsFormData.fmobile.value : '',
+          fatherProfession: familyDetailsFormData.fprofession.value.id ? Number(familyDetailsFormData.fprofession.value.id) : '',
+          fatherAddress: familyDetailsFormData.faddress.value ? familyDetailsFormData.faddress.value : '',
+          fatherAnualIncome: familyDetailsFormData.fannualIncome.value ? familyDetailsFormData.fannualIncome.value : '',
+          fatherPropertyDetails: familyDetailsFormData.fproperty.value ? familyDetailsFormData.fproperty.value : '',
+          pension: familyDetailsFormData.pension.value ? familyDetailsFormData.pension.value : '',
+          motherName: familyDetailsFormData.motherName.value ? familyDetailsFormData.motherName.value : '',
+          motherMaidenName: familyDetailsFormData.mmaidenName.value ? familyDetailsFormData.mmaidenName.value : '',
+          motherReligion: familyDetailsFormData.mreligion.value.id ? familyDetailsFormData.mreligion.value.id : '',
+          motherCaste: familyDetailsFormData.mcaste.value.id ? familyDetailsFormData.mcaste.value.id : '',
+          isMotherConvertedCaste: familyDetailsFormData.mIsConvertedCaste.value.id ? familyDetailsFormData.mIsConvertedCaste.value.id : '',
+          motherHealthcondition: familyDetailsFormData.mhealthCondition.value.id ? familyDetailsFormData.mhealthCondition.value.id : '',
+          motherMobileNumberCountryCode: familyDetailsFormData.motherMobileNumberCountryCode.value.id
+            ? familyDetailsFormData.motherMobileNumberCountryCode.value.id
+            : '',
+          motherMobileNumber: familyDetailsFormData.mmobile.value ? familyDetailsFormData.mmobile.value : '',
+          motherProfession: familyDetailsFormData.mprofession.value.id ? Number(familyDetailsFormData.mprofession.value.id) : '',
+          motherAnualIncome: familyDetailsFormData.mannualIncome.value ? familyDetailsFormData.mannualIncome.value : '',
+          motherPropertyDetails: familyDetailsFormData.mproperty.value ? familyDetailsFormData.mproperty.value : '',
+          familtyPermanentAddress: familyDetailsFormData.permanentAddress.value ? familyDetailsFormData.permanentAddress.value : '',
+          familyPresentAddress: familyDetailsFormData.presentAddress.value ? familyDetailsFormData.presentAddress.value : '',
+          numberOfBrothers: familyDetailsFormData.brothers.value ? Number(familyDetailsFormData.brothers.value) : '',
+          numberOfsisters: familyDetailsFormData.sisters.value ? Number(familyDetailsFormData.sisters.value) : '',
+          referenceName: familyDetailsFormData.refName.value ? familyDetailsFormData.refName.value : '',
+          referenceMobileNmuber: familyDetailsFormData.refMobile.value ? familyDetailsFormData.refMobile.value : '',
+          relation: familyDetailsFormData.relation.value.id ? familyDetailsFormData.relation.value.id : '',
+          referenceAddress: familyDetailsFormData.refAddress.value ? familyDetailsFormData.refAddress.value : ''
+        };
+        const createFamilyRes = await createFamilyDetails(familyDetailsRequestBody, 2);
+      }
+      setActiveStep(activeStep + 1);
+    } else if (activeStep === 3) {
+      //if (validate(partnerDetailsFormData, setPartnerDetailsFormData)) {
+      const partnerDetailsRequestBody = {
+        lookingFor: partnerDetailsFormData.lookingFor.value.id ? partnerDetailsFormData.lookingFor.value.id : '',
+        ageFrom: partnerDetailsFormData.ageFrom.value.id ? partnerDetailsFormData.ageFrom.value.id : '',
+        ageTo: partnerDetailsFormData.ageTo.value.id ? partnerDetailsFormData.ageTo.value.id : '',
+        heightFrom: partnerDetailsFormData.heightFrom.value.id ? partnerDetailsFormData.heightFrom.value.id : '',
+        heightTo: partnerDetailsFormData.heightTo.value.id ? partnerDetailsFormData.heightTo.value.id : '',
+        familyStatus: partnerDetailsFormData.familyStatus.value.id ? partnerDetailsFormData.familyStatus.value.id : '',
+        readyForInterCasteMarriage: partnerDetailsFormData.interCasteMarriage.value.id
+          ? partnerDetailsFormData.interCasteMarriage.value.id
+          : '',
+        marryInterReligionParentsChild: partnerDetailsFormData.interReligion.value.id ? partnerDetailsFormData.interReligion.value.id : '',
+        marryInterCasteParentsChild: partnerDetailsFormData.interCasteChild.value.id ? partnerDetailsFormData.interCasteChild.value.id : '',
+        caste: partnerDetailsFormData.caste.value.id ? partnerDetailsFormData.caste.value.id : '',
+        subCaste: partnerDetailsFormData.subCaste.value.id ? partnerDetailsFormData.subCaste.value.id : '',
+        khujaDhosham: partnerDetailsFormData.khujaDhosam.value.id ? partnerDetailsFormData.khujaDhosam.value.id : '',
+        complexion: partnerDetailsFormData.complexion.value.id ? partnerDetailsFormData.complexion.value.id : '',
+        smoke: partnerDetailsFormData.smoke.value.id ? partnerDetailsFormData.smoke.value.id : '',
+        drink: partnerDetailsFormData.drink.value.id ? partnerDetailsFormData.drink.value.id : '',
+        education: partnerDetailsFormData.education.value.id ? partnerDetailsFormData.education.value.id : '',
+        profession: partnerDetailsFormData.profession.value.id ? partnerDetailsFormData.profession.value.id : '',
+        Passport: partnerDetailsFormData.passport.value.id ? partnerDetailsFormData.passport.value.id : ''
+      };
+      const createPartnerRes = await createPartnerDetails(partnerDetailsRequestBody, 2);
+      //}
+      setActiveStep(activeStep + 1);
+    }
   };
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  const getCustomerDetailsList = async () => {
+    const result = await getCustomerDetails({ id: 2 });
+    console.log('result: ', result);
+    if (result.data.length > 0) {
+      setCustomerDetails(result.data[0]);
+    }
+  };
+
+  useEffect(() => {
+    if (Object.keys(customerDetails).length > 0) {
+      if (edit) {
+        if (customerDetails.personalDetails !== null || customerDetails.personalDetails !== undefined) {
+          setPersonalDetailsFormData({
+            ...personalDetailsFormData,
+            fullName: { ...personalDetailsFormData.fullName, value: customerDetails.personalDetails.fullname },
+            surname: { ...personalDetailsFormData.surname, value: customerDetails.personalDetails.surname },
+            gender: { ...personalDetailsFormData.gender, value: customerDetails.personalDetails.gender },
+            countryCode: { ...personalDetailsFormData.countryCode, value: customerDetails.personalDetails.mobileCountryCode },
+            mobileNumber: { ...personalDetailsFormData.mobileNumber, value: customerDetails.personalDetails.mobileNumber },
+            email: { ...personalDetailsFormData.email, value: customerDetails.personalDetails.email },
+            aadharNumber: { ...personalDetailsFormData.aadharNumber, value: customerDetails.personalDetails.aadharNumber },
+            dateOfBirth: { ...personalDetailsFormData.dateOfBirth, value: customerDetails.personalDetails.dateOfBirth },
+            timeOfBirth: { ...personalDetailsFormData.timeOfBirth, value: customerDetails.personalDetails.timeOfBirth },
+            birthPlace: { ...personalDetailsFormData.birthPlace, value: customerDetails.personalDetails.birthPlace },
+            selectReligion: { ...personalDetailsFormData.selectReligion, value: customerDetails.personalDetails.religion },
+            selectCaste: { ...personalDetailsFormData.selectCaste, value: customerDetails.personalDetails.caste },
+            isConvertedCaste: { ...personalDetailsFormData.isConvertedCaste, value: customerDetails.personalDetails.convertedCaste },
+            selectStar: { ...personalDetailsFormData.selectStar, value: customerDetails.personalDetails.star },
+            selectRassi: { ...personalDetailsFormData.selectRassi, value: customerDetails.personalDetails.moonsign },
+            selectPadam: { ...personalDetailsFormData.selectPadam, value: customerDetails.personalDetails.padam },
+            gothram: { ...personalDetailsFormData.gothram, value: customerDetails.personalDetails.gothram },
+            selectkujadosham: { ...personalDetailsFormData.selectkujadosham, value: customerDetails.personalDetails.khujaDhosam },
+            selectheight: { ...personalDetailsFormData.selectheight, value: customerDetails.personalDetails.height },
+            selectbloodgroup: { ...personalDetailsFormData.selectbloodgroup, value: customerDetails.personalDetails.bloodGroup },
+            selectmothertounge: { ...personalDetailsFormData.selectmothertounge, value: customerDetails.personalDetails.motherTongue },
+            selecthealthcodition: {
+              ...personalDetailsFormData.selecthealthcodition,
+              value: customerDetails.personalDetails.healthCondition
+            },
+            handicappedInfo: { ...personalDetailsFormData.handicappedInfo, value: customerDetails.personalDetails.handicappedInfo },
+            selectcomplexion: { ...personalDetailsFormData.selectcomplexion, value: customerDetails.personalDetails.complexion },
+            selectmaritalstatus: { ...personalDetailsFormData.selectmaritalstatus, value: customerDetails.personalDetails.maritalStatus },
+            deathCertificate: { ...personalDetailsFormData.deathCertificate, value: '' },
+            dateOfMarriage: { ...personalDetailsFormData.dateOfMarriage, value: customerDetails.personalDetails.dateOfMarriage },
+            dateOfDeath: { ...personalDetailsFormData.dateOfDeath, value: customerDetails.personalDetails.dateOfDeath },
+            havingChildren: { ...personalDetailsFormData.havingChildren, value: customerDetails.personalDetails.havingChildren },
+            divorceCertificate: { ...personalDetailsFormData.divorceCertificate, value: '' },
+            dateOfDivorce: { ...personalDetailsFormData.dateOfDivorce, value: customerDetails.personalDetails.dateOfdivorce },
+            reasonForDivorce: { ...personalDetailsFormData.reasonForDivorce, value: customerDetails.personalDetails.reasonForDivorce },
+            uploadAcknowledgement: { ...personalDetailsFormData.uploadAcknowledgement, value: '' },
+            selectsmoke: { ...personalDetailsFormData.selectsmoke, value: customerDetails.personalDetails.smoke },
+            selectdrink: { ...personalDetailsFormData.selectdrink, value: customerDetails.personalDetails.drink },
+            selectfood: { ...personalDetailsFormData.selectfood, value: customerDetails.personalDetails.food },
+            about: { ...personalDetailsFormData.about, value: customerDetails.personalDetails.aboutMe },
+            hobbies: { ...personalDetailsFormData.hobbies, value: customerDetails.personalDetails.hobbies },
+            intrests: { ...personalDetailsFormData.intrests, value: customerDetails.personalDetails.interests },
+            favouritemusic: { ...personalDetailsFormData.favouritemusic, value: customerDetails.personalDetails.favouriteMusic },
+            sports: { ...personalDetailsFormData.sports, value: customerDetails.personalDetails.sports },
+            favouritecuisne: { ...personalDetailsFormData.favouritecuisne, value: customerDetails.personalDetails.favouriteCuisine },
+            favouritereads: { ...personalDetailsFormData.favouritereads, value: customerDetails.personalDetails.favouriteReads },
+            preferedmovies: { ...personalDetailsFormData.preferedmovies, value: customerDetails.personalDetails.preferredMovies },
+            prefereddressingstyle: {
+              ...personalDetailsFormData.prefereddressingstyle,
+              value: customerDetails.personalDetails.preferredDressStyle
+            },
+            spokenlanguages: { ...personalDetailsFormData.spokenlanguages, value: customerDetails.personalDetails.spokenLanguages },
+            selectcountry: { ...personalDetailsFormData.selectcountry, value: customerDetails.personalDetails.country },
+            selectstate: { ...personalDetailsFormData.selectstate, value: customerDetails.personalDetails.state },
+            selectdistrict: { ...personalDetailsFormData.selectdistrict, value: customerDetails.personalDetails.district },
+            city: { ...personalDetailsFormData.city, value: customerDetails.personalDetails.city },
+            address: { ...personalDetailsFormData.address, value: customerDetails.personalDetails.address },
+            altcountryCode: {
+              ...personalDetailsFormData.altcountryCode,
+              value: customerDetails.personalDetails.alternateMobileCountryCode
+            },
+            altmobile: { ...personalDetailsFormData.altmobile, value: customerDetails.personalDetails.alternateMobile },
+            altemail: { ...personalDetailsFormData.altemail, value: customerDetails.personalDetails.alternateEmail },
+            timeToCall: { ...personalDetailsFormData.timeToCall, value: customerDetails.personalDetails.timeToCall },
+            applicationfor: { ...personalDetailsFormData.applicationfor, value: customerDetails.personalDetails.applicationFor },
+            applicationFillingPersonName: {
+              ...personalDetailsFormData.applicationFillingPersonName,
+              value: customerDetails.personalDetails.applicationFillingPersonName
+            },
+            applicationFillingPersonCountryCode: {
+              ...personalDetailsFormData.applicationFillingPersonCountryCode,
+              value: customerDetails.personalDetails.applicationFillingPersonMobileCountryCode
+            },
+            applicationFillingPersonMobile: {
+              ...personalDetailsFormData.applicationFillingPersonMobile,
+              value: customerDetails.personalDetails.applicationFillingPersonMobile
+            },
+            source: { ...personalDetailsFormData.source, value: customerDetails.personalDetails.source },
+            nearestbranch: { ...personalDetailsFormData.nearestbranch, value: customerDetails.personalDetails.nearestBranch }
+          });
+        }
+        if (customerDetails.educationDetails !== null || customerDetails.educationDetails !== undefined) {
+          setEducationDetailsFormData({
+            ...educationDetailsFormData,
+            education: {
+              ...educationDetailsFormData.education,
+              value: customerDetails?.educationDetails?.education || ''
+            },
+            university: {
+              ...educationDetailsFormData.university,
+              value: customerDetails?.educationDetails?.university || ''
+            },
+            employedin: {
+              ...educationDetailsFormData.employedin,
+              value: customerDetails?.educationDetails?.employedin || ''
+            },
+            designation: {
+              ...educationDetailsFormData.designation,
+              value: customerDetails?.educationDetails?.designation || ''
+            },
+            profession: {
+              ...educationDetailsFormData.profession,
+              value: customerDetails?.educationDetails?.profession || ''
+            },
+            workingLocation: {
+              ...educationDetailsFormData.workingLocation,
+              value: customerDetails?.educationDetails?.workingLocation || ''
+            },
+            country: {
+              ...educationDetailsFormData.country,
+              value: customerDetails?.educationDetails?.country || ''
+            },
+            state: {
+              ...educationDetailsFormData.state,
+              value: customerDetails?.educationDetails?.state || ''
+            },
+            selectdistrict: {
+              ...educationDetailsFormData.selectdistrict,
+              value: customerDetails?.educationDetails?.selectdistrict || ''
+            },
+            visaType: {
+              ...educationDetailsFormData.visaType,
+              value: customerDetails?.educationDetails?.visaType || ''
+            },
+            passportNumber: {
+              ...educationDetailsFormData.passportNumber,
+              value: customerDetails?.educationDetails?.passportNumber || ''
+            },
+            validFrom: {
+              ...educationDetailsFormData.validFrom,
+              value: customerDetails?.educationDetails?.validFrom || ''
+            },
+            validTill: {
+              ...educationDetailsFormData.validTill,
+              value: customerDetails?.educationDetails?.validTill || ''
+            },
+            workingCompanyName: {
+              ...educationDetailsFormData.workingCompanyName,
+              value: customerDetails?.educationDetails?.workingCompanyName || ''
+            },
+            companyAddress: {
+              ...educationDetailsFormData.companyAddress,
+              value: customerDetails?.educationDetails?.companyAddress || ''
+            },
+            propertyDetails: {
+              ...educationDetailsFormData.propertyDetails,
+              value: customerDetails?.educationDetails?.propertyDetails || ''
+            },
+            annualIncome: {
+              ...educationDetailsFormData.annualIncome,
+              value: customerDetails?.educationDetails?.annualIncome || ''
+            },
+            workingState: {
+              ...educationDetailsFormData.workingState,
+              value: customerDetails?.educationDetails?.workingState || ''
+            },
+            city: {
+              ...educationDetailsFormData.city,
+              value: customerDetails?.educationDetails?.city || ''
+            },
+            locationAdd: {
+              ...educationDetailsFormData.locationAdd,
+              value: customerDetails?.educationDetails?.locationAdd || ''
+            },
+            compName: {
+              ...educationDetailsFormData.compName,
+              value: customerDetails?.educationDetails?.compName || ''
+            },
+            workingSince: {
+              ...educationDetailsFormData.workingSince,
+              value: customerDetails?.educationDetails?.workingSince || ''
+            },
+            totalExp: {
+              ...educationDetailsFormData.totalExp,
+              value: customerDetails?.educationDetails?.totalExp || ''
+            },
+            passNumber: {
+              ...educationDetailsFormData.passNumber,
+              value: customerDetails?.educationDetails?.passNumber || ''
+            },
+            collegueName: {
+              ...educationDetailsFormData.collegueName,
+              value: customerDetails?.educationDetails?.collegueName || ''
+            }
+          });          
+        }
+        if (customerDetails.familyDetails !== null || customerDetails.familyDetails !== undefined) {
+          setFamilyDetailsFormData({
+            ...familyDetailsFormData,
+            familyStatus: {
+              ...familyDetailsFormData.familyStatus,
+              value: customerDetails?.familyDetails?.familyStatus || ''
+            },
+            familyType: {
+              ...familyDetailsFormData.familyType,
+              value: customerDetails?.familyDetails?.familyType || ''
+            },
+            fatherName: {
+              ...familyDetailsFormData.fatherName,
+              value: customerDetails?.familyDetails?.fatherName || ''
+            },
+            freligion: {
+              ...familyDetailsFormData.freligion,
+              value: customerDetails?.familyDetails?.freligion || ''
+            },
+            fcaste: {
+              ...familyDetailsFormData.fcaste,
+              value: customerDetails?.familyDetails?.fcaste || ''
+            },
+            fIsConvertedCaste: {
+              ...familyDetailsFormData.fIsConvertedCaste,
+              value: customerDetails?.familyDetails?.fIsConvertedCaste || ''
+            },
+            fatherStatus: {
+              ...familyDetailsFormData.fatherStatus,
+              value: customerDetails?.familyDetails?.fatherStatus || ''
+            },
+            fhealthCondition: {
+              ...familyDetailsFormData.fhealthCondition,
+              value: customerDetails?.familyDetails?.fhealthCondition || ''
+            },
+            workingSector: {
+              ...familyDetailsFormData.workingSector,
+              value: customerDetails?.familyDetails?.workingSector || ''
+            },
+            fatherMobileNumberCountryCode: {
+              ...familyDetailsFormData.fatherMobileNumberCountryCode,
+              value: customerDetails?.familyDetails?.fatherMobileNumberCountryCode || ''
+            },
+            fmobile: {
+              ...familyDetailsFormData.fmobile,
+              value: customerDetails?.familyDetails?.fmobile || ''
+            },
+            fprofession: {
+              ...familyDetailsFormData.fprofession,
+              value: customerDetails?.familyDetails?.fprofession || ''
+            },
+            faddress: {
+              ...familyDetailsFormData.faddress,
+              value: customerDetails?.familyDetails?.faddress || ''
+            },
+            fannualIncome: {
+              ...familyDetailsFormData.fannualIncome,
+              value: customerDetails?.familyDetails?.fannualIncome || ''
+            },
+            fproperty: {
+              ...familyDetailsFormData.fproperty,
+              value: customerDetails?.familyDetails?.fproperty || ''
+            },
+            pension: {
+              ...familyDetailsFormData.pension,
+              value: customerDetails?.familyDetails?.pension || ''
+            },
+            motherName: {
+              ...familyDetailsFormData.motherName,
+              value: customerDetails?.familyDetails?.motherName || ''
+            },
+            mmaidenName: {
+              ...familyDetailsFormData.mmaidenName,
+              value: customerDetails?.familyDetails?.mmaidenName || ''
+            },
+            mreligion: {
+              ...familyDetailsFormData.mreligion,
+              value: customerDetails?.familyDetails?.mreligion || ''
+            },
+            mcaste: {
+              ...familyDetailsFormData.mcaste,
+              value: customerDetails?.familyDetails?.mcaste || ''
+            },
+            mIsConvertedCaste: {
+              ...familyDetailsFormData.mIsConvertedCaste,
+              value: customerDetails?.familyDetails?.mIsConvertedCaste || ''
+            },
+            motherStatus: {
+              ...familyDetailsFormData.motherStatus,
+              value: customerDetails?.familyDetails?.motherStatus || ''
+            },
+            mhealthCondition: {
+              ...familyDetailsFormData.mhealthCondition,
+              value: customerDetails?.familyDetails?.mhealthCondition || ''
+            },
+            motherMobileNumberCountryCode: {
+              ...familyDetailsFormData.motherMobileNumberCountryCode,
+              value: customerDetails?.familyDetails?.motherMobileNumberCountryCode || ''
+            },
+            mmobile: {
+              ...familyDetailsFormData.mmobile,
+              value: customerDetails?.familyDetails?.mmobile || ''
+            },
+            mprofession: {
+              ...familyDetailsFormData.mprofession,
+              value: customerDetails?.familyDetails?.mprofession || ''
+            },
+            mannualIncome: {
+              ...familyDetailsFormData.mannualIncome,
+              value: customerDetails?.familyDetails?.mannualIncome || ''
+            },
+            mproperty: {
+              ...familyDetailsFormData.mproperty,
+              value: customerDetails?.familyDetails?.mproperty || ''
+            },
+            permanentAddress: {
+              ...familyDetailsFormData.permanentAddress,
+              value: customerDetails?.familyDetails?.permanentAddress || ''
+            },
+            isAddressSame: {
+              ...familyDetailsFormData.isAddressSame,
+              value: customerDetails?.familyDetails?.isAddressSame || false
+            },
+            presentAddress: {
+              ...familyDetailsFormData.presentAddress,
+              value: customerDetails?.familyDetails?.presentAddress || ''
+            },
+            brothers: {
+              ...familyDetailsFormData.brothers,
+              value: customerDetails?.familyDetails?.brothers || ''
+            },
+            sisters: {
+              ...familyDetailsFormData.sisters,
+              value: customerDetails?.familyDetails?.sisters || ''
+            },
+            refName: {
+              ...familyDetailsFormData.refName,
+              value: customerDetails?.familyDetails?.refName || ''
+            },
+            refMobile: {
+              ...familyDetailsFormData.refMobile,
+              value: customerDetails?.familyDetails?.refMobile || ''
+            },
+            relation: {
+              ...familyDetailsFormData.relation,
+              value: customerDetails?.familyDetails?.relation || ''
+            },
+            refAddress: {
+              ...familyDetailsFormData.refAddress,
+              value: customerDetails?.familyDetails?.refAddress || ''
+            }
+          });          
+        }
+        if (customerDetails.partnerDetails !== null || customerDetails.partnerDetails !== undefined) {
+          setPartnerDetailsFormData({
+            ...partnerDetailsFormData,
+            lookingFor: {
+              ...partnerDetailsFormData.lookingFor,
+              value: customerDetails?.partnerDetails?.lookingFor || ''
+            },
+            ageFrom: {
+              ...partnerDetailsFormData.ageFrom,
+              value: customerDetails?.partnerDetails?.ageFrom || ''
+            },
+            ageTo: {
+              ...partnerDetailsFormData.ageTo,
+              value: customerDetails?.partnerDetails?.ageTo || ''
+            },
+            heightFrom: {
+              ...partnerDetailsFormData.heightFrom,
+              value: customerDetails?.partnerDetails?.heightFrom || ''
+            },
+            heightTo: {
+              ...partnerDetailsFormData.heightTo,
+              value: customerDetails?.partnerDetails?.heightTo || ''
+            },
+            familyStatus: {
+              ...partnerDetailsFormData.familyStatus,
+              value: customerDetails?.partnerDetails?.familyStatus || ''
+            },
+            interCasteMarriage: {
+              ...partnerDetailsFormData.interCasteMarriage,
+              value: customerDetails?.partnerDetails?.interCasteMarriage || ''
+            },
+            interReligion: {
+              ...partnerDetailsFormData.interReligion,
+              value: customerDetails?.partnerDetails?.interReligion || ''
+            },
+            interCasteChild: {
+              ...partnerDetailsFormData.interCasteChild,
+              value: customerDetails?.partnerDetails?.interCasteChild || ''
+            },
+            caste: {
+              ...partnerDetailsFormData.caste,
+              value: customerDetails?.partnerDetails?.caste || ''
+            },
+            subCaste: {
+              ...partnerDetailsFormData.subCaste,
+              value: customerDetails?.partnerDetails?.subCaste || ''
+            },
+            khujaDhosam: {
+              ...partnerDetailsFormData.khujaDhosam,
+              value: customerDetails?.partnerDetails?.khujaDhosam || ''
+            },
+            complexion: {
+              ...partnerDetailsFormData.complexion,
+              value: customerDetails?.partnerDetails?.complexion || ''
+            },
+            smoke: {
+              ...partnerDetailsFormData.smoke,
+              value: customerDetails?.partnerDetails?.smoke || ''
+            },
+            drink: {
+              ...partnerDetailsFormData.drink,
+              value: customerDetails?.partnerDetails?.drink || ''
+            },
+            education: {
+              ...partnerDetailsFormData.education,
+              value: customerDetails?.partnerDetails?.education || ''
+            },
+            profession: {
+              ...partnerDetailsFormData.profession,
+              value: customerDetails?.partnerDetails?.profession || ''
+            },
+            passport: {
+              ...partnerDetailsFormData.passport,
+              value: customerDetails?.partnerDetails?.passport || ''
+            },
+            profilePicture: {
+              ...partnerDetailsFormData.profilePicture,
+              value: customerDetails?.partnerDetails?.profilePicture || []
+            }
+          });          
+        }
+      }
+    }
+  }, [customerDetails]);
+
+  useEffect(() => {
+    if (edit) {
+      setTimeout(() => {
+        getCustomerDetailsList();
+      }, 3000);
+    }
+  }, []);
 
   function getStepContent(step: number) {
     switch (step) {
@@ -1911,20 +2477,86 @@ export default function CreateCustomer({edit}: any) {
           <PersonalDetails personalDetailsFormData={personalDetailsFormData} setPersonalDetailsFormData={setPersonalDetailsFormData} />
         );
       case 1:
-        return (<EducationDetails educationDetailsFormData={educationDetailsFormData} setEducationDetailsFormData={setEducationDetailsFormData} />);
+        return (
+          <EducationDetails educationDetailsFormData={educationDetailsFormData} setEducationDetailsFormData={setEducationDetailsFormData} />
+        );
       case 2:
-        return (<FamilyDetails familyDetailsFormData={familyDetailsFormData} setFamilyDetailsFormData={setFamilyDetailsFormData} />);
+        return <FamilyDetails familyDetailsFormData={familyDetailsFormData} setFamilyDetailsFormData={setFamilyDetailsFormData} />;
       case 3:
-        return (<PartnerDetails partnerDetailsFormData={partnerDetailsFormData} setPartnerDetailsFormData={setPartnerDetailsFormData} />);
+        return <PartnerDetails partnerDetailsFormData={partnerDetailsFormData} setPartnerDetailsFormData={setPartnerDetailsFormData} />;
       case 4:
-        return (<Confirm />);
+        return (
+          <Confirm
+            personalDetailsFormData={personalDetailsFormData}
+            educationDetailsFormData={educationDetailsFormData}
+            familyDetailsFormData={familyDetailsFormData}
+            partnerDetailsFormData={partnerDetailsFormData}
+          />
+        );
       default:
         throw new Error('Unknown step');
     }
   }
 
+  const validate = (formData: any, setFormData: any): boolean => {
+    let newFormData = _.cloneDeep(formData);
+    let isValid = true;
+
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        const field = formData[key];
+
+        // Check for mandatory fields
+        if (field.mandatory) {
+          // Check for empty text, number, or email fields
+          if (field.type !== 'select' && field.type !== 'date' && (!field.value || field.value === '')) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} is required`;
+            isValid = false;
+          } else if (field.type === 'select' && field.isMulti && field.value.length === 0) {
+            console.log('multi select: ', field.name, field.value);
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} must be selected`;
+            isValid = false;
+          }
+          // Check for empty select fields
+          else if (field.type === 'select' && !field.isMulti && (!field.value || !field.value.id || field.value.id === null)) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} must be selected`;
+            isValid = false;
+          }
+          // Check for empty date fields
+          else if (field.type === 'date' && !field.value) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Date is required';
+            isValid = false;
+          } else if (field.type === 'time' && !field.value) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Date is required';
+            isValid = false;
+          }
+          // Email validation
+          else if (key === 'email' && field.value && !/\S+@\S+\.\S+/.test(field.value)) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Invalid email address';
+            isValid = false;
+          }
+        }
+
+        // No errors
+        else {
+          newFormData[key].error = false;
+          newFormData[key].helperText = '';
+        }
+      }
+    }
+
+    setFormData(newFormData);
+    return isValid;
+  };
+
   return (
-    <MainCard title={ edit ? "Edit Customer" : "Create Customer"}>
+    <MainCard title={edit ? 'Edit Customer' : 'Create Customer'}>
       <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
         {steps.map((label) => (
           <Step key={label}>
@@ -1956,9 +2588,9 @@ export default function CreateCustomer({edit}: any) {
             <Stack direction="row" justifyContent={activeStep !== 0 ? 'space-between' : 'flex-end'}>
               {activeStep !== 0 && (
                 <AnimateButton>
-                <Button variant="contained" onClick={handleBack} sx={{ my: 3, ml: 1 }}>
-                  Back
-                </Button>
+                  <Button variant="contained" onClick={handleBack} sx={{ my: 3, ml: 1 }}>
+                    Back
+                  </Button>
                 </AnimateButton>
               )}
               <AnimateButton>

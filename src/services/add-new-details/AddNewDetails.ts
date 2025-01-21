@@ -763,3 +763,163 @@ export const rolesList = async (data: any) => {
         return null;
     }
 }
+
+export const startList = async (data: any) => {
+    const response = await httpsPost("admin-settings/starList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const moonsignList = async (data: any) => {
+    const response = await httpsPost("admin-settings/moonsignList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const mothertongueList = async (data: any) => {
+    const response = await httpsPost("admin-settings/mothertongueList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const musicList = async (data: any) => {
+    const response = await httpsPost("admin-settings/musicList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const sportsList = async (data: any) => {
+    const response = await httpsPost("admin-settings/sportsList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const cuisineList = async (data: any) => {
+    const response = await httpsPost("admin-settings/cuisineList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const readsList = async (data: any) => {
+    const response = await httpsPost("admin-settings/readsList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const moviesList = async (data: any) => {
+    const response = await httpsPost("admin-settings/moviesList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const dressstyleList = async (data: any) => {
+    const response = await httpsPost("admin-settings/dressstyleList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const applicationforList = async (data: any) => {
+    const response = await httpsPost("admin-settings/applicationforList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listEmployedIn = async (data: any) => {
+    const response = await httpsPost("admin-settings/employedinList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listFamilyStatus = async (data: any) => {
+    const response = await httpsPost("admin-settings/familystatusList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listFamilyType = async (data: any) => {
+    const response = await httpsPost("admin-settings/familytypeList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listRelation = async (data: any) => {
+    const response = await httpsPost("admin-settings/relationList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listHealthCondition = async (data: any) => {
+    const response = await httpsPost("admin-settings/healthconditionList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}
+
+export const listLookingfor = async (data: any) => {
+    const response = await httpsPost("admin-settings/lookingforList", data)
+    if (response) {
+        return response;
+    }
+    else {
+        return null;
+    }
+}

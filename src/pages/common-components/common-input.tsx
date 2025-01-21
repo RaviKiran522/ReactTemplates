@@ -12,13 +12,14 @@ interface InputProps {
     error?: boolean | undefined;
     helperText?: any | undefined;
     mandatory?: boolean | undefined;
-    
+    multiline?: boolean | undefined;
+    rows?: number | undefined;
   };
   onChange: (name: any, value: any) => void;
 }
 
 const CommonInputField: React.FC<InputProps> = ({ inputProps, onChange }) => {
-  const { label, id, name, type, placeholder, value, error, helperText, mandatory } = inputProps;
+  const { label, id, name, type, placeholder, value, error, helperText, mandatory, multiline, rows } = inputProps;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(name, e.target.value);
@@ -28,12 +29,15 @@ const CommonInputField: React.FC<InputProps> = ({ inputProps, onChange }) => {
     
       <TextField
         label={label}
+        multiline={ multiline ? true : false }
+        rows={multiline ? rows : 1}
         id={id}
         name={name}
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
+        sx={{ maxWidth: 'auto' }}
         fullWidth
         required={mandatory}
         error={error}

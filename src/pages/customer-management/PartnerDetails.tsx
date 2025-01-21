@@ -10,8 +10,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 import UploadMultiFile from 'components/third-party/dropzone/MultiFile';
-
+import {
+  listLookingfor,
+  listFamilyStatus,
+  listEducation,
+  listProfession,
+  listcaste,
+  listSubCaste
+} from '../../services/add-new-details/AddNewDetails';
+import Animate from './Animate';
 import {
   FormControlLabel,
   Radio,
@@ -29,6 +39,12 @@ import {
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: any) => {
+  const [familyStatus, setFamilyStatus] = useState<any>([]);
+  const [education, setEducation] = useState<any>([]);
+  const [profession, setProfession] = useState<any>([]);
+  const [lookingFor, setLookingFor] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   // Define the structure of form data for type safety
   interface FormField {
     label: any;
@@ -84,8 +100,16 @@ const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: a
     setPartnerDetailsFormData(newFormData);
   };
 
-  const handleSelectChange = (name: FormDataKeys, value: any) => {
+  const handleSelectChange = async (name: FormDataKeys, value: any) => {
     const newFormData = _.cloneDeep(partnerDetailsFormData);
+    if(name === "caste") {
+      let subCasteList = await listSubCaste({castId: value.id, meta: true});
+      console.log("subCasteList: ", subCasteList)
+      if(subCasteList?.data?.length > 0) {
+        subCasteList = subCasteList.data.map((item: any) => ({id: item.id, label: item.castName}));
+        newFormData.subCaste.options = subCasteList;
+      }
+    }
     newFormData[name].value = value;
     newFormData[name].error = false;
     newFormData[name].helperText = '';
@@ -120,6 +144,98 @@ const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: a
     }
   };
 
+  const getDropdownsData = async () => {
+    setIsLoading(true);
+    let lookingForRes = await listLookingfor({ meta: true });
+    if (lookingForRes.status) {
+      if (lookingForRes.data.length > 0) {
+        lookingForRes = lookingForRes.data.map((item: any) => ({ id: item.id, label: item.name }));
+        setLookingFor(lookingForRes);
+      } else {
+        setLookingFor([]);
+      }
+    } else {
+      setLookingFor([]);
+    }
+
+    let familyStatusRes = await listFamilyStatus({ meta: true });
+    if (familyStatusRes.status) {
+      if (familyStatusRes.data.length > 0) {
+        familyStatusRes = familyStatusRes.data.map((item: any) => ({ id: item.id, label: item.name }));
+        setFamilyStatus(familyStatusRes);
+      } else {
+        setFamilyStatus([]);
+      }
+    } else {
+      setFamilyStatus([]);
+    }
+
+    let educationRes = await listEducation({ meta: true });
+    if (educationRes.status) {
+      if (educationRes.data.length > 0) {
+        educationRes = educationRes.data.map((item: any) => ({ id: item.id, label: item.educationName }));
+        setEducation(educationRes);
+      } else {
+        setEducation([]);
+      }
+    } else {
+      setEducation([]);
+    }
+
+    let professionRes = await listProfession({ meta: true });
+    if (professionRes.status) {
+      if (professionRes.data.length > 0) {
+        professionRes = professionRes.data.map((item: any) => ({ id: item.id, label: item.professionName }));
+        setProfession(professionRes);
+      } else {
+        setProfession([]);
+      }
+    } else {
+      setProfession([]);
+    }
+
+    let casteRes = await listcaste({ meta: true });
+    if (casteRes.status) {
+      if (casteRes.data.length > 0) {
+        casteRes = casteRes.data.map((item: any) => ({ id: item.id, label: item.castName }));
+        setProfession(professionRes);
+      } else {
+        setProfession([]);
+      }
+    } else {
+      setProfession([]);
+    }
+
+    setPartnerDetailsFormData((prev: any) => ({
+      ...prev,
+      lookingFor: {
+        ...prev.lookingFor,
+        options: lookingForRes ? lookingForRes : []
+      },
+      familyStatus: {
+        ...prev.familyStatus,
+        options: familyStatusRes ? familyStatusRes : []
+      },
+      profession: {
+        ...prev.profession,
+        options: professionRes ? professionRes : []
+      },
+      education: {
+        ...prev.education,
+        options: educationRes ? educationRes : []
+      },
+      caste: {
+        ...prev.caste,
+        options: casteRes ? casteRes : []
+      }
+    }));
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getDropdownsData();
+  }, []);
+
   console.log('Form Submitted', partnerDetailsFormData?.workingLocation);
   return (
     <Container
@@ -130,8 +246,23 @@ const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: a
         borderRadius: '10px'
       }}
     >
+      <Backdrop
+        sx={{
+          color: 'blue',
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <form onSubmit={handleSubmit} noValidate>
         <Grid container spacing={2}>
+          <Grid item xs={12}>
+            {/* <CardHeader title="Provide your family details" /> */}
+            <Typography variant="h6" sx={{ color: 'black', fontWeight: 'bold', fontSize: 16 }}>
+              Provide your partner details
+            </Typography>
+          </Grid>
           <Grid item xs={6}>
             <CommonSelectField inputProps={partnerDetailsFormData.lookingFor} onSelectChange={handleSelectChange} />
           </Grid>
@@ -156,18 +287,25 @@ const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: a
           {partnerDetailsFormData.interCasteMarriage?.value?.label === 'Yes' && (
             <>
               <Grid item xs={6}>
-                <CommonSelectField inputProps={partnerDetailsFormData.interReligion} onSelectChange={handleSelectChange} />
+                <Animate>
+                  <CommonSelectField inputProps={partnerDetailsFormData.interReligion} onSelectChange={handleSelectChange} />
+                </Animate>
               </Grid>
               <Grid item xs={6}>
-                <CommonSelectField inputProps={partnerDetailsFormData.interCasteChild} onSelectChange={handleSelectChange} />
+                <Animate>
+                  <CommonSelectField inputProps={partnerDetailsFormData.interCasteChild} onSelectChange={handleSelectChange} />
+                </Animate>
               </Grid>
               <Grid item xs={6}>
-                <CommonSelectField inputProps={partnerDetailsFormData.caste} onSelectChange={handleSelectChange} />
+                <Animate>
+                  <CommonSelectField inputProps={partnerDetailsFormData.caste} onSelectChange={handleSelectChange} />
+                </Animate>
               </Grid>
               <Grid item xs={6}>
-                <CommonInputField inputProps={partnerDetailsFormData.subCaste} onChange={handleChange} />
+                <Animate>
+                <CommonSelectField inputProps={partnerDetailsFormData.subCaste} onSelectChange={handleSelectChange} />
+                </Animate>
               </Grid>
-
             </>
           )}
           <Grid item xs={6}>
@@ -192,44 +330,48 @@ const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: a
             <CommonSelectField inputProps={partnerDetailsFormData.passport} onSelectChange={handleSelectChange} />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
-                  <MainCard title={partnerDetailsFormData.profilePicture.label}>
-                    <Formik
-                      initialValues={{ files: null }}
-                      onSubmit={() => {
-                        // submit form
-                      }}
-                      validationSchema={yup.object().shape({
-                        files: yup.mixed().required('Avatar is a required.')
-                      })}
-                    >
-                      {({ values, handleSubmit, setFieldValue, touched, errors }) => {
-                        useEffect(()=>{
-                          setPartnerDetailsFormData({...partnerDetailsFormData, profilePicture: {...partnerDetailsFormData?.profilePicture, value: values?.files}})
-                        }, [values])
-                        return <form onSubmit={()=>{}}>
-                          <Grid spacing={3}>
-                            <Grid item xs={12}>
-                              <Stack spacing={1.5} alignItems="center">
-                                <UploadMultiFile
-                                  showList={false}
-                                  setFieldValue={setFieldValue}
-                                  files={values.files}
-                                  error={touched.files && !!errors.files}
-                                />
-                              </Stack>
-                              {touched.files && errors.files && (
-                                <FormHelperText error id="standard-weight-helper-text-password-login">
-                                  {errors.files as string}
-                                </FormHelperText>
-                              )}
-                            </Grid>
-                          </Grid>
-                        </form>
-                      }}
-                    </Formik>
-                  </MainCard>
-                </Grid>
-          
+            <MainCard title={partnerDetailsFormData.profilePicture.label}>
+              <Formik
+                initialValues={{ files: null }}
+                onSubmit={() => {
+                  // submit form
+                }}
+                validationSchema={yup.object().shape({
+                  files: yup.mixed().required('Avatar is a required.')
+                })}
+              >
+                {({ values, handleSubmit, setFieldValue, touched, errors }) => {
+                  useEffect(() => {
+                    setPartnerDetailsFormData({
+                      ...partnerDetailsFormData,
+                      profilePicture: { ...partnerDetailsFormData?.profilePicture, value: values?.files }
+                    });
+                  }, [values]);
+                  return (
+                    <form onSubmit={() => {}}>
+                      <Grid spacing={3}>
+                        <Grid item xs={12}>
+                          <Stack spacing={1.5} alignItems="center">
+                            <UploadMultiFile
+                              showList={false}
+                              setFieldValue={setFieldValue}
+                              files={values.files}
+                              error={touched.files && !!errors.files}
+                            />
+                          </Stack>
+                          {touched.files && errors.files && (
+                            <FormHelperText error id="standard-weight-helper-text-password-login">
+                              {errors.files as string}
+                            </FormHelperText>
+                          )}
+                        </Grid>
+                      </Grid>
+                    </form>
+                  );
+                }}
+              </Formik>
+            </MainCard>
+          </Grid>
         </Grid>
       </form>
     </Container>

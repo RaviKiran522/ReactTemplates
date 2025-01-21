@@ -41,6 +41,18 @@ export const httpsPatch = async (url: string, data = {}, customHeaders = {}) => 
   }
 };
 
+export const httpsPut = async (url: string, data = {}, customHeaders = {}) => {
+  try {
+    const response = await axiosInstance.put(url, data, {
+      headers: customHeaders,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('PATCH Error:', error);
+    throw error;
+  }
+};
+
 // Common DELETE method (optional)
 export const httpsDelete = async (url: string, customHeaders = {}) => {
   try {

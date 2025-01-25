@@ -50,3 +50,4 @@ export const deafualtImage = async (data: any) => {
         return null;
     }
 }
+

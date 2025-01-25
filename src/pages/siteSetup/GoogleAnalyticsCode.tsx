@@ -6,7 +6,7 @@ import _ from 'lodash';
 import CommonDatePicker from 'pages/common-components/common-date';
 import moment from "moment"
 import MainCard from 'components/MainCard';
-import { googleAnaliticalSetup } from 'services/Sitesetups/SiteSettings';
+import { googleAnaliticalSetup } from 'services/Sitesetups/SiteSetting';
 
 const GoogleAnalyticsCode: React.FC = () => {
   // Define the structure of form data for type safety

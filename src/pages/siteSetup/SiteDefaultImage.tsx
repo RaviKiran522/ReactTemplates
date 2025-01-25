@@ -22,7 +22,7 @@ import {
   // IconButton,
   FormHelperText
 } from '@mui/material';
-import { deafualtImage } from 'services/Sitesetups/SiteSettings';
+import { deafualtImage } from 'services/Sitesetups/SiteSetting';
 
 const SiteDefaultImage = () => {
   const uploadCertificatesFormData: any = {

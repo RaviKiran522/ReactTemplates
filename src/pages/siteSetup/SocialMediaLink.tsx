@@ -6,7 +6,7 @@ import _ from 'lodash';
 import CommonDatePicker from 'pages/common-components/common-date';
 import moment from "moment"
 import MainCard from 'components/MainCard';
-import { socialmediaSetup } from 'services/Sitesetups/SiteSettings';
+import { socialmediaSetup } from 'services/Sitesetups/SiteSetting';
 
 const SocialMediaLink: React.FC = () => {
   // Define the structure of form data for type safety

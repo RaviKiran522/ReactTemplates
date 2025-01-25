@@ -8,7 +8,7 @@ import CommonSelectField from 'pages/common-components/common-select';
 import { Button, Grid, Container, Alert } from '@mui/material';
 import _ from 'lodash';
 import { Severity } from 'Common/utils';
-import { basicSetup } from '../../services/Sitesetups/SiteSettings'
+import { basicSetup } from '../../services/Sitesetups/SiteSetting'
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
 export default function UpdateBasicSitesetting() {

@@ -6,7 +6,7 @@ import _ from 'lodash';
 import CommonDatePicker from 'pages/common-components/common-date';
 import moment from "moment"
 import MainCard from 'components/MainCard';
-import { martiprefixSetup } from 'services/Sitesetups/SiteSettings';
+import { martiprefixSetup } from 'services/Sitesetups/SiteSetting';
 
 const UpdateMetricPrefix: React.FC = () => {
   // Define the structure of form data for type safety

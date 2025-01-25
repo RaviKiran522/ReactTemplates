@@ -158,7 +158,7 @@ export default function District() {
   };
 
   const getCountryies = async () => {
-    const response = await countryList({});
+    const response = await countryList({meta: true});
     if (response.status) {
       const result = response.data.map((item: any) => ({ id: item.id, label: item.countryName }));
       setFormData((prev) => ({

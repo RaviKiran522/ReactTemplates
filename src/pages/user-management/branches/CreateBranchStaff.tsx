@@ -36,6 +36,8 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Create from '../Create';
 import { cityList, countryList, districtList, listcaste, religionList, rolesList, statesList } from 'services/add-new-details/AddNewDetails';
+import { Severity } from 'Common/utils';
+import { createBranchStaff } from 'services/branch-staff/branchStaff';
 // import SvgIcon from '@mui/joy/SvgIcon';
 // import style from '@mui/material'
 
@@ -65,6 +67,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     mandatory?: boolean;
     options: { id: any; label: any }[];
     isMulti?: boolean;
+    countryCode?:any;
   }
 
   interface FormData {
@@ -129,14 +132,15 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       options: []
     },
     fatherno: {
-      label: ' Enter Your Father Mobie No',
+      name: "fatherno",
       id: 'fatherno',
-      name: 'fatherno',
-      type: 'number',
-      value: '',
+      label: "Enter Your Father Mobile Number",
+      type: 'mobile',
       error: false,
       helperText: '',
       mandatory: true,
+      countryCode:'+91',
+      value:"",
       options: []
     },
     fatheraddress: {
@@ -151,14 +155,15 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       options: []
     },
     referenceno: {
-      label: 'Enter refrence Number',
+      name: "referenceno",
       id: 'referenceno',
-      name: 'referenceno',
-      type: 'number',
-      value: '',
+      label: "Enter Reference Mobile Number",
+      type: 'mobile',
       error: false,
       helperText: '',
       mandatory: true,
+      countryCode:'+91',
+      value:"",
       options: []
     },
     referenceaddress: {
@@ -212,21 +217,43 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       mandatory: true,
       options: []
     },
-    expereince: {
-      label: 'Your Past Expereince',
-      id: 'expereince',
-      name: 'expereince',
+    // expereince: {
+    //   label: 'Your Past Expereince',
+    //   id: 'expereince',
+    //   name: 'expereince',
+    //   value: '',
+    //   error: false,
+    //   helperText: 'Please select date',
+    //   mandatory: true,
+    //   options: []
+    // },
+    // temporaryaddress: {
+    //   label: 'Enter Your Address',
+    //   id: 'temporaryaddress',
+    //   name: 'temporaryaddress',
+    //   type: 'text',
+    //   value: '',
+    //   error: false,
+    //   helperText: '',
+    //   mandatory: true,
+    //   options: []
+    // },
+    expYears: {
+      label: 'Exp Years',
+      id: 'expYears',
+      name: 'expYears',
+      type: 'number',
       value: '',
       error: false,
-      helperText: 'Please select date',
+      helperText: '',
       mandatory: true,
       options: []
     },
-    temporaryaddress: {
-      label: 'Enter Your Address',
-      id: 'temporaryaddress',
-      name: 'temporaryaddress',
-      type: 'text',
+    expMonths: {
+      label: 'Exp Months',
+      id: 'expMonths',
+      name: 'expMonths',
+      type: 'number',
       value: '',
       error: false,
       helperText: '',
@@ -296,7 +323,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       type: 'file',
       value: '',
       error: false,
-      mandatory: true,
+      mandatory: false,
       options: []
     },
     role: {
@@ -338,14 +365,15 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       options: []
     },
     number: {
-      label: ' Enter Mobile Number',
+      name: "number",
       id: 'number',
-      name: 'number',
-      type: 'number',
-      value: '',
+      label: "Enter Mobile Number",
+      type: 'mobile',
       error: false,
       helperText: '',
       mandatory: true,
+      countryCode:'+91',
+      value:"",
       options: []
     },
     email: {
@@ -390,14 +418,15 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       isMulti: false
     },
     officenumber: {
-      label: ' Enter office Number',
+      name: "officenumber",
       id: 'officenumber',
-      name: 'officenumber',
-      type: 'number',
-      value: '',
+      label: "Enter Office Number",
+      type: 'mobile',
       error: false,
       helperText: '',
       mandatory: true,
+      countryCode:'+91',
+      value:"",
       options: []
     },
     personalemail: {
@@ -500,28 +529,28 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       mandatory: true,
       options: []
     },
-    pincode: {
-      label: ' Enter Pin Code',
-      id: 'pincode',
-      name: 'pincode',
-      type: 'number',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
-    address: {
-      label: ' Enter Your Address',
-      id: 'adress',
-      name: 'address',
-      type: 'text',
-      value: '',
-      error: false,
-      helperText: '',
-      mandatory: true,
-      options: []
-    },
+    // pincode: {
+    //   label: ' Enter Pin Code',
+    //   id: 'pincode',
+    //   name: 'pincode',
+    //   type: 'number',
+    //   value: '',
+    //   error: false,
+    //   helperText: '',
+    //   mandatory: true,
+    //   options: []
+    // },
+    // address: {
+    //   label: ' Enter Your Address',
+    //   id: 'adress',
+    //   name: 'address',
+    //   type: 'text',
+    //   value: '',
+    //   error: false,
+    //   helperText: '',
+    //   mandatory: true,
+    //   options: []
+    // },
     education: {
       label: 'Select Education Level ',
       id: 'education',
@@ -561,6 +590,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       mandatory: true,
       isMulti: false,
     },
+ 
      
   };
 
@@ -568,10 +598,13 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
   const years = [2020, 2021, 2022];
   // const days = [1, 2, 3];
 
+  
+
   const [formData, setFormData] = useState<FormData>(formFields);
   const [formDataForContactDetails, setFormDataForContactDetails] = useState<FormData>(contactDetailsFormData);
   const [certificatesUploadFormData, setCertificatesUploadFormData] = useState<FormData>(uploadCertificatesFormData);
   const [list, setList] = useState(false);
+
 
   type FormDataKeys = keyof typeof formData;
    useEffect(()=>{
@@ -597,7 +630,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
           setFormData(newFormFields)
         }
         if(castList.status){
-          let castOptions = castList.data.map((each:any)=>({ id: each.id, label: each.name }))
+          let castOptions = castList.data.map((each:any)=>({ id: each.id, label: each.castName }))
           newFormFields.caste.options = castOptions
           setFormData(newFormFields)
         }
@@ -652,6 +685,56 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         }
       }
     }
+    setFormData(newFormData)
+    return { newFormData: newFormData, isValid: isValid };
+  };
+  const validateContactDetails = (formDataForContactDetails: any) => {
+    let newFormData = _.cloneDeep(formDataForContactDetails);
+    let isValid = true;
+    for (const key in formDataForContactDetails) {
+      if (formDataForContactDetails.hasOwnProperty(key)) {
+        const field = formDataForContactDetails[key];
+
+        if (field.mandatory) {
+          if (key === 'email') {
+            if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
+              newFormData[key].error = true;
+              newFormData[key].helperText = 'Invalid email address';
+              isValid = false;
+            } else {
+              newFormData[key].error = false;
+              newFormData[key].helperText = '';
+            }
+          } else if (key === 'date') {
+            if (!field.value?.day || !field.value?.month || !field.value?.year) {
+              newFormData[key].error = true;
+              newFormData[key].helperText = 'Please select a complete date';
+              isValid = false;
+            } else {
+              newFormData[key].error = false;
+              newFormData[key].helperText = '';
+            }
+          } else if (field.type === 'select') {
+            if (!field.value || field.value.id === null) {
+              newFormData[key].error = true;
+              // newFormData[key].helperText = `${field.label} is required`;
+              isValid = false;
+            } else {
+              newFormData[key].error = false;
+              newFormData[key].helperText = '';
+            }
+          } else if (!field.value) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} is required`;
+            isValid = false;
+          } else {
+            newFormData[key].error = false;
+            newFormData[key].helperText = '';
+          }
+        }
+      }
+    }
+    setFormDataForContactDetails(newFormData)
     return { newFormData: newFormData, isValid: isValid };
   };
 
@@ -671,12 +754,12 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     const newFormData = _.cloneDeep(formData);
         if(name == 'countryName'){
           let stateList = await statesList({meta:true,status:1,countryId:value?.id})
-          if(stateList.status){
+          if(stateList.status && stateList.data.length > 0){
             let stateOptions = stateList.data.map((each:any)=>({ id: each.id, label: each.stateName }))
-            newFormData.statename.options = stateOptions
+            newFormData.state.options = stateOptions
           }
           
-        }else if(name == 'statename'){
+        }else if(name == 'state'){
           let districtLists = await districtList({meta:true,status:1,stateId:value?.id})
           if(districtLists.status){
             let districtoptions = districtLists.data.map((each:any)=>({ id: each.id, label: each.districtName }))
@@ -687,7 +770,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
           let cityLists = await cityList({meta:true,status:1,districtId:value?.id})
           if(cityLists.status){
             let cityOptions = cityLists.data.map((each:any)=>({ id: each.id, label: each.cityName }))
-            newFormData.cityname.options = cityOptions
+            newFormData.city.options = cityOptions
           }
           
         }
@@ -699,6 +782,29 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         setFormData(newFormData);
 
   };
+
+  const phoneChangeHandler = (name: any, value: any, country: any) => {
+    const newFormData = _.cloneDeep(formData);
+  
+    if (!newFormData[name]) {
+      console.error(`Field with name '${name}' not found in formData`);
+      return;
+    }
+  
+    if (value !== undefined && value !== null) {
+      newFormData[name].value = value;
+      newFormData[name].countryCode = `+${country.dialCode}` || newFormData[name].countryCode;
+    }
+  
+    if (newFormData[name].error) {
+      newFormData[name].error = false;
+      newFormData[name].helperText = ''; // Reset error message
+    }
+  
+    setFormData(newFormData);
+  };
+  
+  
 
   const handleDateChange = (name: keyof FormData, value: Date | null) => {
     const newFormData = _.cloneDeep(formData);
@@ -734,124 +840,45 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     setFormDataForContactDetails(newFormData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('formData', formData);
 
     const expDate = formData.expereincedate?.value ? moment(formData.expereincedate.value) : null;
 
     const experienceYear = expDate ? expDate.year() : null;
     const experienceMonth = expDate ? expDate.month() + 1 : null;
 
-    const sampleObject = {
-      name: formData.name?.value || '',
-      surname: formData.surname?.value || '',
-      email: formData.email?.value || '',
-      personalEmail: formData.personalemail?.value || '',
-      address: formData.address?.value || '',
-      state: formData.state?.value?.label || '',
-      branch: formData.branch?.value?.label || '',
-      religion: formData.religion?.value?.label || '',
-      caste: formData.caste?.value?.label || '',
-      role: formData.role?.value?.label || '',
-      city: formData.city?.value?.label || '',
-      qualification: formData.qualification?.value?.label || '',
-      source: formData.source?.value?.label || '',
-      gender: formData.gender?.value?.label || '',
-      education: formData.education?.value?.label || '',
-      maritalstatus: formData.maritalstatus?.value?.label || '',
-      number: formData.number?.value || '',
-      aadharcard: formData.aadharcard?.value || '',
-      officenumber: formData.officenumber?.value || '',
-      fathernumber: formData.fatherno?.value || '',
-      fathername: formData.fathername?.value || '',
-      referenceno: formData.referenceno?.value || '',
-      referencename: formData.referencename?.value || '',
-      referenceaddress: formData.referenceaddress?.value || '',
-      fatheraddress: formData.fatheraddress?.value || '',
-      ssccertificate: formData.ssccertificate?.value || '',
-      aadharcardphoto: formData.aadharcardphoto?.value || '',
-      pancard: formData.pancard?.value || '',
-      highercertificate: formData.highercertificate?.value || '',
-      profile: formData.profile?.value || '',
-      dateofbirth: formData.dateofbirth?.value ? moment(formData.dateofbirth.value).format('YYYY/MM/DD') : '',
-      joiningdate: formData.joiningdate?.value ? moment(formData.joiningdate.value).format('YYYY/MM/DD') : '',
-      expereincedate: experienceYear && experienceMonth ? `${experienceYear}-${String(experienceMonth).padStart(2, '0')}` : ''
-    };
-
-    console.log('Form Submitted:', sampleObject);
     const validation = validate(formData);
-    if (!validation?.isValid) {
-      setFormData(validation?.newFormData);
-      console.log('Validation failed. Please check all fields.');
-      return;
-    }
+    // if (validation?.isValid) {
+    //   setFormData(validation?.newFormData);
+                   
+    // }
+    
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('formDataForContactDetails', formDataForContactDetails);
 
     const expDate = formDataForContactDetails.expereincedate?.value ? moment(formDataForContactDetails.expereincedate.value) : null;
 
     const experienceYear = expDate ? expDate.year() : null;
     const experienceMonth = expDate ? expDate.month() + 1 : null;
 
-    const sampleObject = {
-      name: formDataForContactDetails.name?.value || '',
-      surname: formDataForContactDetails.surname?.value || '',
-      email: formDataForContactDetails.email?.value || '',
-      personalEmail: formDataForContactDetails.personalemail?.value || '',
-      address: formDataForContactDetails.address?.value || '',
-      state: formDataForContactDetails.state?.value?.label || '',
-      branch: formDataForContactDetails.branch?.value?.label || '',
-      religion: formDataForContactDetails.religion?.value?.label || '',
-      caste: formDataForContactDetails.caste?.value?.label || '',
-      role: formDataForContactDetails.role?.value?.label || '',
-      city: formDataForContactDetails.city?.value?.label || '',
-      qualification: formDataForContactDetails.qualification?.value?.label || '',
-      source: formDataForContactDetails.source?.value?.label || '',
-      gender: formDataForContactDetails.gender?.value?.label || '',
-      education: formDataForContactDetails.education?.value?.label || '',
-      maritalstatus: formDataForContactDetails.maritalstatus?.value?.label || '',
-      number: formDataForContactDetails.number?.value || '',
-      aadharcard: formDataForContactDetails.aadharcard?.value || '',
-      officenumber: formDataForContactDetails.officenumber?.value || '',
-      fathernumber: formDataForContactDetails.fatherno?.value || '',
-      fathername: formDataForContactDetails.fathername?.value || '',
-      referenceno: formDataForContactDetails.referenceno?.value || '',
-      referencename: formDataForContactDetails.referencename?.value || '',
-      referenceaddress: formDataForContactDetails.referenceaddress?.value || '',
-      fatheraddress: formDataForContactDetails.fatheraddress?.value || '',
-      ssccertificate: formDataForContactDetails.ssccertificate?.value || '',
-      aadharcardphoto: formDataForContactDetails.aadharcardphoto?.value || '',
-      pancard: formDataForContactDetails.pancard?.value || '',
-      highercertificate: formDataForContactDetails.highercertificate?.value || '',
-      profile: formDataForContactDetails.profile?.value || '',
-      dateofbirth: formDataForContactDetails.dateofbirth?.value
-        ? moment(formDataForContactDetails.dateofbirth.value).format('YYYY/MM/DD')
-        : '',
-      joiningdate: formDataForContactDetails.joiningdate?.value
-        ? moment(formDataForContactDetails.joiningdate.value).format('YYYY/MM/DD')
-        : '',
-      expereincedate: experienceYear && experienceMonth ? `${experienceYear}-${String(experienceMonth).padStart(2, '0')}` : ''
-    };
 
-    console.log('Form Submitted:', sampleObject);
-    const validation = validate(formDataForContactDetails);
-    if (!validation?.isValid) {
+    const validation = validateContactDetails(formDataForContactDetails);
+    if (validation?.isValid) {
       setFormDataForContactDetails(validation?.newFormData);
-      console.log('Validation failed. Please check all fields.');
       return;
     }
   };
 
-  const handleUploadCertificatesSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    console.log('passbook', certificatesUploadFormData);
+  const handleUploadCertificatesSubmit = async() => {
+    // e.preventDefault();
+    let validation = validateContactDetails(formDataForContactDetails);
+    let validation2 = validate(formData);
+   
     const sampleObject = {
       ssccertificate: certificatesUploadFormData.ssccertificate?.value || '',
       aadharcardphoto: certificatesUploadFormData.aadharcardphoto?.value || '',
@@ -860,7 +887,17 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       passbook: certificatesUploadFormData?.passbook?.value || ''
     };
 
-    console.log('Form Submitted:', sampleObject);
+    if(validation?.isValid && validation2?.isValid){
+        return {
+          status : true
+        }
+   
+    }else{
+      return {
+        status : false
+      }
+    }
+
     // const validation = validate(formData)
     // if (!validation?.isValid) {
     //   setFormData(validation?.newFormData)
@@ -890,6 +927,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       handleSubmit={handleSubmit}
       handleContactSubmit={handleContactSubmit}
       handleUploadCertificatesSubmit={handleUploadCertificatesSubmit}
+      phoneChangeHandler = {phoneChangeHandler}
     />
   );
 };

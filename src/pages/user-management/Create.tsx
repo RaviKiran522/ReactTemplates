@@ -34,6 +34,10 @@ import { useLocation, Link, Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import { createBranchStaff } from 'services/branch-staff/branchStaff';
+import Alert from '@mui/material/Alert';
+import { Severity } from 'Common/utils';
+import PhoneNumberField from 'pages/common-components/common-mobile-number';
 // import SvgIcon from '@mui/joy/SvgIcon';
 // import style from '@mui/material'
 
@@ -68,7 +72,8 @@ const Create = ({
   handleDateChangeForContact,
   handleSubmit,
   handleContactSubmit,
-  handleUploadCertificatesSubmit
+  handleUploadCertificatesSubmit,
+  phoneChangeHandler
 }: any) => {
   // Define the structure of form data for type safety
   interface FormField {
@@ -91,9 +96,129 @@ const Create = ({
   let selectedTab = 0;
 
   const [value, setValue] = useState(selectedTab);
+  const [isLoading, setIsLoading] = useState(false);
+  const [successBanner, setSuccessBanner] = useState({ flag: false, severity: Severity.Success, message: '' });
 
   const handleTabsChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+    const validateFields = (formData: any) => {
+      let newFormData = _.cloneDeep(formData);
+      let isValid = true;
+      for (const key in formData) {
+        if (formData.hasOwnProperty(key)) {
+          const field = formData[key];
+  
+          if (field.mandatory) {
+            if (key === 'email') {
+              if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
+                newFormData[key].error = true;
+                newFormData[key].helperText = 'Invalid email address';
+                isValid = false;
+              } else {
+                newFormData[key].error = false;
+                newFormData[key].helperText = '';
+              }
+            } else if (key === 'date') {
+              if (!field.value?.day || !field.value?.month || !field.value?.year) {
+                newFormData[key].error = true;
+                newFormData[key].helperText = 'Please select a complete date';
+                isValid = false;
+              } else {
+                newFormData[key].error = false;
+                newFormData[key].helperText = '';
+              }
+            } else if (field.type === 'select') {
+              if (!field.value || field.value.id === null) {
+                newFormData[key].error = true;
+                // newFormData[key].helperText = `${field.label} is required`;
+                isValid = false;
+              } else {
+                newFormData[key].error = false;
+                newFormData[key].helperText = '';
+              }
+            } else if (!field.value) {
+              newFormData[key].error = true;
+              newFormData[key].helperText = `${field.label} is required`;
+              isValid = false;
+            } else {
+              newFormData[key].error = false;
+              newFormData[key].helperText = '';
+            }
+          }
+        }
+      }
+      return { newFormData: newFormData, isValid: isValid };
+    };
+
+     const validateContactDetails = (formDataForContactDetails: any) => {
+        let newFormData = _.cloneDeep(formDataForContactDetails);
+        let isValid = true;
+        for (const key in formDataForContactDetails) {
+          if (formDataForContactDetails.hasOwnProperty(key)) {
+            const field = formDataForContactDetails[key];
+    
+            if (field.mandatory) {
+              if (key === 'email') {
+                if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
+                  newFormData[key].error = true;
+                  newFormData[key].helperText = 'Invalid email address';
+                  isValid = false;
+                } else {
+                  newFormData[key].error = false;
+                  newFormData[key].helperText = '';
+                }
+              } else if (key === 'date') {
+                if (!field.value?.day || !field.value?.month || !field.value?.year) {
+                  newFormData[key].error = true;
+                  newFormData[key].helperText = 'Please select a complete date';
+                  isValid = false;
+                } else {
+                  newFormData[key].error = false;
+                  newFormData[key].helperText = '';
+                }
+              } else if (field.type === 'select') {
+                if (!field.value || field.value.id === null) {
+                  newFormData[key].error = true;
+                  // newFormData[key].helperText = `${field.label} is required`;
+                  isValid = false;
+                } else {
+                  newFormData[key].error = false;
+                  newFormData[key].helperText = '';
+                }
+              } else if (!field.value) {
+                newFormData[key].error = true;
+                newFormData[key].helperText = `${field.label} is required`;
+                isValid = false;
+              } else {
+                newFormData[key].error = false;
+                newFormData[key].helperText = '';
+              }
+            }
+          }
+        }
+        return { newFormData: newFormData, isValid: isValid };
+      };
+  
+  const handleNext = (type:any,form:any) => {
+    let validation
+    if(type == 'first'){
+      validation = validateFields(form);
+    }else{
+      validation = validateContactDetails(form);
+    }
+    if(validation?.isValid){
+      if (value < 2) { // Adjust according to the number of tabs
+        setValue(value + 1);
+      }
+    }
+   
+  };
+
+  const handlePrev = () => {
+    if (value > 0) {
+      setValue(value - 1);
+    }
   };
 
   const months = ['January', 'February', 'March'];
@@ -105,141 +230,71 @@ const Create = ({
 
   type FormDataKeys = keyof typeof formData;
 
-  //   const validate = (): boolean => {
-  //     let newFormData = _.cloneDeep(formData);
-  //     let isValid = true;
-  //     for (const key in formData) {
-  //       if (formData.hasOwnProperty(key)) {
-  //         const field = formData[key];
+  const createBranch = async() =>{
+    let checkData = await handleUploadCertificatesSubmit()
+    console.log('formData.........',formData)
+    if(checkData.status){
+    let object = {
+      "name": formData.name?.value || '',
+      "surname": formData.surname?.value || '',
+      "mobileNumberCountryCode": formData.mobileCode.value || '',
+      "mobileNumber": formData.number?.value || '',
+      "email": formData.email?.value || '',
+      "gender": formData.gender?.value?.id || '',
+      "maritalStatus": formData.maritalstatus?.value?.id || '',
+      "officeMobileNumberCountryCode": formData.officeMobileCode.value || '',
+      "officeMobileNumber": formData.officenumber?.value || '',
+      "personalEmail": formData.personalemail?.value || '',
+      "dateOfBirth": formData.dateofbirth?.value ? moment(formData.dateofbirth.value).format('YYYY/MM/DD') : '',
+      "educationType": formData.education?.value?.id || '',
+      "status":formData.status?.value?.id || '',
+      "role_id": formData.role?.value?.id || '',
+      "branch_id": formData.branch?.value?.id || '',
+      "caste_id": formData.caste?.value?.id || '',
+      "religion_id": formData.religion?.value?.id || '',
+      "state_id": formData.state?.value?.id || '',
+      "city_id": formData.city?.value?.id || '',
+      "country_id": formData.country?.value?.id || '',
+      "district_id": formData.district?.value?.id || '',
+      "joiningDate": formDataForContactDetails.joiningdate?.value
+      ? moment(formDataForContactDetails.joiningdate.value).format('YYYY/MM/DD')
+      : '',
+      "address": formDataForContactDetails.address?.value || '',
+      "aadharNumber": formDataForContactDetails.aadharcard?.value || '',
+      "pastExperienceYears": formDataForContactDetails.expYears?.value ||  '',
+      "pastExperienceMonths": formDataForContactDetails.expMonths?.value ||  '',
+      "fatherName": formDataForContactDetails.fathername?.value || '',
+      "fatherContactCountryCode": formDataForContactDetails.fatherMobileCode?.value || '',
+      "fatherContact": formDataForContactDetails.fatherno?.value || '',
+      "fatherAddress": formDataForContactDetails.fatheraddress?.value || '',
+      "referenceName": formDataForContactDetails.referencename?.value || '',
+      "referenceContactCountryCode": formDataForContactDetails.referenceMobileCode?.value || '',
+      "referenceContact": formDataForContactDetails.referenceno?.value || '',
+      "referenceAddress": formDataForContactDetails.referenceaddress?.value || '',
+      "education_id": formDataForContactDetails.qualification?.value?.id || '',
+      "source_id": formDataForContactDetails.source?.value?.id || '',
+    }
 
-  //         if (field.mandatory) {
-  //           if (key === 'email') {
-  //             if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
-  //               newFormData[key].error = true;
-  //               newFormData[key].helperText = 'Invalid email address';
-  //               isValid = false;
-  //             } else {
-  //               newFormData[key].error = false;
-  //               newFormData[key].helperText = '';
-  //             }
-  //           } else if (key === 'date') {
-  //             if (!field.value?.day || !field.value?.month || !field.value?.year) {
-  //               newFormData[key].error = true;
-  //               newFormData[key].helperText = 'Please select a complete date';
-  //               isValid = false;
-  //             } else {
-  //               newFormData[key].error = false;
-  //               newFormData[key].helperText = '';
-  //             }
-  //           } else if (field.type === 'select') {
-  //             if (!field.value || field.value.id === null) {
-  //               newFormData[key].error = true;
-  //               // newFormData[key].helperText = `${field.label} is required`;
-  //               isValid = false;
-  //             } else {
-  //               newFormData[key].error = false;
-  //               newFormData[key].helperText = '';
-  //             }
-  //           } else if (!field.value) {
-  //             newFormData[key].error = true;
-  //             newFormData[key].helperText = `${field.label} is required`;
-  //             isValid = false;
-  //           } else {
-  //             newFormData[key].error = false;
-  //             newFormData[key].helperText = '';
-  //           }
-  //         }
-  //       }
-  //     }
+    setIsLoading(true);
+                     
+          const result = await createBranchStaff(object);
+          if (result.status) {
+            setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
+            setIsLoading(false);
+            setTimeout(() => {
+              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+              setFormData(formData);
+            }, 2000);
+          } else {
+            setSuccessBanner({ flag: true, message: result.message, severity: Severity.Error });
+            setIsLoading(false);
+          }
+  }
+    
+  }
 
-  //     setFormData(newFormData);
-  //     return isValid;
-  //   };
+ 
 
-  //   const handleChange = (name: FormDataKeys, value: any) => {
-  //     const newFormData = _.cloneDeep(formData);
-  //     newFormData[name].value = value;
-
-  //     if (newFormData[name].error) {
-  //       newFormData[name].error = false;
-  //       newFormData[name].helperText = ''; // Reset error message
-  //     }
-
-  //     setFormData(newFormData);
-  //   };
-
-  //   const handleSelectChange = (name: FormDataKeys, value: any) => {
-  //     const newFormData = _.cloneDeep(formData);
-  //     newFormData[name].value = value;
-  //     newFormData[name].error = false;
-  //     newFormData[name].helperText = '';
-
-  //     setFormData(newFormData);
-  //   };
-
-  //   const handleDateChange = (name: keyof FormData, value: Date | null) => {
-  //     const newFormData = _.cloneDeep(formData);
-  //     newFormData[name].value = value;
-  //     newFormData[name].error = false;
-  //     newFormData[name].helperText = '';
-  //     setFormData(newFormData);
-  //   };
-
-  //   const handleSubmit = (e: React.FormEvent) => {
-  //     e.preventDefault();
-
-  //     console.log('formData', formData);
-
-  //     const expDate = formData.expereincedate?.value ? moment(formData.expereincedate.value) : null;
-
-  //     const experienceYear = expDate ? expDate.year() : null;
-  //     const experienceMonth = expDate ? expDate.month() + 1 : null;
-
-  //     const sampleObject = {
-  //       name: formData.name?.value || '',
-  //       surname: formData.surname?.value || '',
-  //       email: formData.email?.value || '',
-  //       personalEmail: formData.personalemail?.value || '',
-  //       address: formData.address?.value || '',
-  //       state: formData.state?.value?.label || '',
-  //       branch: formData.branch?.value?.label || '',
-  //       religion: formData.religion?.value?.label || '',
-  //       caste: formData.caste?.value?.label || '',
-  //       role: formData.role?.value?.label || '',
-  //       city: formData.city?.value?.label || '',
-  //       qualification: formData.qualification?.value?.label || '',
-  //       source: formData.source?.value?.label || '',
-  //       gender: formData.gender?.value?.label || '',
-  //       education: formData.education?.value?.label || '',
-  //       maritalstatus: formData.maritalstatus?.value?.label || '',
-  //       number: formData.number?.value || '',
-  //       aadharcard: formData.aadharcard?.value || '',
-  //       officenumber: formData.officenumber?.value || '',
-  //       fathernumber: formData.fatherno?.value || '',
-  //       fathername: formData.fathername?.value || '',
-  //       referenceno: formData.referenceno?.value || '',
-  //       referencename: formData.referencename?.value || '',
-  //       referenceaddress: formData.referenceaddress?.value || '',
-  //       fatheraddress: formData.fatheraddress?.value || '',
-  //       ssccertificate: formData.ssccertificate?.value || '',
-  //       aadharcardphoto: formData.aadharcardphoto?.value || '',
-  //       pancard: formData.pancard?.value || '',
-  //       highercertificate: formData.highercertificate?.value || '',
-  //       profile: formData.profile?.value || '',
-  //       dateofbirth: formData.dateofbirth?.value ? moment(formData.dateofbirth.value).format('YYYY/MM/DD') : '',
-  //       joiningdate: formData.joiningdate?.value ? moment(formData.joiningdate.value).format('YYYY/MM/DD') : '',
-  //       expereincedate: experienceYear && experienceMonth ? `${experienceYear}-${String(experienceMonth).padStart(2, '0')}` : ''
-  //     };
-
-  //     console.log('Form Submitted:', sampleObject);
-  //     if (!validate()) {
-  //       console.log('Validation failed. Please check all fields.');
-  //       return;
-  //     }
-  //   };
-console.log("formDataForContactDetails: ", formDataForContactDetails)
-console.log("formData: ", formData)
-console.log("uploadcertificates: ", certificatesUploadFormData)
   return (
     <Container
       style={{
@@ -254,6 +309,18 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
           {title}
         </Typography>
       )}
+      {successBanner.flag && (
+                <Stack spacing={2} sx={{ m: 2 }}>
+                  <Alert
+                    severity={successBanner.severity}
+                    // onClose={() => {
+                    //   setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+                    // }}
+                  >
+                    {successBanner.message}
+                  </Alert>
+                </Stack>
+              )}
       <MainCard border={true}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
           <Tabs value={value} onChange={handleTabsChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
@@ -278,42 +345,32 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                   {({ values, handleSubmit, setFieldValue, touched, errors }) => (
                     <form onSubmit={handleSubmit}>
                       <Typography variant="h6" marginBottom={0.5}>
-                        {formData.profile.label}
+                      Upload Your Profile
                       </Typography>
                       <Grid container justifyContent="center" alignItems="center">
-                        <Grid item xs={12} sm={8} md={4}>
+                      <Grid item xs={12} sm={8} md={4}>
                           <Stack alignItems="center">
                             <Stack spacing={0.5} alignItems="center">
                               <UploadAvatar
-                                setFieldValue={setFieldValue}
+                                 setFieldValue={(field, file) => {
+                                  setFieldValue(field, file);
+                                  formData.profile.value = file[0]  // Store in state
+                                }}
                                 file={values.files}
                                 error={touched.files && !!errors.files}
-                                // inputProps={{
-                                //   label: formData?.profile?.label || 'Upload Profile Picture',
-                                //   accept: 'image/*'
-                                // }}
                                 sx={{
                                   width: '80px',
-                                  height: '80px'
+                                  height: '80px',
                                 }}
                               />
-                              {/* <Stack>
-                          <Typography align="center" variant="caption" color="secondary">
-                            Allowed &apos;image/*&apos;
-                          </Typography>
-                          <Typography align="center" variant="caption" color="secondary">
-                            *.png, *.jpeg, *.jpg, *.gif
-                          </Typography>
-                        </Stack> */}
                             </Stack>
                             {touched.files && errors.files && (
-                              <FormHelperText error id="standard-weight-helper-text-password-login">
-                                {errors.files as string}
-                              </FormHelperText>
+                              <FormHelperText error>{errors.files}</FormHelperText>
                             )}
                           </Stack>
-                          <Stack direction="row" justifyContent="center" paddingTop={2}>
-                            {values.files !== null && (
+
+                          <Stack direction="row" justifyContent="center" paddingTop={2} spacing={2}>
+                            {values.files && (
                               <Button color="error" onClick={() => setFieldValue('files', null)}>
                                 Cancel
                               </Button>
@@ -339,7 +396,10 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                   <CommonInputField inputProps={formData.surname} onChange={handleChange} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.number} onChange={handleChange} />
+                  <PhoneNumberField inputProps={formData.number} onChange={phoneChangeHandler} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <PhoneNumberField inputProps={formData.officenumber} onChange={phoneChangeHandler} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formData.email} onChange={handleChange} />
@@ -370,9 +430,7 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                     </RadioGroup>
                   </FormControl>
                 </Grid> */}
-                <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formData.officenumber} onChange={handleChange} />
-                </Grid>
+                
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formData.personalemail} onChange={handleChange} />
                 </Grid>
@@ -402,8 +460,8 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                   <CommonSelectField inputProps={formData.education} onSelectChange={handleSelectChange} />
                 </Grid>
                 <Grid item xs={12} textAlign={'end'}>
-                  <Button type="submit" variant="contained" color="primary">
-                    Register
+                  <Button variant="contained" color="primary" type='submit'  onClick={()=>handleNext("first",formData)} disabled={value === 1}>
+                    Next
                   </Button>
                 </Grid>
               </Grid>
@@ -416,7 +474,7 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                   <CommonSelectField inputProps={formDataForContactDetails.qualification} onSelectChange={handleSelectChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formDataForContactDetails.temporaryaddress} onChange={handleChangeForContact} />
+                  <CommonInputField inputProps={formDataForContactDetails.address} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formDataForContactDetails.aadharcard} onChange={handleChangeForContact} />
@@ -425,17 +483,23 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                   <CommonInputField inputProps={formDataForContactDetails.fathername} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <CommonInputField inputProps={formDataForContactDetails.fatherno} onChange={handleChangeForContact} />
+                  <PhoneNumberField inputProps={formDataForContactDetails.fatherno} onChange={phoneChangeHandler} />
                 </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <PhoneNumberField inputProps={formDataForContactDetails.referenceno} onChange={phoneChangeHandler} />
+                </Grid>
+                {/* <Grid item xs={12} sm={6} md={6}>
+                  <CommonInputField inputProps={formDataForContactDetails.fatherno} onChange={handleChangeForContact} />
+                </Grid> */}
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formDataForContactDetails.fatheraddress} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formDataForContactDetails.referencename} onChange={handleChangeForContact} />
                 </Grid>
-                <Grid item xs={12} sm={6} md={6}>
+                {/* <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formDataForContactDetails.referenceno} onChange={handleChangeForContact} />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formDataForContactDetails.referenceaddress} onChange={handleChangeForContact} />
                 </Grid>
@@ -445,45 +509,39 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                 <Grid item xs={12} sm={6} md={6} marginTop={2}>
                   <CommonDatePicker inputProps={formDataForContactDetails.joiningdate} onDateChange={handleDateChangeForContact} />
                 </Grid>
-                <Grid container item xs={12} sm={6} md={6} marginBottom={1} textAlign={'center'}>
-                  <InputLabel>{formDataForContactDetails.expereince.label}</InputLabel>
+                <Grid item xs={12} sm={6} md={3} marginTop={2}>
+                  <CommonInputField inputProps={formDataForContactDetails.expYears} onChange={handleChangeForContact} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} marginTop={2}>
+                  <CommonInputField inputProps={formDataForContactDetails.expMonths} onChange={handleChangeForContact} />
+                </Grid>
+                {/* <Grid container item xs={12} sm={6} md={6} marginBottom={1} textAlign={'center'}>
                   <Grid container spacing={1}>
                     <Grid item xs={6}>
                       <FormControl fullWidth error={formDataForContactDetails.expereince.error}>
-                        <InputLabel>Month</InputLabel>
-                        <Select
-                          value={formDataForContactDetails.expereince.value.month || ''}
-                          onChange={(e) => handleSelectChangeForContact('expereince', { ...formDataForContactDetails.expereince.value, month: e.target.value })}
-                        >
-                          {months.map((month, index) => (
-                            <MenuItem key={index + 1} value={index + 1}>
-                              {month}
-                            </MenuItem>
-                          ))}
-                        </Select>
+                      <CommonInputField inputProps={formDataForContactDetails.expYears} onChange={handleChange} />
+
+                       
                       </FormControl>
                     </Grid>
                     <Grid item xs={6}>
                       <FormControl fullWidth error={formDataForContactDetails.expereince.error}>
-                        <InputLabel>Year</InputLabel>
-                        <Select
-                          value={formDataForContactDetails.expereince.value.year || ''}
-                          onChange={(e) => handleSelectChangeForContact('expereince', { ...formDataForContactDetails.expereince.value, year: e.target.value })}
-                        >
-                          {years.map((year) => (
-                            <MenuItem key={year} value={year}>
-                              {year}
-                            </MenuItem>
-                          ))}
-                        </Select>
+                      <CommonInputField inputProps={formDataForContactDetails.expMonths} onChange={handleChange} />
+
                       </FormControl>
                     </Grid>
                   </Grid>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} textAlign={'end'}>
-                  <Button type="submit" variant="contained" color="primary">
-                    Save
+                <Button variant="contained" color="primary" onClick={handlePrev} disabled={value === 0}>
+                    Previous
                   </Button>
+                  <Button variant="contained" color="primary" type="submit" onClick={()=>handleNext("second",formDataForContactDetails)} disabled={value === 2} style={{ marginLeft: '10px' }}>
+                    Next
+                  </Button>
+                  {/* <Button type="submit" variant="contained" color="primary">
+                    Save
+                  </Button> */}
                 </Grid>
               </Grid>
             </form>
@@ -697,8 +755,8 @@ console.log("uploadcertificates: ", certificatesUploadFormData)
                   </MainCard>
                 </Grid>
                 <Grid item xs={12} textAlign={'end'}>
-                  <Button type="submit" variant="contained" color="primary">
-                    Upload
+                  <Button  variant="contained" color="primary" onClick={createBranch}>
+                    Create Branch
                   </Button>
                 </Grid>
               </Grid>

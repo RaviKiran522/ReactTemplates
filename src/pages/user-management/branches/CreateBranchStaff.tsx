@@ -38,6 +38,7 @@ import Create from '../Create';
 import { cityList, countryList, districtList, listcaste, religionList, rolesList, statesList } from 'services/add-new-details/AddNewDetails';
 import { Severity } from 'Common/utils';
 import { createBranchStaff } from 'services/branch-staff/branchStaff';
+import ContactForm from 'sections/extra-pages/contact/ContactForm';
 // import SvgIcon from '@mui/joy/SvgIcon';
 // import style from '@mui/material'
 
@@ -92,7 +93,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 2, label: 'B.tech' },
         { id: 3, label: 'B.com' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -201,7 +202,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 5, label: 'Tv 9' },
         { id: 6, label: 'Etv Telangana' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -259,7 +260,22 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       helperText: '',
       mandatory: true,
       options: []
-    }
+    },
+    status: {
+      label: 'Status',
+      id: 'status',
+      name: 'status',
+      type:'select',
+      options: [
+        { id: 1, label: 'ENABLE' },
+        { id: 2, label: 'DISABLE' }
+      ],
+      value: '',
+      error: false,
+      helperText: '',
+      mandatory: true,
+      isMulti: false,
+    },
   };
 
   const uploadCertificatesFormData: FormData = {
@@ -336,7 +352,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 2, label: 'Manager' },
         { id: 3, label: 'BPO' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -396,7 +412,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 1, label: 'Male' },
         { id: 2, label: 'Female' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -411,7 +427,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 1, label: 'Married' },
         { id: 2, label: 'Unmarried' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -450,7 +466,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 2, label: 'Mumbi' },
         { id: 3, label: 'Hyderabad' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -466,7 +482,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 2, label: 'Mumbi' },
         { id: 3, label: 'Hyderabad' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -482,7 +498,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 2, label: 'Mumbi' },
         { id: 3, label: 'Hyderabad' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -497,7 +513,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 1, label: 'Hindu' },
         { id: 2, label: 'Shik' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -513,7 +529,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 2, label: 'Mumbi' },
         { id: 3, label: 'Hyderabad' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -560,7 +576,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         { id: 'regular', label: 'Regular' },
         { id: 'distance', label: 'Distance' }
       ],
-      value: { id: null, label: '' },
+      value: '',
       error: false,
       helperText: '',
       mandatory: true,
@@ -645,43 +661,50 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const field = formData[key];
-
+  
+        // Check for mandatory fields
         if (field.mandatory) {
-          if (key === 'email') {
-            if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
-              newFormData[key].error = true;
-              newFormData[key].helperText = 'Invalid email address';
-              isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
-            }
-          } else if (key === 'date') {
-            if (!field.value?.day || !field.value?.month || !field.value?.year) {
-              newFormData[key].error = true;
-              newFormData[key].helperText = 'Please select a complete date';
-              isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
-            }
-          } else if (field.type === 'select') {
-            if (!field.value || field.value.id === null) {
-              newFormData[key].error = true;
-              // newFormData[key].helperText = `${field.label} is required`;
-              isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
-            }
-          } else if (!field.value) {
+          // Check for empty text, number, or email fields
+          if (
+            field.type !== 'select' &&
+            field.type !== 'date' &&
+            (!field.value || field.value === '')
+          ) {
             newFormData[key].error = true;
             newFormData[key].helperText = `${field.label} is required`;
             isValid = false;
-          } else {
-            newFormData[key].error = false;
-            newFormData[key].helperText = '';
           }
+          // Check for empty select fields
+          else if (
+            field.type === 'select' &&
+            (!field.value || !field.value.id || field.value.id === null)
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} must be selected`;
+            isValid = false;
+          }
+          // Check for empty date fields
+          else if (field.type === 'date' && !field.value) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Date is required';
+            isValid = false;
+          }
+          // Email validation
+          else if (
+            key === 'email' &&
+            field.value &&
+            !/\S+@\S+\.\S+/.test(field.value)
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Invalid email address';
+            isValid = false;
+          }
+        }
+  
+        // No errors
+        else {
+          newFormData[key].error = false;
+          newFormData[key].helperText = '';
         }
       }
     }
@@ -696,41 +719,44 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
         const field = formDataForContactDetails[key];
 
         if (field.mandatory) {
-          if (key === 'email') {
-            if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
-              newFormData[key].error = true;
-              newFormData[key].helperText = 'Invalid email address';
-              isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
-            }
-          } else if (key === 'date') {
-            if (!field.value?.day || !field.value?.month || !field.value?.year) {
-              newFormData[key].error = true;
-              newFormData[key].helperText = 'Please select a complete date';
-              isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
-            }
-          } else if (field.type === 'select') {
-            if (!field.value || field.value.id === null) {
-              newFormData[key].error = true;
-              // newFormData[key].helperText = `${field.label} is required`;
-              isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
-            }
-          } else if (!field.value) {
+          // Check for empty text, number, or email fields
+          if (
+            field.type !== 'select' &&
+            field.type !== 'date' &&
+            (!field.value || field.value === '')
+          ) {
             newFormData[key].error = true;
             newFormData[key].helperText = `${field.label} is required`;
             isValid = false;
-          } else {
-            newFormData[key].error = false;
-            newFormData[key].helperText = '';
           }
+          // Check for empty select fields
+          else if (
+            field.type === 'select' &&
+            (!field.value || !field.value.id || field.value.id === null)
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = `${field.label} must be selected`;
+            isValid = false;
+          }
+          // Check for empty date fields
+          else if (field.type === 'date' && !field.value) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Date is required';
+            isValid = false;
+          }
+          // Email validation
+          else if (
+            key === 'email' &&
+            field.value &&
+            !/\S+@\S+\.\S+/.test(field.value)
+          ) {
+            newFormData[key].error = true;
+            newFormData[key].helperText = 'Invalid email address';
+            isValid = false;
+          }
+        }else {
+          newFormData[key].error = false;
+          newFormData[key].helperText = '';
         }
       }
     }
@@ -758,6 +784,9 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
             let stateOptions = stateList.data.map((each:any)=>({ id: each.id, label: each.stateName }))
             newFormData.state.options = stateOptions
           }
+          newFormData.state.value = ""
+          newFormData.district.value = ""
+          newFormData.city.value = ""
           
         }else if(name == 'state'){
           let districtLists = await districtList({meta:true,status:1,stateId:value?.id})
@@ -765,6 +794,8 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
             let districtoptions = districtLists.data.map((each:any)=>({ id: each.id, label: each.districtName }))
             newFormData.district.options = districtoptions
           }
+          newFormData.district.value = ""
+          newFormData.city.value = ""
           
         }else if(name == 'district'){
           let cityLists = await cityList({meta:true,status:1,districtId:value?.id})
@@ -772,7 +803,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
             let cityOptions = cityLists.data.map((each:any)=>({ id: each.id, label: each.cityName }))
             newFormData.city.options = cityOptions
           }
-          
+          newFormData.city.value = ""
         }
         
           
@@ -804,6 +835,26 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     setFormData(newFormData);
   };
   
+  const phoneChangeHandlerForContact = (name: any, value: any, country: any) => {
+    const newFormData = _.cloneDeep(formDataForContactDetails);
+  
+    if (!newFormData[name]) {
+      console.error(`Field with name '${name}' not found in formData`);
+      return;
+    }
+  
+    if (value !== undefined && value !== null) {
+      newFormData[name].value = value;
+      newFormData[name].countryCode = `+${country.dialCode}` || newFormData[name].countryCode;
+    }
+  
+    if (newFormData[name].error) {
+      newFormData[name].error = false;
+      newFormData[name].helperText = ''; // Reset error message
+    }
+  
+    setFormDataForContactDetails(newFormData);
+  };
   
 
   const handleDateChange = (name: keyof FormData, value: Date | null) => {
@@ -878,15 +929,6 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
     // e.preventDefault();
     let validation = validateContactDetails(formDataForContactDetails);
     let validation2 = validate(formData);
-   
-    const sampleObject = {
-      ssccertificate: certificatesUploadFormData.ssccertificate?.value || '',
-      aadharcardphoto: certificatesUploadFormData.aadharcardphoto?.value || '',
-      pancard: certificatesUploadFormData.pancard?.value || '',
-      highercertificate: certificatesUploadFormData.highercertificate?.value || '',
-      passbook: certificatesUploadFormData?.passbook?.value || ''
-    };
-
     if(validation?.isValid && validation2?.isValid){
         return {
           status : true
@@ -928,6 +970,7 @@ const CreateBranchStaff = ({ needTitle = true, userData = {} }): any => {
       handleContactSubmit={handleContactSubmit}
       handleUploadCertificatesSubmit={handleUploadCertificatesSubmit}
       phoneChangeHandler = {phoneChangeHandler}
+      phoneChangeHandlerForContact = {phoneChangeHandlerForContact}
     />
   );
 };

@@ -84,6 +84,7 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({ inputProps, onChang
         placeholder="Enter your phone number" // Placeholder text    value={value}  // Phone number only (without country code)
         onChange={(phone, country) => onChange(name, phone, country)}
         countryCodeEditable={false}
+        value={value}
         enableSearch={true}
         inputProps={{
           name,

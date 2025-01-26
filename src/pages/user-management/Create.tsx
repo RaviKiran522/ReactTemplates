@@ -17,7 +17,8 @@ import {
   MenuItem,
   Stack,
   // IconButton,
-  FormHelperText
+  FormHelperText,
+  CircularProgress
 } from '@mui/material';
 import _ from 'lodash';
 import moment from 'moment';
@@ -34,7 +35,7 @@ import { useLocation, Link, Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { createBranchStaff } from 'services/branch-staff/branchStaff';
+import { createBranchStaff, updateBranchStaffFile } from 'services/branch-staff/branchStaff';
 import Alert from '@mui/material/Alert';
 import { Severity } from 'Common/utils';
 import PhoneNumberField from 'pages/common-components/common-mobile-number';
@@ -73,7 +74,8 @@ const Create = ({
   handleSubmit,
   handleContactSubmit,
   handleUploadCertificatesSubmit,
-  phoneChangeHandler
+  phoneChangeHandler,
+  phoneChangeHandlerForContact
 }: any) => {
   // Define the structure of form data for type safety
   interface FormField {
@@ -110,41 +112,44 @@ const Create = ({
           const field = formData[key];
   
           if (field.mandatory) {
-            if (key === 'email') {
-              if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
-                newFormData[key].error = true;
-                newFormData[key].helperText = 'Invalid email address';
-                isValid = false;
-              } else {
-                newFormData[key].error = false;
-                newFormData[key].helperText = '';
-              }
-            } else if (key === 'date') {
-              if (!field.value?.day || !field.value?.month || !field.value?.year) {
-                newFormData[key].error = true;
-                newFormData[key].helperText = 'Please select a complete date';
-                isValid = false;
-              } else {
-                newFormData[key].error = false;
-                newFormData[key].helperText = '';
-              }
-            } else if (field.type === 'select') {
-              if (!field.value || field.value.id === null) {
-                newFormData[key].error = true;
-                // newFormData[key].helperText = `${field.label} is required`;
-                isValid = false;
-              } else {
-                newFormData[key].error = false;
-                newFormData[key].helperText = '';
-              }
-            } else if (!field.value) {
+            // Check for empty text, number, or email fields
+            if (
+              field.type !== 'select' &&
+              field.type !== 'date' &&
+              (!field.value || field.value === '')
+            ) {
               newFormData[key].error = true;
               newFormData[key].helperText = `${field.label} is required`;
               isValid = false;
-            } else {
-              newFormData[key].error = false;
-              newFormData[key].helperText = '';
             }
+            // Check for empty select fields
+            else if (
+              field.type === 'select' &&
+              (!field.value || !field.value.id || field.value.id === null)
+            ) {
+              newFormData[key].error = true;
+              newFormData[key].helperText = `${field.label} must be selected`;
+              isValid = false;
+            }
+            // Check for empty date fields
+            else if (field.type === 'date' && !field.value) {
+              newFormData[key].error = true;
+              newFormData[key].helperText = 'Date is required';
+              isValid = false;
+            }
+            // Email validation
+            else if (
+              key === 'email' &&
+              field.value &&
+              !/\S+@\S+\.\S+/.test(field.value)
+            ) {
+              newFormData[key].error = true;
+              newFormData[key].helperText = 'Invalid email address';
+              isValid = false;
+            }
+          }else {
+            newFormData[key].error = false;
+            newFormData[key].helperText = '';
           }
         }
       }
@@ -159,41 +164,44 @@ const Create = ({
             const field = formDataForContactDetails[key];
     
             if (field.mandatory) {
-              if (key === 'email') {
-                if (!field.value || !/\S+@\S+\.\S+/.test(field.value)) {
-                  newFormData[key].error = true;
-                  newFormData[key].helperText = 'Invalid email address';
-                  isValid = false;
-                } else {
-                  newFormData[key].error = false;
-                  newFormData[key].helperText = '';
-                }
-              } else if (key === 'date') {
-                if (!field.value?.day || !field.value?.month || !field.value?.year) {
-                  newFormData[key].error = true;
-                  newFormData[key].helperText = 'Please select a complete date';
-                  isValid = false;
-                } else {
-                  newFormData[key].error = false;
-                  newFormData[key].helperText = '';
-                }
-              } else if (field.type === 'select') {
-                if (!field.value || field.value.id === null) {
-                  newFormData[key].error = true;
-                  // newFormData[key].helperText = `${field.label} is required`;
-                  isValid = false;
-                } else {
-                  newFormData[key].error = false;
-                  newFormData[key].helperText = '';
-                }
-              } else if (!field.value) {
+              // Check for empty text, number, or email fields
+              if (
+                field.type !== 'select' &&
+                field.type !== 'date' &&
+                (!field.value || field.value === '')
+              ) {
                 newFormData[key].error = true;
                 newFormData[key].helperText = `${field.label} is required`;
                 isValid = false;
-              } else {
-                newFormData[key].error = false;
-                newFormData[key].helperText = '';
               }
+              // Check for empty select fields
+              else if (
+                field.type === 'select' &&
+                (!field.value || !field.value.id || field.value.id === null)
+              ) {
+                newFormData[key].error = true;
+                newFormData[key].helperText = `${field.label} must be selected`;
+                isValid = false;
+              }
+              // Check for empty date fields
+              else if (field.type === 'date' && !field.value) {
+                newFormData[key].error = true;
+                newFormData[key].helperText = 'Date is required';
+                isValid = false;
+              }
+              // Email validation
+              else if (
+                key === 'email' &&
+                field.value &&
+                !/\S+@\S+\.\S+/.test(field.value)
+              ) {
+                newFormData[key].error = true;
+                newFormData[key].helperText = 'Invalid email address';
+                isValid = false;
+              }
+            }else {
+              newFormData[key].error = false;
+              newFormData[key].helperText = '';
             }
           }
         }
@@ -231,64 +239,114 @@ const Create = ({
   type FormDataKeys = keyof typeof formData;
 
   const createBranch = async() =>{
+   
     let checkData = await handleUploadCertificatesSubmit()
-    console.log('formData.........',formData)
+    console.log('formData..........',formData)
+    let fileData = new FormData()
     if(checkData.status){
     let object = {
       "name": formData.name?.value || '',
       "surname": formData.surname?.value || '',
-      "mobileNumberCountryCode": formData.mobileCode.value || '',
+      "mobileNumberCountryCode": formData.number.countryCode || '',
       "mobileNumber": formData.number?.value || '',
       "email": formData.email?.value || '',
-      "gender": formData.gender?.value?.id || '',
-      "maritalStatus": formData.maritalstatus?.value?.id || '',
-      "officeMobileNumberCountryCode": formData.officeMobileCode.value || '',
+      "gender": formData.gender?.value?.label || '',
+      "maritalStatus": formData.maritalstatus?.value?.label || '',
+      "officeMobileNumberCountryCode": formData.officenumber.countryCode || '',
       "officeMobileNumber": formData.officenumber?.value || '',
       "personalEmail": formData.personalemail?.value || '',
       "dateOfBirth": formData.dateofbirth?.value ? moment(formData.dateofbirth.value).format('YYYY/MM/DD') : '',
-      "educationType": formData.education?.value?.id || '',
-      "status":formData.status?.value?.id || '',
+      "educationType": formData.education?.value?.label || '',
+      "status":formDataForContactDetails.status?.value?.id || '',
       "role_id": formData.role?.value?.id || '',
       "branch_id": formData.branch?.value?.id || '',
       "caste_id": formData.caste?.value?.id || '',
       "religion_id": formData.religion?.value?.id || '',
       "state_id": formData.state?.value?.id || '',
       "city_id": formData.city?.value?.id || '',
-      "country_id": formData.country?.value?.id || '',
+      "country_id": formData.countryName?.value?.id || '',
       "district_id": formData.district?.value?.id || '',
       "joiningDate": formDataForContactDetails.joiningdate?.value
       ? moment(formDataForContactDetails.joiningdate.value).format('YYYY/MM/DD')
       : '',
       "address": formDataForContactDetails.address?.value || '',
       "aadharNumber": formDataForContactDetails.aadharcard?.value || '',
-      "pastExperienceYears": formDataForContactDetails.expYears?.value ||  '',
-      "pastExperienceMonths": formDataForContactDetails.expMonths?.value ||  '',
+      "pastExperienceYears": Number(formDataForContactDetails.expYears?.value) ||  '',
+      "pastExperienceMonths": Number(formDataForContactDetails.expMonths?.value) ||  '',
       "fatherName": formDataForContactDetails.fathername?.value || '',
-      "fatherContactCountryCode": formDataForContactDetails.fatherMobileCode?.value || '',
+      "fatherContactCountryCode": formDataForContactDetails.fatherno?.countryCode || '',
       "fatherContact": formDataForContactDetails.fatherno?.value || '',
       "fatherAddress": formDataForContactDetails.fatheraddress?.value || '',
       "referenceName": formDataForContactDetails.referencename?.value || '',
-      "referenceContactCountryCode": formDataForContactDetails.referenceMobileCode?.value || '',
+      "referenceContactCountryCode": formDataForContactDetails.referenceno?.countryCode || '',
       "referenceContact": formDataForContactDetails.referenceno?.value || '',
       "referenceAddress": formDataForContactDetails.referenceaddress?.value || '',
       "education_id": formDataForContactDetails.qualification?.value?.id || '',
       "source_id": formDataForContactDetails.source?.value?.id || '',
     }
-
+    const filteredObject = JSON.parse(JSON.stringify(object, (key, value) => {
+      return value === '' || value === null || value === undefined ? undefined : value;
+    }));
     setIsLoading(true);
                      
-          const result = await createBranchStaff(object);
-          if (result.status) {
-            setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
+    const result = await createBranchStaff(object);
+    let isCertificatesAvailable = filteredObject
+    console.log('certificatesUploadFormData....',certificatesUploadFormData)
+    if (result.status) {
+      if(formData.profile.value != ""){
+        fileData.append('profile',formData.profile.value)
+        isCertificatesAvailable = true
+      }
+      if(certificatesUploadFormData.ssccertificate?.value != ""){
+        fileData.append('ssccertificate',certificatesUploadFormData.ssccertificate?.value[0])
+        isCertificatesAvailable = true
+      }
+      if(certificatesUploadFormData.aadharcardphoto?.value != ""){
+        fileData.append('aadharcardphoto',certificatesUploadFormData.aadharcardphoto?.value[0])
+        isCertificatesAvailable = true
+      }
+      if(certificatesUploadFormData.pancard?.value != ""){
+        fileData.append('pancard',certificatesUploadFormData.pancard?.value[0])
+        isCertificatesAvailable = true
+      }
+      if(certificatesUploadFormData.highercertificate?.value != ""){
+        fileData.append('highercertificate',certificatesUploadFormData.highercertificate?.value[0])
+        isCertificatesAvailable = true
+      }
+      if(certificatesUploadFormData?.passbook?.value != ""){
+        fileData.append('passbook',certificatesUploadFormData?.passbook?.value[0])
+        isCertificatesAvailable = true
+      }
+      if(isCertificatesAvailable){
+        fileData.append('id',result?.data?.id)
+        let filesUpdate = await updateBranchStaffFile(fileData)
+        if(filesUpdate.status){
+          setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
+          setIsLoading(false);
+          setTimeout(() => {
+            setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+            setFormData(formData);
+          }, 2000);
+        }else{
+          
+            setSuccessBanner({ flag: true, message: filesUpdate.message, severity: Severity.Error });
             setIsLoading(false);
-            setTimeout(() => {
-              setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
-              setFormData(formData);
-            }, 2000);
-          } else {
-            setSuccessBanner({ flag: true, message: result.message, severity: Severity.Error });
-            setIsLoading(false);
-          }
+          
+        }
+      }else{
+        setSuccessBanner({ flag: true, message: result.message, severity: Severity.Success });
+        setIsLoading(false);
+        setTimeout(() => {
+          setSuccessBanner({ flag: false, message: '', severity: Severity.Success });
+          setFormData(formData);
+        }, 2000);
+      }
+
+      
+    } else {
+      setSuccessBanner({ flag: true, message: result.message, severity: Severity.Error });
+      setIsLoading(false);
+    }
   }
     
   }
@@ -313,9 +371,9 @@ const Create = ({
                 <Stack spacing={2} sx={{ m: 2 }}>
                   <Alert
                     severity={successBanner.severity}
-                    // onClose={() => {
-                    //   setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
-                    // }}
+                    onClose={() => {
+                      setSuccessBanner({ flag: false, severity: successBanner.severity, message: '' });
+                    }}
                   >
                     {successBanner.message}
                   </Alert>
@@ -483,10 +541,10 @@ const Create = ({
                   <CommonInputField inputProps={formDataForContactDetails.fathername} onChange={handleChangeForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <PhoneNumberField inputProps={formDataForContactDetails.fatherno} onChange={phoneChangeHandler} />
+                  <PhoneNumberField inputProps={formDataForContactDetails.fatherno} onChange={phoneChangeHandlerForContact} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
-                  <PhoneNumberField inputProps={formDataForContactDetails.referenceno} onChange={phoneChangeHandler} />
+                  <PhoneNumberField inputProps={formDataForContactDetails.referenceno} onChange={phoneChangeHandlerForContact} />
                 </Grid>
                 {/* <Grid item xs={12} sm={6} md={6}>
                   <CommonInputField inputProps={formDataForContactDetails.fatherno} onChange={handleChangeForContact} />
@@ -506,14 +564,17 @@ const Create = ({
                 <Grid item xs={12} sm={6} md={6}>
                   <CommonSelectField inputProps={formDataForContactDetails.source} onSelectChange={handleSelectChangeForContact} />
                 </Grid>
-                <Grid item xs={12} sm={6} md={6} marginTop={2}>
+                <Grid item xs={12} sm={6} md={3} >
                   <CommonDatePicker inputProps={formDataForContactDetails.joiningdate} onDateChange={handleDateChangeForContact} />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3} marginTop={2}>
+                <Grid item xs={12} sm={6} md={3} >
                   <CommonInputField inputProps={formDataForContactDetails.expYears} onChange={handleChangeForContact} />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3} marginTop={2}>
+                <Grid item xs={12} sm={6} md={3} >
                   <CommonInputField inputProps={formDataForContactDetails.expMonths} onChange={handleChangeForContact} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <CommonSelectField inputProps={formDataForContactDetails.status} onSelectChange={handleSelectChangeForContact} />
                 </Grid>
                 {/* <Grid container item xs={12} sm={6} md={6} marginBottom={1} textAlign={'center'}>
                   <Grid container spacing={1}>
@@ -570,8 +631,12 @@ const Create = ({
                               <Stack spacing={1.5} alignItems="center">
                                 <UploadMultiFile
                                   showList={list}
-                                  setFieldValue={setFieldValue}
+                                  setFieldValue={(field, file) => {
+                                    setFieldValue(field, file);
+                                    certificatesUploadFormData.ssccertificate.value = file[0]  // Store in state
+                                  }}
                                   files={values.files}
+                                  
                                   error={touched.files && !!errors.files}
                                 />
                               </Stack>
@@ -608,7 +673,10 @@ const Create = ({
                               <Stack spacing={1.5} alignItems="center">
                                 <UploadMultiFile
                                   showList={list}
-                                  setFieldValue={setFieldValue}
+                                  setFieldValue={(field, file) => {
+                                    setFieldValue(field, file);
+                                    certificatesUploadFormData.highercertificate.value = file[0]  // Store in state
+                                  }}
                                   files={values.files}
                                   error={touched.files && !!errors.files}
                                 />
@@ -646,7 +714,10 @@ const Create = ({
                               <Stack spacing={1.5} alignItems="center">
                                 <UploadMultiFile
                                   showList={list}
-                                  setFieldValue={setFieldValue}
+                                  setFieldValue={(field, file) => {
+                                    setFieldValue(field, file);
+                                    certificatesUploadFormData.aadharcardphoto.value = file[0]  // Store in state
+                                  }}
                                   files={values.files}
                                   error={touched.files && !!errors.files}
                                 />
@@ -684,7 +755,10 @@ const Create = ({
                               <Stack spacing={1.5} alignItems="center">
                                 <UploadMultiFile
                                   showList={list}
-                                  setFieldValue={setFieldValue}
+                                  setFieldValue={(field, file) => {
+                                    setFieldValue(field, file);
+                                    certificatesUploadFormData.pancard.value = file[0]  // Store in state
+                                  }}
                                   files={values.files}
                                   error={touched.files && !!errors.files}
                                 />
@@ -728,7 +802,10 @@ const Create = ({
                               <Stack spacing={0} alignItems="center">
                                 <UploadMultiFile
                                   showList={list}
-                                  setFieldValue={setFieldValue}
+                                  setFieldValue={(field, file) => {
+                                    setFieldValue(field, file);
+                                    certificatesUploadFormData.passbook.value = file[0]  // Store in state
+                                  }}
                                   files={values.files}
                                   error={touched.files && !!errors.files}
                                   // inputProps={{
@@ -755,9 +832,16 @@ const Create = ({
                   </MainCard>
                 </Grid>
                 <Grid item xs={12} textAlign={'end'}>
-                  <Button  variant="contained" color="primary" onClick={createBranch}>
+                  {/* <Button  variant="contained" color="primary" onClick={createBranch}>
                     Create Branch
-                  </Button>
+                  </Button> */}
+                   <Button
+                                         variant="contained" color="primary" onClick={createBranch}
+                                          sx={{ margin: '1rem' }}
+                                          startIcon={isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                        >
+                                Create Staff
+                              </Button>
                 </Grid>
               </Grid>
             </form>

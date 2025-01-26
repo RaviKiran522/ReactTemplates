@@ -65,3 +65,17 @@ export const httpsDelete = async (url: string, customHeaders = {}) => {
     throw error;
   }
 };
+export const httpsPostFormData = async (url: string, formData: FormData, customHeaders = {}) => {
+  try {
+    const response = await axiosInstance.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        ...customHeaders,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('POST FormData Error:', error);
+    throw error;
+  }
+};

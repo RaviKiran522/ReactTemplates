@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Button, Grid, Container } from '@mui/material';
@@ -36,6 +36,7 @@ import {
   districtList,
   cityList
 } from '../../services/add-new-details/AddNewDetails';
+import { getNearestBranchList } from '../../services/customer-management/CustomerManagement';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import {
@@ -55,7 +56,7 @@ import {
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import Search from 'layout/Dashboard/Header/HeaderContent/Search';
-const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }: any) => {
+const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData, edit }: any) => {
   // Define the structure of form data for type safety
   const [religionData, setReligionData] = useState([]);
   const [casteData, setCasteData] = useState([]);
@@ -145,18 +146,49 @@ const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }
     let stateResult;
     let districtResult;
     let cityResult;
+    let nearestBranchData;
     if (name === 'selectcountry') {
-      stateResult = await getStatesListByCountryId(value.id);
+      stateResult = await getStatesListByCountryId(value?.id ? value?.id : 0);
+      nearestBranchData = await getNearestBranchList({
+        country_id: value?.id ? value?.id : 0,
+        state_id: personalDetailsFormData?.selectstate?.value?.id ? personalDetailsFormData.selectstate.value.id : 0,
+        city_id: personalDetailsFormData?.city?.value?.id ? personalDetailsFormData.city.value.id : 0,
+        district_id: personalDetailsFormData?.selectdistrict?.value?.id ? personalDetailsFormData.selectdistrict.value.id : 0
+      });
     } else if (name === 'selectstate') {
-      districtResult = await getDistrictsListBystateId(personalDetailsFormData.selectcountry.value.id, value.id);
+      districtResult = await getDistrictsListBystateId(
+        personalDetailsFormData?.selectcountry?.value?.id ? personalDetailsFormData.selectcountry.value.id : 0,
+        value?.id ? value?.id : 0
+      );
+      nearestBranchData = await getNearestBranchList({
+        country_id: personalDetailsFormData?.selectcountry?.value?.id ? personalDetailsFormData.selectcountry.value.id : 0,
+        state_id: value?.id ? value?.id : 0,
+        city_id: personalDetailsFormData?.city?.value?.id ? personalDetailsFormData.city.value.id : 0,
+        district_id: personalDetailsFormData?.selectdistrict?.value?.id ? personalDetailsFormData.selectdistrict.value.id : 0
+      });
       console.log('districtResult: ', districtResult);
     } else if (name === 'selectdistrict') {
       cityResult = await getCitiesListByDistrictId(
-        personalDetailsFormData.selectcountry.value.id,
-        personalDetailsFormData.selectstate.value.id,
-        value.id
+        personalDetailsFormData?.selectcountry?.value?.id ? personalDetailsFormData.selectcountry.value.id : 0,
+        personalDetailsFormData?.selectstate?.value?.id ? personalDetailsFormData.selectstate.value.id : 0,
+        value?.id ? value?.id : 0
       );
+      nearestBranchData = await getNearestBranchList({
+        country_id: personalDetailsFormData?.selectcountry?.value?.id ? personalDetailsFormData.selectcountry.value.id : 0,
+        state_id: personalDetailsFormData?.selectstate?.value?.id ? personalDetailsFormData.selectstate.value.id : 0,
+        city_id: personalDetailsFormData?.city?.value?.id ? personalDetailsFormData.city.value.id : 0,
+        district_id: value?.id ? value?.id : 0
+      });
+    } else if (name === 'city') {
+      nearestBranchData = await getNearestBranchList({
+        country_id: personalDetailsFormData?.selectcountry?.value?.id ? personalDetailsFormData.selectcountry.value.id : 0,
+        state_id: personalDetailsFormData?.selectstate?.value?.id ? personalDetailsFormData.selectstate.value.id : 0,
+        city_id: value?.id ? value?.id : 0,
+        district_id: personalDetailsFormData?.selectdistrict?.value?.id ? personalDetailsFormData.selectdistrict.value.id : 0,
+        meta: true
+      });
     }
+    
     const newFormData = _.cloneDeep(personalDetailsFormData);
     newFormData[name].value = value;
     newFormData[name].error = false;
@@ -181,14 +213,14 @@ const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }
         newFormData['reasonForDivorce'].mandatory = true;
       } else if (value.id === 4) {
         newFormData['havingChildren'].mandatory = true;
-        newFormData['uploadAcknowledgement'].mandatory = true;
+        newFormData['divorceAcknowledgeCertificate'].mandatory = true;
       } else if (value.id === 5) {
         newFormData['havingChildren'].mandatory = true;
       } else {
         newFormData['havingChildren'].mandatory = false;
         newFormData['deathCertificate'].mandatory = false;
         newFormData['divorceCertificate'].mandatory = false;
-        newFormData['uploadAcknowledgement'].mandatory = false;
+        newFormData['divorceAcknowledgeCertificate'].mandatory = false;
         newFormData['dateOfMarriage'].mandatory = false;
         newFormData['dateOfDeath'].mandatory = false;
         newFormData['reasonForDivorce'].mandatory = false;
@@ -206,14 +238,19 @@ const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }
     } else if (name === 'selectcountry') {
       newFormData['selectstate'].options =
         stateResult?.data?.length > 0 ? stateResult?.data?.map((item: any) => ({ id: item?.id, label: item?.stateName })) : [];
+      newFormData['nearestbranch'].options = nearestBranchData?.data?.length > 0 ? nearestBranchData?.data?.map((item: any) => ({ id: item?.id, label: item?.branchName })) : [];
     } else if (name === 'selectstate') {
       newFormData['selectdistrict'].options =
         districtResult?.data?.length > 0 ? districtResult?.data?.map((item: any) => ({ id: item?.id, label: item?.districtName })) : [];
-    } else if (name === 'selectdistrict') {
+        newFormData['nearestbranch'].options = nearestBranchData?.data?.length > 0 ? nearestBranchData?.data?.map((item: any) => ({ id: item?.id, label: item?.branchName })) : [];
+      } else if (name === 'selectdistrict') {
       newFormData['city'].options =
         cityResult?.data?.length > 0 ? cityResult?.data?.map((item: any) => ({ id: item?.id, label: item?.cityName })) : [];
-    }
-
+        newFormData['nearestbranch'].options = nearestBranchData?.data?.length > 0 ? nearestBranchData?.data?.map((item: any) => ({ id: item?.id, label: item?.branchName })) : [];
+      } else if(name === 'city') {
+        newFormData['nearestbranch'].options = nearestBranchData?.data?.length > 0 ? nearestBranchData?.data?.map((item: any) => ({ id: item?.id, label: item?.branchName })) : []; 
+      }
+      console.log("nearestBranchData: ", nearestBranchData?.data)
     setPersonalDetailsFormData(newFormData);
   };
 
@@ -503,7 +540,9 @@ const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }
   };
 
   useEffect(() => {
-    getDropdownsData();
+    if (!edit) {
+      getDropdownsData();
+    }
   }, []);
 
   console.log('Form Submitted', personalDetailsFormData);
@@ -853,7 +892,7 @@ const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }
                   exit={{ opacity: 0, scale: 0.8, y: -30 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <MainCard title={personalDetailsFormData.uploadAcknowledgement.label}>
+                  <MainCard title={personalDetailsFormData.divorceAcknowledgeCertificate.label}>
                     <Formik
                       initialValues={{ files: null }}
                       onSubmit={() => {
@@ -867,7 +906,7 @@ const PersonalDetails = ({ personalDetailsFormData, setPersonalDetailsFormData }
                         useEffect(() => {
                           setPersonalDetailsFormData({
                             ...personalDetailsFormData,
-                            uploadAcknowledgement: { ...personalDetailsFormData?.uploadAcknowledgement, value: values?.files }
+                            divorceAcknowledgeCertificate: { ...personalDetailsFormData?.divorceAcknowledgeCertificate, value: values?.files }
                           });
                         }, [values]);
                         return (

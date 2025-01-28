@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Button, Grid, Container } from '@mui/material';
@@ -42,7 +42,7 @@ import {
   FormHelperText
 } from '@mui/material';
 import MainCard from 'components/MainCard';
-const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormData }: any) => {
+const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormData, edit }: any) => {
   const [educationList, setEducationList] = useState([]);
   const [universityList, setUniversityList] = useState([]);
   const [employedInList, setEmployedInList] = useState([]);
@@ -149,17 +149,18 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
     let cityResult;
     if (name === 'country') {
       stateResult = await getStatesListByCountryId(value.id);
-    } else if (name === 'state') {
+    } else if (name === 'state' || name === 'indiaWorkingState') {
       districtResult = await getDistrictsListBystateId(educationDetailsFormData.country.value.id, value.id);
       console.log('districtResult: ', districtResult);
     } else if (name === 'selectdistrict') {
       cityResult = await getCitiesListByDistrictId(
         educationDetailsFormData.country.value.id,
-        educationDetailsFormData.selectstate.value.id,
+        educationDetailsFormData.indiaWorkingState.value.id,
         value.id
       );
     } else if (name === 'workingLocation' && value.id === 2) {
-      const getCoutryId: any = countryList.find((iten: any) => iten.label.toLowerCase() === 'india');
+      const getCoutryId: any = educationDetailsFormData.country.options.find((iten: any) => iten.label.toLowerCase() === 'india');
+      console.log('countryList: ', educationDetailsFormData.country.options, 'getCoutryId: ', getCoutryId);
       if (getCoutryId) {
         stateResult = await getStatesListByCountryId(getCoutryId.id ? getCoutryId.id : 0);
       }
@@ -168,7 +169,7 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
     if (name === 'country' || name === 'workingLocation') {
       if (name === 'workingLocation' && value.id === 2) {
         newFormData['country'].options = countryList;
-        newFormData['state'].mandatory = true;
+        newFormData['indiaWorkingState'].mandatory = true;
         newFormData['selectdistrict'].mandatory = true;
         newFormData['city'].mandatory = true;
         newFormData['locationAdd'].mandatory = true;
@@ -176,22 +177,36 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
         newFormData['workingSince'].mandatory = true;
         newFormData['totalExp'].mandatory = true;
         newFormData['passNumber'].mandatory = true;
-        newFormData['collegueName'].mandatory = true;
+        newFormData['indiaColleaguesName'].mandatory = true;
+        newFormData['indiaColleagueMobileNo'].mandatory = true;
 
         newFormData['country'].mandatory = false;
+        newFormData['state'].mandatory = false;
         newFormData['visaType'].mandatory = false;
         newFormData['passportNumber'].mandatory = false;
         newFormData['validFrom'].mandatory = false;
         newFormData['validTill'].mandatory = false;
         newFormData['workingCompanyName'].mandatory = false;
         newFormData['companyAddress'].mandatory = false;
+
         newFormData['country'].error = false;
+        newFormData['state'].error = false;
         newFormData['visaType'].error = false;
         newFormData['passportNumber'].error = false;
         newFormData['validFrom'].error = false;
         newFormData['validTill'].error = false;
         newFormData['workingCompanyName'].error = false;
         newFormData['companyAddress'].error = false;
+        
+        newFormData['country'].value = "";
+        newFormData['state'].value = "";
+        newFormData['visaType'].value = "";
+        newFormData['passportNumber'].value = "";
+        newFormData['validFrom'].value = "";
+        newFormData['validTill'].value = "";
+        newFormData['workingCompanyName'].value = "";
+        newFormData['companyAddress'].value = "";
+
       } else if (name === 'workingLocation' && value.id === 1) {
         newFormData['country'].mandatory = true;
         newFormData['state'].mandatory = true;
@@ -202,6 +217,7 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
         newFormData['workingCompanyName'].mandatory = true;
         newFormData['companyAddress'].mandatory = true;
 
+        newFormData['indiaWorkingState'].mandatory = false;
         newFormData['selectdistrict'].mandatory = false;
         newFormData['city'].mandatory = false;
         newFormData['locationAdd'].mandatory = false;
@@ -209,7 +225,10 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
         newFormData['workingSince'].mandatory = false;
         newFormData['totalExp'].mandatory = false;
         newFormData['passNumber'].mandatory = false;
-        newFormData['collegueName'].mandatory = false;
+        newFormData['indiaColleaguesName'].mandatory = false;
+        newFormData['indiaColleagueMobileNo'].mandatory = false;
+
+        newFormData['indiaWorkingState'].error = false;
         newFormData['selectdistrict'].error = false;
         newFormData['city'].error = false;
         newFormData['locationAdd'].error = false;
@@ -217,11 +236,28 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
         newFormData['workingSince'].error = false;
         newFormData['totalExp'].error = false;
         newFormData['passNumber'].error = false;
-        newFormData['collegueName'].error = false;
+        newFormData['indiaColleaguesName'].error = false;
+        newFormData['indiaColleagueMobileNo'].error = false;
+
+        newFormData['indiaWorkingState'].value = "";
+        newFormData['selectdistrict'].value = "";
+        newFormData['city'].value = "";
+        newFormData['locationAdd'].value = "";
+        newFormData['compName'].value = "";
+        newFormData['workingSince'].value = "";
+        newFormData['totalExp'].value = "";
+        newFormData['passNumber'].value = "";
+        newFormData['indiaColleaguesName'].value = "";
+        newFormData['indiaColleagueMobileNo'].value = "";
       }
-      newFormData['state'].options =
+      if (name === "country") {
+        newFormData['state'].options =
+          stateResult?.data?.length > 0 ? stateResult?.data?.map((item: any) => ({ id: item?.id, label: item?.stateName })) : [];
+      } else if(name === 'workingLocation' && value.id === 2) {
+        newFormData['indiaWorkingState'].options =
         stateResult?.data?.length > 0 ? stateResult?.data?.map((item: any) => ({ id: item?.id, label: item?.stateName })) : [];
-    } else if (name === 'state') {
+      }
+    } else if (name === 'indiaWorkingState') {
       newFormData['selectdistrict'].options =
         districtResult?.data?.length > 0 ? districtResult?.data?.map((item: any) => ({ id: item?.id, label: item?.districtName })) : [];
     } else if (name === 'selectdistrict') {
@@ -348,7 +384,9 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
   };
 
   useEffect(() => {
-    getDropdownsData();
+    if (!edit) {
+      getDropdownsData();
+    }
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -468,7 +506,7 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
             <>
               <Grid item xs={6}>
                 <Animate>
-                  <CommonSelectField inputProps={educationDetailsFormData.state} onSelectChange={handleSelectChange} />
+                  <CommonSelectField inputProps={educationDetailsFormData.indiaWorkingState} onSelectChange={handleSelectChange} />
                 </Animate>
               </Grid>
               <Grid item xs={6}>
@@ -508,7 +546,12 @@ const EducationDetails = ({ educationDetailsFormData, setEducationDetailsFormDat
               </Grid>
               <Grid item xs={6}>
                 <Animate>
-                  <CommonInputField inputProps={educationDetailsFormData.collegueName} onChange={handleChange} />
+                  <CommonInputField inputProps={educationDetailsFormData.indiaColleaguesName} onChange={handleChange} />
+                </Animate>
+              </Grid>
+              <Grid item xs={6}>
+                <Animate>
+                  <CommonInputField inputProps={educationDetailsFormData.indiaColleagueMobileNo} onChange={handleChange} />
                 </Animate>
               </Grid>
             </>

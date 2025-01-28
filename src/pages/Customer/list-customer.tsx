@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import CommonList from 'pages/common-components/common-list';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -14,7 +15,17 @@ import { Button, Typography} from '@mui/material';
 import { useNavigate } from 'react-router';
 import BlockCustomer from './block-customer';
 import CustomerApprove from './customer-approve';
-
+import {
+  createPersonalDetails,
+  createCustomer,
+  createPartnerDetails,
+  createFamilyDetails,
+  createEducationDetails,
+  getCustomerDetails,
+  getNearestBranchList,
+  savePersonalDataUploads,
+  saveCustomerProfile
+} from '../../services/customer-management/CustomerManagement';
 // type Action = {
 //   label: string;
 //   icon: JSX.Element;
@@ -156,6 +167,7 @@ export default function ListCustomer() {
           isMulti: false,
         }
     }
+    const [customerList, setCustomerList] = useState([]);
 
     const [formData, setFormData] = useState<FormData>(formFields);
     const history = useNavigate();
@@ -182,6 +194,19 @@ export default function ListCustomer() {
       }
       
     };
+
+  const getCustomerDetailsList = async () => {
+    const result = await getCustomerDetails({});
+    if(result.status) {
+      setCustomerList(result.data);
+    }
+    console.log("getCustomerDetails: ", result)
+  }
+
+
+  useEffect(()=>{
+    getCustomerDetailsList()
+  }, [])
   let data = [
     {
       email: 'uyewuewyeyw@gmail.com',
@@ -252,12 +277,13 @@ export default function ListCustomer() {
   const actionHandleClick = (action: any,each:any) => {
     console.log(action,each);
     if(action == 'viewProfile'){
+      sessionStorage.setItem("customerId", String(each?.id));
+      console.log("each?.id: ", each?.id);
       const fullPath = `${window.location.origin}/admin/customerManagement/viewProfile`;
       window.open(fullPath, '_blank');
-      // history(`/customerManagement/viewProfile`)
     }
     if(action == 'edit'){
-      sessionStorage.setItem("customer", JSON.stringify(each))
+      sessionStorage.setItem("customer", String(each?.id))
       const fullPath = `${window.location.origin}/admin/customerManagement/editCustomer`;
       window.open(fullPath, '_blank');
     }
@@ -322,7 +348,7 @@ export default function ListCustomer() {
         </MainCard >
         </Grid>
         </Grid>
-      <CommonList data={data} actions={actions} actionHandleClick={actionHandleClick} />
+      <CommonList data={customerList} actions={actions} actionHandleClick={actionHandleClick} />
       <BlockCustomer open = {blockOpen} handleClose = {handleClose}/>
       <CustomerApprove open = {approveOpen} handleClose = {handleClose}/>
     </>

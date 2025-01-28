@@ -52,29 +52,29 @@ const Confirm = ({ personalDetailsFormData, educationDetailsFormData, familyDeta
                   <CardContent>
                     <Grid container spacing={2}>
                       {Object.entries(personalDetailsFormData).map(([key, value]: any, index: number) => {
-                        return value.type === 'file' ? null : (
+                        return value?.type === 'file' ? null : (
                           <Grid item xs={4} key={index}>
-                            <Typography variant="subtitle1">{value.label}:</Typography>
-                            {(value.type == 'text' || value.type == 'email' || value.type == 'number') && (
-                              <Typography variant="body1">{value.value !== '' ? value.value : '--'}</Typography>
+                            <Typography variant="subtitle1">{value?.label}:</Typography>
+                            {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                              <Typography variant="body1">{value?.value !== '' ? value?.value : '--'}</Typography>
                             )}
-                            {value.type === 'select' && !value.isMulti && (
-                              <Typography variant="body1">{value.value.label ? value.value.label : '--'}</Typography>
+                            {value?.type === 'select' && !value?.isMulti && (
+                              <Typography variant="body1">{value?.value?.label ? value?.value?.label : '--'}</Typography>
                             )}
-                            {value.type === 'select' && value.isMulti && (
+                            {value?.type === 'select' && value?.isMulti && (
                               <Typography variant="body1">
-                                {value.value.length > 0
-                                  ? value.value.reduce((acc: any, item: any, index: number) => {
-                                      return acc + item.label + (index === value.value.length - 1 ? '' : ', ');
+                                {value?.value?.length > 0
+                                  ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                      return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
                                     }, '')
                                   : '--'}
                               </Typography>
                             )}
-                            {value.type === 'date' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('DD/MM/YYYY') : '--'}</Typography>
+                            {value?.type === 'date' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
                             )}
-                            {value.type === 'time' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('HH:mm') : '--'}</Typography>
+                            {value?.type === 'time' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>
                             )}
                           </Grid>
                         );
@@ -94,34 +94,34 @@ const Confirm = ({ personalDetailsFormData, educationDetailsFormData, familyDeta
                   <CardHeader title="Education Details" />
                   <CardContent>
                     <Grid container spacing={2}>
-                    {Object.entries(educationDetailsFormData).map(([key, value]: any, index: number) => {
-                        return value.type === 'file' ? null : (
+                    {/* {Object.entries(educationDetailsFormData).map(([key, value]: any, index: number) => {
+                        return value?.type === 'file' ? null : (
                           <Grid item xs={4} key={index}>
-                            <Typography variant="subtitle1">{value.label}:</Typography>
-                            {(value.type == 'text' || value.type == 'email' || value.type == 'number') && (
-                              <Typography variant="body1">{value.value !== '' ? value.value : '--'}</Typography>
+                            <Typography variant="subtitle1">{value?.label}:</Typography>
+                            {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                              <Typography variant="body1">{value?.value !== '' ? value?.value : '--'}</Typography>
                             )}
-                            {value.type === 'select' && !value.isMulti && (
-                              <Typography variant="body1">{value.value.label ? value.value.label : '--'}</Typography>
+                            {value?.type === 'select' && !value?.isMulti && (
+                              <Typography variant="body1">{value?.value?.label ? value?.value?.label : '--'}</Typography>
                             )}
-                            {value.type === 'select' && value.isMulti && (
+                            {value?.type === 'select' && value?.isMulti && (
                               <Typography variant="body1">
-                                {value.value.length > 0
-                                  ? value.value.reduce((acc: any, item: any, index: number) => {
-                                      return acc + item.label + (index === value.value.length - 1 ? '' : ', ');
+                                {value?.value?.length > 0
+                                  ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                      return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
                                     }, '')
                                   : '--'}
                               </Typography>
                             )}
-                            {value.type === 'date' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('DD/MM/YYYY') : '--'}</Typography>
+                            {value?.type === 'date' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
                             )}
-                            {value.type === 'time' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('HH:mm') : '--'}</Typography>
+                            {value?.type === 'time' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>
                             )}
                           </Grid>
                         );
-                      })}
+                      })} */}
                     </Grid>
                   </CardContent>
                 </Card>
@@ -138,29 +138,29 @@ const Confirm = ({ personalDetailsFormData, educationDetailsFormData, familyDeta
                   <CardContent>
                     <Grid container spacing={2}>
                     {Object.entries(familyDetailsFormData).map(([key, value]: any, index: number) => {
-                        return value.type === 'file' ? null : (
+                        return value?.type === 'file' ? null : (
                           <Grid item xs={4} key={index}>
-                            <Typography variant="subtitle1">{value.label}:</Typography>
-                            {(value.type == 'text' || value.type == 'email' || value.type == 'number') && (
-                              <Typography variant="body1">{value.value !== '' ? value.value : '--'}</Typography>
+                            <Typography variant="subtitle1">{value?.label}:</Typography>
+                            {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                              <Typography variant="body1">{value?.value !== '' ? value?.value : '--'}</Typography>
                             )}
-                            {value.type === 'select' && !value.isMulti && (
-                              <Typography variant="body1">{value.value.label ? value.value.label : '--'}</Typography>
+                            {value?.type === 'select' && !value?.isMulti && (
+                              <Typography variant="body1">{value?.value?.label ? value?.value?.label : '--'}</Typography>
                             )}
-                            {value.type === 'select' && value.isMulti && (
+                            {value?.type === 'select' && value?.isMulti && (
                               <Typography variant="body1">
-                                {value.value.length > 0
-                                  ? value.value.reduce((acc: any, item: any, index: number) => {
-                                      return acc + item.label + (index === value.value.length - 1 ? '' : ', ');
+                                {value?.value?.length > 0
+                                  ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                      return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
                                     }, '')
                                   : '--'}
                               </Typography>
                             )}
-                            {value.type === 'date' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('DD/MM/YYYY') : '--'}</Typography>
+                            {value?.type === 'date' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
                             )}
-                            {value.type === 'time' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('HH:mm') : '--'}</Typography>
+                            {value?.type === 'time' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>
                             )}
                           </Grid>
                         );
@@ -181,29 +181,29 @@ const Confirm = ({ personalDetailsFormData, educationDetailsFormData, familyDeta
                   <CardContent>
                     <Grid container spacing={2}>
                     {Object.entries(partnerDetailsFormData).map(([key, value]: any, index: number) => {
-                        return value.type === 'file' ? null : (
+                        return value?.type === 'file' ? null : (
                           <Grid item xs={4} key={index}>
-                            <Typography variant="subtitle1">{value.label}:</Typography>
-                            {(value.type == 'text' || value.type == 'email' || value.type == 'number') && (
-                              <Typography variant="body1">{value.value !== '' ? value.value : '--'}</Typography>
+                            <Typography variant="subtitle1">{value?.label}:</Typography>
+                            {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                              <Typography variant="body1">{value?.value !== '' ? value?.value : '--'}</Typography>
                             )}
-                            {value.type === 'select' && !value.isMulti && (
-                              <Typography variant="body1">{value.value.label ? value.value.label : '--'}</Typography>
+                            {value?.type === 'select' && !value?.isMulti && (
+                              <Typography variant="body1">{value?.value?.label ? value?.value?.label : '--'}</Typography>
                             )}
-                            {value.type === 'select' && value.isMulti && (
+                            {value?.type === 'select' && value?.isMulti && (
                               <Typography variant="body1">
-                                {value.value.length > 0
-                                  ? value.value.reduce((acc: any, item: any, index: number) => {
-                                      return acc + item.label + (index === value.value.length - 1 ? '' : ', ');
+                                {value?.value?.length > 0
+                                  ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                      return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
                                     }, '')
                                   : '--'}
                               </Typography>
                             )}
-                            {value.type === 'date' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('DD/MM/YYYY') : '--'}</Typography>
+                            {value?.type === 'date' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
                             )}
-                            {value.type === 'time' && (
-                              <Typography variant="body1">{value.value ? moment(value.value).format('HH:mm') : '--'}</Typography>
+                            {value?.type === 'time' && (
+                              <Typography variant="body1">{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>
                             )}
                           </Grid>
                         );

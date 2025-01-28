@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Button, Grid, Container } from '@mui/material';
@@ -38,7 +38,7 @@ import {
   FormHelperText
 } from '@mui/material';
 import MainCard from 'components/MainCard';
-const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: any) => {
+const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData, edit }: any) => {
   const [familyStatus, setFamilyStatus] = useState<any>([]);
   const [education, setEducation] = useState<any>([]);
   const [profession, setProfession] = useState<any>([]);
@@ -233,7 +233,9 @@ const PartnerDetails = ({ partnerDetailsFormData, setPartnerDetailsFormData }: a
   };
 
   useEffect(() => {
-    getDropdownsData();
+    if(!edit) {
+      getDropdownsData();
+    }
   }, []);
 
   console.log('Form Submitted', partnerDetailsFormData?.workingLocation);

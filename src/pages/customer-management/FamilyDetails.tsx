@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import CommonInputField from 'pages/common-components/common-input';
 import CommonSelectField from 'pages/common-components/common-select';
 import { Button, Grid, Container } from '@mui/material';
@@ -40,11 +40,12 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Box
+  Box,
+  Checkbox
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import { options } from '@fullcalendar/core/preact';
-const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any) => {
+const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData, edit }: any) => {
   const [familyStatus, setFamilyStatus] = useState([]);
   const [familyType, setFamilyType] = useState([]);
   const [relation, setRelation] = useState([]);
@@ -53,6 +54,7 @@ const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any)
   const [healthCondition, setHealthCondition] = useState([]);
   const [profession, setProfession] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSameAddress, setIsSameAddress] = useState(false);
 
   // Define the structure of form data for type safety
   interface FormField {
@@ -324,8 +326,17 @@ const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any)
     setIsLoading(false);
   };
 
+  const handleCheckboxChange = (event: any) => {
+    if(event.target.checked) {
+      setFamilyDetailsFormData({...familyDetailsFormData, permanentAddress: {...familyDetailsFormData.permanentAddress, value: familyDetailsFormData.presentAddress.value}});
+    }
+    setIsSameAddress(event.target.checked);
+  }
+
   useEffect(() => {
-    getDropdownsData();
+    if (!edit) {
+      getDropdownsData();
+    }
   }, []);
 
   console.log('Form Submitted', familyDetailsFormData);
@@ -416,10 +427,7 @@ const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any)
                         </Grid>
                         <Grid item xs={6}>
                           <Animate>
-                            <CommonSelectField
-                              inputProps={familyDetailsFormData.fprofession}
-                              onSelectChange={handleSelectChange}
-                            />
+                            <CommonSelectField inputProps={familyDetailsFormData.fprofession} onSelectChange={handleSelectChange} />
                           </Animate>
                         </Grid>
                         <Grid item xs={6}>
@@ -493,10 +501,7 @@ const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any)
                         </Grid>
                         <Grid item xs={6}>
                           <Animate>
-                            <CommonSelectField
-                              inputProps={familyDetailsFormData.mprofession}
-                              onSelectChange={handleSelectChange}
-                            />
+                            <CommonSelectField inputProps={familyDetailsFormData.mprofession} onSelectChange={handleSelectChange} />
                           </Animate>
                         </Grid>
                         <Grid item xs={6}>
@@ -513,6 +518,16 @@ const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any)
                     )}
                     <Grid item xs={6}>
                       <CommonInputField inputProps={familyDetailsFormData.presentAddress} onChange={handleChange} />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={isSameAddress} 
+                            onChange={handleCheckboxChange}
+                            color="primary"
+                          />
+                        }
+                        label="Present Address is the same as Permanent Address"
+                      />
                     </Grid>
                     <Grid item xs={6}>
                       <CommonInputField inputProps={familyDetailsFormData.permanentAddress} onChange={handleChange} />
@@ -540,7 +555,13 @@ const FamilyDetails = ({ familyDetailsFormData, setFamilyDetailsFormData }: any)
                     <Grid item xs={6}>
                       <CommonInputField inputProps={familyDetailsFormData.refName} onChange={handleChange} />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={2}>
+                      <CommonSelectField
+                        inputProps={familyDetailsFormData.referenceMobileCountryCode}
+                        onSelectChange={handleSelectChange}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
                       <CommonInputField inputProps={familyDetailsFormData.refMobile} onChange={handleChange} />
                     </Grid>
                     <Grid item xs={6}>

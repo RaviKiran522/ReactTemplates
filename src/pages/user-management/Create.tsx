@@ -290,7 +290,7 @@ const Create = ({
     setIsLoading(true);
                      
     const result = await createBranchStaff(object);
-    let isCertificatesAvailable = filteredObject
+    let isCertificatesAvailable = false
     console.log('certificatesUploadFormData....',certificatesUploadFormData)
     if (result.status) {
       if(formData.profile.value != ""){

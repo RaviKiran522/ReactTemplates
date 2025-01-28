@@ -22,12 +22,15 @@ import PermissionsTable from 'pages/common-components/common-permissions-table';
 import CreateBranch from 'pages/user-management/branches/CreateBranch';
 import UserHistory from 'pages/user-management/UserHistory';
 import ViewProfile from './view-profile';
+import { getCustomerDetails } from 'services/customer-management/CustomerManagement';
 
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
 export default function CustomerViewProfile() {
   const [value, setValue] = useState(0);
+  const [customerData, setCustomerData] = useState({});
   var user = sessionStorage.getItem('branchUser');
+  console.log("customerId: ", sessionStorage.getItem('customerId'))
   console.log('usr: ', user);
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -56,6 +59,22 @@ export default function CustomerViewProfile() {
     console.log('Updated roles:', updatedRoles);
     setRoles(updatedRoles);
   };
+
+  const getCustomerDataDetails = async () => {
+    const response = await getCustomerDetails({ id: 2 });
+    if(response.status) {
+      setCustomerData(response.data[0]);
+    }
+    else {
+      setCustomerData({});
+    }
+  }
+
+  useEffect(()=>{
+    getCustomerDataDetails()
+  }, [])
+
+  console.log("customerData: ", customerData);
 
   return (
     <>

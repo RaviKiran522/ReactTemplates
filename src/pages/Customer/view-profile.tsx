@@ -1,4 +1,6 @@
 // material-ui
+import { useEffect } from 'react';
+import moment from 'moment';
 import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Chip from '@mui/material/Chip';
@@ -9,12 +11,11 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 // import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 // import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-
 
 // third-party
 
@@ -23,6 +24,29 @@ import MainCard from 'components/MainCard';
 import Avatar from 'components/@extended/Avatar';
 
 import defaultImages from 'assets/images/users/default.png';
+import {
+  personalDetails,
+  educationDetails,
+  familyDetails,
+  partnerDetails,
+  setCustomerDetailsToIndividualFormData,
+  personalDetailsDropdowns,
+  educationDetailsDropdowns,
+  familyDetailsDropdowns,
+  partnerDetailsDropdowns
+} from '../customer-management/CustomerCommonDetails';
+
+import {
+  createPersonalDetails,
+  createCustomer,
+  createPartnerDetails,
+  createFamilyDetails,
+  createEducationDetails,
+  getCustomerDetails,
+  getNearestBranchList,
+  savePersonalDataUploads,
+  saveCustomerProfile
+} from '../../services/customer-management/CustomerManagement';
 
 // assets
 import { CallCalling, Gps, Link, Link1, Sms, Profile, Setting, Mobile, Verify } from 'iconsax-react';
@@ -31,7 +55,22 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import React, { useState } from 'react';
 import CommonTextAreaField from 'pages/common-components/common-textarea';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Card,
+  LinearProgress,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField
+} from '@mui/material';
 import _ from 'lodash';
 import { useNavigate } from 'react-router';
 import { C } from '@fullcalendar/core/internal-common';
@@ -63,18 +102,18 @@ function a11yProps(index: number) {
 let detailsObject = {
   personalDetails: {
     gender: 'Male',
-    religion: "Hindu",
-    cast: "Brahmin",
+    religion: 'Hindu',
+    cast: 'Brahmin',
     newCast: null, // Empty field
     subCast: null, // Empty field
-    dateOfBirth: "15-06-1994",
+    dateOfBirth: '15-06-1994',
     timeOfBirth: null, // Empty field
     aadharNumber: null, // Empty field
     birthPlace: null, // Empty field
     address: null, // Empty field
-    state: "Andhra Pradesh",
-    district: "Visakhapatnam",
-    city: "Visakhapatnam (Urban)",
+    state: 'Andhra Pradesh',
+    district: 'Visakhapatnam',
+    city: 'Visakhapatnam (Urban)',
     star: null, // Empty field
     raasi: null, // Empty field
     padam: null, // Empty field
@@ -92,26 +131,26 @@ let detailsObject = {
   },
   employmentDetails: {
     education: "Bachelor's Degree in Computer Science",
-    university: "Andhra University",
-    employedIn: "Private Sector",
-    designation: "Software Developer",
-    profession: "IT Professional",
+    university: 'Andhra University',
+    employedIn: 'Private Sector',
+    designation: 'Software Developer',
+    profession: 'IT Professional',
     newEmployedIn: null, // Placeholder for "New Employed In"
     newProfession: null, // Placeholder for "New Profession"
     newDesignation: null, // Placeholder for "New Designation"
-    workingLocation: "Hyderabad",
-    workingCountry: "India",
-    workingState: "Telangana",
-    workingCity: "Hyderabad",
-    companyAddress: "Madhapur, Hyderabad, Telangana",
-    companyName: "Tech Solutions Pvt. Ltd.",
-    workingSince: "2018",
-    totalExperience: "5 Years",
-    passportNumber: "A1234567",
-    collegeDetails: "Andhra Engineering College",
-    propertyDetails: "Owned a 2BHK apartment in Visakhapatnam",
-    annualIncome: "1200000", // Annual income in INR
-    monthlyIncome: "100000"  // Monthly income in INR
+    workingLocation: 'Hyderabad',
+    workingCountry: 'India',
+    workingState: 'Telangana',
+    workingCity: 'Hyderabad',
+    companyAddress: 'Madhapur, Hyderabad, Telangana',
+    companyName: 'Tech Solutions Pvt. Ltd.',
+    workingSince: '2018',
+    totalExperience: '5 Years',
+    passportNumber: 'A1234567',
+    collegeDetails: 'Andhra Engineering College',
+    propertyDetails: 'Owned a 2BHK apartment in Visakhapatnam',
+    annualIncome: '1200000', // Annual income in INR
+    monthlyIncome: '100000' // Monthly income in INR
   },
   familyDeatails: {
     familytype: 'Joint Family',
@@ -132,8 +171,7 @@ let detailsObject = {
     refname: 'Sathyanarayana',
     refnumber: '8844999390',
     refrelation: 'Relative',
-    refaddress: 'Andhra,West Godavari, Palakol',
-
+    refaddress: 'Andhra,West Godavari, Palakol'
   },
   fatherDetails: {
     fathername: 'anjaneyulu',
@@ -165,13 +203,65 @@ let detailsObject = {
     partenerEducation: 'B.tech',
     partenerProfession: 'Softawrw Field',
     passport: 'NO'
-
-  },
+  }
 };
 
 export default function ViewProfile() {
   const matchDownMD = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const [value, setValue] = useState(0);
+  const customerId = sessionStorage.getItem('customerId');
+  const [personalDetailsFormData, setPersonalDetailsFormData] = useState<any>(personalDetails);
+  const [educationDetailsFormData, setEducationDetailsFormData] = useState<any>(educationDetails);
+  const [familyDetailsFormData, setFamilyDetailsFormData] = useState<any>(familyDetails);
+  const [partnerDetailsFormData, setPartnerDetailsFormData] = useState<any>(partnerDetails);
+  const [customerDetails, setCustomerDetails] = useState<any>({});
+  const [allDropdownsLoaded, setAllDropdownsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getAllDropdownsData = async () => {
+    setIsLoading(true);
+    await personalDetailsDropdowns(setPersonalDetailsFormData);
+    await educationDetailsDropdowns(setEducationDetailsFormData);
+    await familyDetailsDropdowns(setFamilyDetailsFormData);
+    await partnerDetailsDropdowns(setPartnerDetailsFormData);
+    setAllDropdownsLoaded(true);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getAllDropdownsData();
+  }, []);
+
+  useEffect(() => {
+    setCustomerDetailsToIndividualFormData(
+      personalDetailsFormData,
+      setPersonalDetailsFormData,
+      educationDetailsFormData,
+      setEducationDetailsFormData,
+      familyDetailsFormData,
+      setFamilyDetailsFormData,
+      partnerDetailsFormData,
+      setPartnerDetailsFormData,
+      customerDetails,
+      true
+    );
+  }, [customerDetails]);
+
+  useEffect(() => {
+    if (allDropdownsLoaded) {
+      setIsLoading(true);
+      getCustomerDetailsList();
+      setIsLoading(false);
+    }
+  }, [allDropdownsLoaded]);
+
+  const getCustomerDetailsList = async () => {
+    const result = await getCustomerDetails({ id: customerId });
+    console.log('result: ', result);
+    if (result.data.length > 0) {
+      setCustomerDetails(result.data[0]);
+    }
+  };
 
   // interface FormField {
   //   [x: string]: any;
@@ -220,21 +310,19 @@ export default function ViewProfile() {
   // type FormDataKeys = keyof typeof formData;
 
   const [supportFormData, setSupportFormData] = useState({
-    support: "",
-    status: "", // Added status field
+    support: '',
+    status: '' // Added status field
   });
 
   // State for storing comments in the table
-  const [supportTable, setSupportTable] = useState<
-    { id: number; date: string; support: string; status: string }[]
-  >([]);
+  const [supportTable, setSupportTable] = useState<{ id: number; date: string; support: string; status: string }[]>([]);
 
   // Handle form field changes
   const handleCommentChanged = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setSupportFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -242,7 +330,7 @@ export default function ViewProfile() {
     e.preventDefault();
 
     if (!supportFormData.support.trim()) {
-      alert("Please fill out all fields before submitting.");
+      alert('Please fill out all fields before submitting.');
       return;
     }
     // if (!supportFormData.support.trim() || !supportFormData.status.trim()) {
@@ -255,24 +343,22 @@ export default function ViewProfile() {
       id: supportTable.length + 1, // Incremental ID
       date: new Date().toLocaleDateString(), // Current date
       support: supportFormData.support,
-      status: supportFormData.status, // Include status
+      status: supportFormData.status // Include status
     };
 
     setSupportTable((prevState) => [...prevState, newSupport]);
 
     // Perform form submission logic
-    console.log("Form Submitted:", supportFormData);
+    console.log('Form Submitted:', supportFormData);
 
     // Clear the form (optional)
     setSupportFormData({
-      support: "",
-      status: "",
+      support: '',
+      status: ''
     });
   };
 
   const verifiedPercentage = 75;
-
-
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -281,32 +367,24 @@ export default function ViewProfile() {
     const { children, value, index, ...other } = props;
 
     return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`tabpanel-${index}`}
-        aria-labelledby={`tab-${index}`}
-        {...other}
-      >
+      <div role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...other}>
         {value === index && <div>{children}</div>}
       </div>
     );
   }
 
   const [commentFormData, setCommentFormData] = useState({
-    comment: "",
+    comment: ''
   });
   // State for storing comments in the table
-  const [commentsTable, setCommentsTable] = useState<
-    { id: number; date: string; comment: string; }[]
-  >([]);
+  const [commentsTable, setCommentsTable] = useState<{ id: number; date: string; comment: string }[]>([]);
 
   // Handle form field changes
-  const handleCommentChanges = (e: { target: { name: any; value: any; }; }) => {
+  const handleCommentChanges = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setCommentFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -314,7 +392,7 @@ export default function ViewProfile() {
     e.preventDefault();
 
     if (!commentFormData.comment.trim()) {
-      alert("Please add a comment before submitting.");
+      alert('Please add a comment before submitting.');
       return;
     }
 
@@ -322,66 +400,62 @@ export default function ViewProfile() {
     const newComment = {
       id: commentsTable.length + 1, // Incremental ID
       date: new Date().toLocaleDateString(), // Current date
-      comment: commentFormData.comment,
+      comment: commentFormData.comment
     };
 
     setCommentsTable((prevState) => [...prevState, newComment]);
 
-
-
     // Perform form submission logic
-    console.log("Form Submitted:", commentFormData);
+    console.log('Form Submitted:', commentFormData);
 
     // Clear the form (optional)
     setCommentFormData({
-      comment: "",
+      comment: ''
     });
   };
 
-
   const handleListCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/listCustomers';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
   const handleConvertedCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/convertedCustomers';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
   const handleExpiredCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/planExpiredCustomers';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
   const handleBlockedRequesCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/blockedRequests';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
   const handleFreeCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/freeCustomers';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
   const handlePaidCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/paidCustomers';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
   const handleBlockedCustomersNavigation = (row: any) => {
-    console.log('row.........', row)
+    console.log('row.........', row);
     const newUrl = '/admin/customerManagement/blockedCustomers';
     const fullPath = `${window.location.origin}${newUrl}`;
     window.open(fullPath, '_blank');
   };
-
 
   // const navigate = useNavigate();
   // const handleListCustomersNavigation = () => {
@@ -405,8 +479,6 @@ export default function ViewProfile() {
   // const handleBlockedCustomersNavigation = () => {
   //   navigate('/customerManagement/blockedCustomers');// Use the route path defined in your router
   // };
-
-
 
   return (
     <Grid container spacing={2}>
@@ -440,40 +512,39 @@ export default function ViewProfile() {
                 <Typography variant="subtitle1" color="primary">
                   {verifiedPercentage}% Verified
                 </Typography>
-                <LinearProgress
-                  variant="determinate"
-                  value={verifiedPercentage}
-                  sx={{ width: "80%" }}
-                />
+                <LinearProgress variant="determinate" value={verifiedPercentage} sx={{ width: '80%' }} />
               </Stack>
             </Grid>
 
             <Grid item xs={12}>
-              <Stack marginBottom={2} marginTop={2} >
+              <Stack marginBottom={2} marginTop={2}>
                 <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
-                  <ListItem sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <ListItem sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <ListItemIcon>
                       <Sms size={20} />
                     </ListItemIcon>
-                    <a href="/verify-email" style={{ textDecoration: "none", fontWeight: "normal", color: "#4f4b4b", marginRight: "25px" }} >
+                    <a href="/verify-email" style={{ textDecoration: 'none', fontWeight: 'normal', color: '#4f4b4b', marginRight: '25px' }}>
                       Email Verified
                     </a>
                   </ListItem>
                   {/* Mobile Verification */}
-                  <ListItem sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <ListItem sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <ListItemIcon>
                       <Mobile size={20} />
                     </ListItemIcon>
-                    <a href="/verify-mobile" style={{ textDecoration: "none", fontWeight: "normal", color: "#4f4b4b", marginRight: "25px" }}>
+                    <a
+                      href="/verify-mobile"
+                      style={{ textDecoration: 'none', fontWeight: 'normal', color: '#4f4b4b', marginRight: '25px' }}
+                    >
                       Mobile Verified
                     </a>
                   </ListItem>
                   {/* ID Verification */}
-                  <ListItem sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <ListItem sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <ListItemIcon>
                       <Verify size={20} />
                     </ListItemIcon>
-                    <a href="/verify-id" style={{ textDecoration: "none", fontWeight: "normal", color: "#4f4b4b", marginRight: "25px" }}>
+                    <a href="/verify-id" style={{ textDecoration: 'none', fontWeight: 'normal', color: '#4f4b4b', marginRight: '25px' }}>
                       ID Verified
                     </a>
                   </ListItem>
@@ -485,91 +556,79 @@ export default function ViewProfile() {
               <Divider />
             </Grid>
             <Grid item xs={12}>
-
               <List component="nav" aria-label="main mailbox folders" sx={{ py: 0, '& .MuiListItem-root': { p: 0, py: 1 } }}>
                 <Accordion>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1-content"
                     id="panel1-header"
-                    sx={{ flexDirection: "row-reverse" }} // Moves the icon and text to the right
+                    sx={{ flexDirection: 'row-reverse' }} // Moves the icon and text to the right
                   >
                     Total Customers
                   </AccordionSummary>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handleListCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
                     >
                       List Customers
                     </Typography>
-                    <Typography>
-                      908
-                    </Typography>
+                    <Typography>908</Typography>
                   </AccordionDetails>
 
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handleFreeCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
                     >
                       Free Customers
                     </Typography>
-                    <Typography>
-                      908
-                    </Typography>
+                    <Typography>908</Typography>
                   </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handleConvertedCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
                     >
                       Converted Customers
                     </Typography>
-                    <Typography>
-                      908
-                    </Typography>
+                    <Typography>908</Typography>
                   </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handlePaidCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
-                    >Paid Customers
+                    >
+                      Paid Customers
                     </Typography>
-                    <Typography>
-                      724
-                    </Typography>
+                    <Typography>724</Typography>
                   </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handleExpiredCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
                     >
                       Plan Expired Customers
                     </Typography>
-                    <Typography>
-                      908
-                    </Typography>
+                    <Typography>908</Typography>
                   </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handleBlockedCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
-                    >Blocked Cusromers
+                    >
+                      Blocked Cusromers
                     </Typography>
-                    <Typography>
-                      673
-                    </Typography>
+                    <Typography>673</Typography>
                   </AccordionDetails>
-                  <AccordionDetails sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <AccordionDetails sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography
                       onClick={handleBlockedRequesCustomersNavigation}
                       style={{ cursor: 'pointer', textDecoration: 'none', color: 'black' }}
-                    >Blocked Requests
+                    >
+                      Blocked Requests
                     </Typography>
-                    <Typography>
-                      673
-                    </Typography>
+                    <Typography>673</Typography>
                   </AccordionDetails>
                 </Accordion>
               </List>
@@ -585,7 +644,6 @@ export default function ViewProfile() {
                   </ListItemIcon>
 
                   <Typography align="left">Profile</Typography>
-
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>
@@ -593,7 +651,6 @@ export default function ViewProfile() {
                   </ListItemIcon>
 
                   <Typography align="left">Profile Settings</Typography>
-
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>
@@ -601,7 +658,6 @@ export default function ViewProfile() {
                   </ListItemIcon>
 
                   <Typography align="left">Shortlisted Profiles</Typography>
-
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>
@@ -657,7 +713,6 @@ export default function ViewProfile() {
                   </ListItemIcon>
                   <Typography align="left">Mobile Requests Received</Typography>
                 </ListItem>
-
               </List>
             </Grid>
             <Grid item xs={12} marginBottom={2} marginTop={2}>
@@ -671,7 +726,6 @@ export default function ViewProfile() {
                   </ListItemIcon>
 
                   <Typography align="left">anshan.dh81@gmail.com</Typography>
-
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>
@@ -679,54 +733,41 @@ export default function ViewProfile() {
                   </ListItemIcon>
 
                   <Typography align="left">8654 239 581</Typography>
-
                 </ListItem>
                 <ListItem>
-
-
                   <Typography align="left">Branch : Hyderabad</Typography>
-
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Date of Birth : 09-12-1982</Typography>
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Inbond Date : 09-12-1982</Typography>
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Registered Date : 09-12-1982</Typography>
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Created By : 09-12-1982</Typography>
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Blocked By : 09-12-1982</Typography>
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Invoice date : 09-12-1982</Typography>
                 </ListItem>
                 <ListItem>
-
                   <Typography align="left">Approved date : 09-12-1982</Typography>
                 </ListItem>
               </List>
             </Grid>
-
           </Grid>
-
         </MainCard>
-      </Grid >
+      </Grid>
 
       {/* Tabs Section */}
-      < Grid item xs={12} sm={7} md={8} xl={9} >
+      <Grid item xs={12} sm={7} md={8} xl={9}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Personel Info" {...a11yProps(0)} />
+          <Tab label="Personal Info" {...a11yProps(0)} />
 
           <Tab label="Education & Work" {...a11yProps(1)} />
 
@@ -742,9 +783,52 @@ export default function ViewProfile() {
         </Tabs>
         <TabPanel value={value} index={0}>
           <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+            <MainCard>
               <List sx={{ py: 0 }}>
-                <ListItem divider={!matchDownMD}>
+                <Grid container>
+                  {Object.entries(personalDetailsFormData).map(([key, value]: any, index: number) => {
+                    return value?.type === 'file' ? null : (
+                      <>
+                        <Grid item xs={6} key={index}>
+                          <Typography color="secondary">{value?.label} </Typography>
+                          {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                            <Typography>{value?.value !== '' ? value?.value : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && !value?.isMulti && (
+                            <Typography>{value?.value?.label ? value?.value?.label : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && value?.isMulti && (
+                            <Typography>
+                              {value?.value?.length > 0
+                                ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                    return acc + item?.label + (index === value?.value?.length - 1 ? '' : ', ');
+                                  }, '')
+                                : '--'}
+                            </Typography>
+                          )}
+                          {value?.type === 'date' && (
+                            <Typography>{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
+                          )}
+                          {value?.type === 'time' && <Typography>{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>}
+                        </Grid>
+                        {(index + 1) % 2 == 0 && (
+                          <Grid item xs={12} key={index}>
+                            <hr
+                              style={{
+                                borderColor: 'rgba(0, 0, 0, 0.1)',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                margin: '20px 0',
+                                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
+                              }}
+                            />{' '}
+                          </Grid>
+                        )}
+                      </>
+                    );
+                  })}
+                </Grid>
+                {/* <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}>
@@ -752,127 +836,15 @@ export default function ViewProfile() {
                         <Typography>{detailsObject.personalDetails.gender}</Typography>
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Religion</Typography>
-                        <Typography>{detailsObject.personalDetails.religion}</Typography>
-                      </Stack>
-                    </Grid>
                   </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Cast</Typography>
-                        <Typography>{detailsObject.personalDetails.cast}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">New Cast</Typography>
-                        <Typography>{detailsObject.personalDetails.newCast}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Sub-Cast</Typography>
-                        <Typography>{detailsObject.personalDetails.subCast}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Date of Birth</Typography>
-                        <Typography>{detailsObject.personalDetails.dateOfBirth}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Time of Birth</Typography>
-                        <Typography>{detailsObject.personalDetails.timeOfBirth}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Aadhar Number</Typography>
-                        <Typography>{detailsObject.personalDetails.aadharNumber}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Birth Place</Typography>
-                        <Typography>{detailsObject.personalDetails.birthPlace}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Date of Address</Typography>
-                        <Typography>{detailsObject.personalDetails.address}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">State</Typography>
-                        <Typography>{detailsObject.personalDetails.state}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">District</Typography>
-                        <Typography>{detailsObject.personalDetails.district}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">City</Typography>
-                        <Typography>{detailsObject.personalDetails.city}</Typography>
-                      </Stack>
-                    </Grid>
-                    {/* <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Temporary Address</Typography>
-                        <Typography>{detailsObject.personalDetails.tempAddress}</Typography>
-                      </Stack>
-                    </Grid> */}
-                  </Grid>
-                </ListItem>
-
-
-
+                </ListItem> */}
               </List>
             </MainCard>
-            <MainCard style={{ marginTop: '5px' }}>
+            {/* <MainCard style={{ marginTop: '5px' }}>
               <List sx={{ py: 0 }}>
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Star</Typography>
                         <Typography>{detailsObject.personalDetails.star}</Typography>
@@ -889,7 +861,6 @@ export default function ViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Padam</Typography>
                         <Typography>{detailsObject.personalDetails.padam}</Typography>
@@ -906,7 +877,6 @@ export default function ViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Khuja Dosham</Typography>
                         <Typography>{detailsObject.personalDetails.khujaDosham}</Typography>
@@ -923,7 +893,6 @@ export default function ViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Blood Group</Typography>
                         <Typography>{detailsObject.personalDetails.bloodGroup}</Typography>
@@ -940,7 +909,6 @@ export default function ViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Health Condition</Typography>
                         <Typography>{detailsObject.personalDetails.healthCondition}</Typography>
@@ -957,7 +925,6 @@ export default function ViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Smoke</Typography>
                         <Typography>{detailsObject.personalDetails.smoke}</Typography>
@@ -974,7 +941,6 @@ export default function ViewProfile() {
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-
                       <Stack spacing={0.5}>
                         <Typography color="secondary">Food</Typography>
                         <Typography>{detailsObject.personalDetails.food}</Typography>
@@ -989,628 +955,285 @@ export default function ViewProfile() {
                   </Grid>
                 </ListItem>
               </List>
-            </MainCard>
+            </MainCard> */}
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+            <MainCard>
               <List sx={{ py: 0 }}>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Education</Typography>
-                        <Typography>{detailsObject.employmentDetails.education}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">University</Typography>
-                        <Typography>{detailsObject.employmentDetails.university}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Emplyoed In</Typography>
-                        <Typography>{detailsObject.employmentDetails.employedIn}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Designaion</Typography>
-                        <Typography>{detailsObject.employmentDetails.designation}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Profession</Typography>
-                        <Typography>{detailsObject.employmentDetails.profession}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">New Emplyoed In</Typography>
-                        <Typography>{detailsObject.employmentDetails.newEmployedIn}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">New Profession</Typography>
-                        <Typography>{detailsObject.employmentDetails.newProfession}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">New Designaion</Typography>
-                        <Typography>{detailsObject.employmentDetails.newDesignation}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Working location</Typography>
-                        <Typography>{detailsObject.employmentDetails.workingLocation}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Working Country</Typography>
-                        <Typography>{detailsObject.employmentDetails.workingCountry}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Working State</Typography>
-                        <Typography>{detailsObject.employmentDetails.workingState}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Working City</Typography>
-                        <Typography>{detailsObject.employmentDetails.workingCity}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Company Address</Typography>
-                        <Typography>{detailsObject.employmentDetails.companyAddress}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Company Name</Typography>
-                        <Typography>{detailsObject.employmentDetails.companyName}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Working Since</Typography>
-                        <Typography>{detailsObject.employmentDetails.workingSince}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Total Experience</Typography>
-                        <Typography>{detailsObject.employmentDetails.totalExperience}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Passport Number</Typography>
-                        <Typography>{detailsObject.employmentDetails.passportNumber}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Collegue Details</Typography>
-                        <Typography>{detailsObject.employmentDetails.collegeDetails}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Property Details</Typography>
-                        <Typography>{detailsObject.employmentDetails.propertyDetails}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Annual Income</Typography>
-                        <Typography>{detailsObject.employmentDetails.annualIncome}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Monthly Income</Typography>
-                        <Typography>{detailsObject.employmentDetails.monthlyIncome}</Typography>
-                      </Stack>
-                    </Grid>
-                    {/* <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Company Name</Typography>
-                        <Typography>{detailsObject.employmentDetails.companyName}</Typography>
-                      </Stack>
-                    </Grid> */}
-                  </Grid>
-                </ListItem>
-
-
+              <Grid container>
+                  {Object.entries(educationDetailsFormData).map(([key, value]: any, index: number) => {
+                    return value?.type === 'file' ? null : (
+                      <>
+                        <Grid item xs={6} key={index}>
+                          <Typography color="secondary">{value?.label} </Typography>
+                          {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                            <Typography>{value?.value !== '' ? value?.value : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && !value?.isMulti && (
+                            <Typography>{value?.value?.label ? value?.value?.label : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && value?.isMulti && (
+                            <Typography>
+                              {value?.value?.length > 0
+                                ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                    return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
+                                  }, '')
+                                : '--'}
+                            </Typography>
+                          )}
+                          {value?.type === 'date' && (
+                            <Typography>{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
+                          )}
+                          {value?.type === 'time' && <Typography>{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>}
+                        </Grid>
+                        {(index + 1) % 2 == 0 && (
+                          <Grid item xs={12} key={index}>
+                            <hr
+                              style={{
+                                borderColor: 'rgba(0, 0, 0, 0.1)',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                margin: '20px 0',
+                                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
+                              }}
+                            />{' '}
+                          </Grid>
+                        )}
+                      </>
+                    );
+                  })}
+                </Grid>
               </List>
             </MainCard>
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+            <MainCard>
               <List sx={{ py: 0 }}>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Family Status</Typography>
-                        <Typography>{detailsObject.familyDeatails.familystatus}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Family Type</Typography>
-                        <Typography>{detailsObject.familyDeatails.familytype}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Father Name</Typography>
-                        <Typography>{detailsObject.familyDeatails.farhername}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Religion</Typography>
-                        <Typography>{detailsObject.familyDeatails.religion}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Cast</Typography>
-                        <Typography>{detailsObject.familyDeatails.cast}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Status</Typography>
-                        <Typography>{detailsObject.familyDeatails.status}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Pension</Typography>
-                        <Typography>{detailsObject.familyDeatails.pension}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Mother Name</Typography>
-                        <Typography>{detailsObject.familyDeatails.mothername}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Maiden Name</Typography>
-                        <Typography>{detailsObject.familyDeatails.maidenname}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Mother Religion</Typography>
-                        <Typography>{detailsObject.familyDeatails.mothereligion}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Mother Cast</Typography>
-                        <Typography>{detailsObject.familyDeatails.mothercast}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Permanent Address</Typography>
-                        <Typography>{detailsObject.familyDeatails.peramanentaddres}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Present Address</Typography>
-                        <Typography>{detailsObject.familyDeatails.presenttaddres}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">No.of Brothers</Typography>
-                        <Typography>{detailsObject.familyDeatails.noofbrothers}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">No.of sisters</Typography>
-                        <Typography>{detailsObject.familyDeatails.noofsisters}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Ref.Name</Typography>
-                        <Typography>{detailsObject.familyDeatails.refname}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Ref.Number</Typography>
-                        <Typography>{detailsObject.familyDeatails.refnumber}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Ref.Relation</Typography>
-                        <Typography>{detailsObject.familyDeatails.refrelation}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Ref.Address</Typography>
-                        <Typography>{detailsObject.familyDeatails.refaddress}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
+              <Grid container>
+                  {Object.entries(familyDetailsFormData).map(([key, value]: any, index: number) => {
+                    return value?.type === 'file' ? null : (
+                      <>
+                        <Grid item xs={6} key={index}>
+                          <Typography color="secondary">{value?.label} </Typography>
+                          {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                            <Typography>{value?.value !== '' ? value?.value : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && !value?.isMulti && (
+                            <Typography>{value?.value?.label ? value?.value?.label : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && value?.isMulti && (
+                            <Typography>
+                              {value?.value?.length > 0
+                                ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                    return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
+                                  }, '')
+                                : '--'}
+                            </Typography>
+                          )}
+                          {value?.type === 'date' && (
+                            <Typography>{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
+                          )}
+                          {value?.type === 'time' && <Typography>{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>}
+                        </Grid>
+                        {(index + 1) % 2 == 0 && (
+                          <Grid item xs={12} key={index}>
+                            <hr
+                              style={{
+                                borderColor: 'rgba(0, 0, 0, 0.1)',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                margin: '20px 0',
+                                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
+                              }}
+                            />{' '}
+                          </Grid>
+                        )}
+                      </>
+                    );
+                  })}
+                </Grid>
               </List>
             </MainCard>
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={3}>
           <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+            <MainCard>
               <List sx={{ py: 0 }}>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Loking For</Typography>
-                        <Typography>{detailsObject.partnerDetails.lokingfor}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Age From</Typography>
-                        <Typography>{detailsObject.partnerDetails.agefrom}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Age From</Typography>
-                        <Typography>{detailsObject.partnerDetails.ageto}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">height From</Typography>
-                        <Typography>{detailsObject.partnerDetails.heightfrom}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Height To</Typography>
-                        <Typography>{detailsObject.partnerDetails.heightto}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Family Status</Typography>
-                        <Typography>{detailsObject.partnerDetails.familystatu}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Ready For Intercast</Typography>
-                        <Typography>{detailsObject.partnerDetails.reddyforintercast}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Khuja Dosham</Typography>
-                        <Typography>{detailsObject.partnerDetails.khujadosham}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Complexion</Typography>
-                        <Typography>{detailsObject.partnerDetails.complexion}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Partener Smoke</Typography>
-                        <Typography>{detailsObject.partnerDetails.partenerSmoke}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Partener Drink</Typography>
-                        <Typography>{detailsObject.partnerDetails.partenerDrink}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Partener Education</Typography>
-                        <Typography>{detailsObject.partnerDetails.partenerEducation}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-                <ListItem divider={!matchDownMD}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Partener Profession</Typography>
-                        <Typography>{detailsObject.partnerDetails.partenerProfession}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={0.5}>
-                        <Typography color="secondary">Passport</Typography>
-                        <Typography>{detailsObject.partnerDetails.passport}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </ListItem>
+              <Grid container>
+                  {Object.entries(partnerDetailsFormData).map(([key, value]: any, index: number) => {
+                    return value?.type === 'file' ? null : (
+                      <>
+                        <Grid item xs={6} key={index}>
+                          <Typography color="secondary">{value?.label} </Typography>
+                          {(value?.type == 'text' || value?.type == 'email' || value?.type == 'number') && (
+                            <Typography>{value?.value !== '' ? value?.value : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && !value?.isMulti && (
+                            <Typography>{value?.value?.label ? value?.value?.label : '--'}</Typography>
+                          )}
+                          {value?.type === 'select' && value?.isMulti && (
+                            <Typography>
+                              {value?.value?.length > 0
+                                ? value?.value?.reduce((acc: any, item: any, index: number) => {
+                                    return acc + item.label + (index === value?.value?.length - 1 ? '' : ', ');
+                                  }, '')
+                                : '--'}
+                            </Typography>
+                          )}
+                          {value?.type === 'date' && (
+                            <Typography>{value?.value ? moment(value?.value).format('DD/MM/YYYY') : '--'}</Typography>
+                          )}
+                          {value?.type === 'time' && <Typography>{value?.value ? moment(value?.value).format('HH:mm') : '--'}</Typography>}
+                        </Grid>
+                        {(index + 1) % 2 == 0 && (
+                          <Grid item xs={12} key={index}>
+                            <hr
+                              style={{
+                                borderColor: 'rgba(0, 0, 0, 0.1)',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                margin: '20px 0',
+                                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
+                              }}
+                            />{' '}
+                          </Grid>
+                        )}
+                      </>
+                    );
+                  })}
+                </Grid>
               </List>
             </MainCard>
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={4}>
           <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+            <MainCard>
               <List sx={{ py: 0 }}>
                 <ListItem divider={!matchDownMD}>
                   {/* <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={0.5}> */}
-                        <Box
-                          p={3}
-                          sx={{
-                            width: "80%",
-                            maxWidth: '100%',
-                            margin: "auto",
-                            backgroundColor: "white",
-                            borderRadius: 2,
-                            boxShadow: 3,
-                          }}
+                  <Box
+                    p={3}
+                    sx={{
+                      width: '80%',
+                      maxWidth: '100%',
+                      margin: 'auto',
+                      backgroundColor: 'white',
+                      borderRadius: 2,
+                      boxShadow: 3
+                    }}
+                  >
+                    {/* Image Section */}
+                    <Card
+                      sx={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        borderRadius: '8px',
+                        padding: 2,
+                        marginBottom: 2 // Add spacing here
+                      }}
+                    >
+                      <img
+                        src="https://cdn.pixabay.com/photo/2022/11/09/00/44/aadhaar-card-7579588_1280.png"
+                        alt="Sample"
+                        style={{
+                          width: '100%',
+                          maxWidth: '100%',
+                          borderRadius: '8px'
+                        }}
+                      />
+                    </Card>
+
+                    <Card
+                      sx={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        borderRadius: '8px',
+                        padding: 2,
+                        marginBottom: 2 // Add spacing here
+                      }}
+                    >
+                      <Grid
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="space-between"
+                        gap={2} // Space between the items
+                      >
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" sx={{ padding: 1, flex: 1, backgroundColor: 'primary' }}>
+                          Aadhar Uploaded By
+                        </Button>
+                        {/* </Card> */}
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" sx={{ padding: 1, flex: 1 }}>
+                          Aadhar Verified By
+                        </Button>
+                        {/* </Card> */}
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" sx={{ padding: 1, flex: 1 }}>
+                          Aadhar Verified Date
+                        </Button>
+                        {/* </Card> */}
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" sx={{ padding: 1, flex: 1 }}>
+                          Delete
+                        </Button>
+                        {/* </Card> */}
+                      </Grid>
+                    </Card>
+
+                    <Card
+                      sx={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        borderRadius: '8px',
+                        padding: 2,
+                        marginBottom: 2 // Add spacing here
+                      }}
+                    >
+                      <Grid
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="space-between"
+                        gap={2} // Space between the items
+                      >
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" startIcon={<CheckCircleIcon />} sx={{ padding: 1, flex: 1, backgroundColor: 'green' }}>
+                          AE100625
+                        </Button>
+                        {/* </Card> */}
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" startIcon={<CheckCircleIcon />} sx={{ padding: 1, flex: 1, backgroundColor: 'green' }}>
+                          AEADMIN
+                        </Button>
+                        {/* </Card> */}
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button
+                          variant="contained"
+                          startIcon={<CheckCircleIcon />}
+                          sx={{ textAlign: 'center', flex: 1, backgroundColor: 'green' }}
                         >
-                          {/* Image Section */}
-                          <Card
-                            sx={{
-                              width: '100%',
-                              maxWidth: '100%',
-                              borderRadius: '8px',
-                              padding: 2,
-                              marginBottom: 2, // Add spacing here
-                            }}
-                          >
-                            <img
-                              src="https://cdn.pixabay.com/photo/2022/11/09/00/44/aadhaar-card-7579588_1280.png"
-                              alt="Sample"
-                              style={{
-                                width: '100%',
-                                maxWidth: '100%',
-                                borderRadius: '8px',
-                              }}
-                            />
-                          </Card>
+                          20-12-2024 01:59:44
+                        </Button>
+                        {/* </Card> */}
+                        {/* <Card sx={{ padding: 1, flex: 1 }}> */}
+                        <Button variant="contained" startIcon={<DeleteIcon />} sx={{ padding: 1, flex: 1, backgroundColor: 'green' }}>
+                          Delete
+                        </Button>
+                        {/* </Card> */}
+                      </Grid>
+                    </Card>
 
-
-                          <Card
-                            sx={{
-                             
-                              width: '100%',
-                              maxWidth: '100%',
-                              borderRadius: '8px',
-                              padding: 2,
-                              marginBottom: 2, // Add spacing here
-                            }}
-                          >
-                            <Grid
-                              display="flex"
-                              flexDirection="row"
-                              justifyContent="space-between"
-                              gap={2} // Space between the items
-                              
-                            >
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                                <Button variant='contained' sx={{ padding: 1, flex: 1 ,  backgroundColor:'primary' }}>Aadhar Uploaded By</Button>
-                              {/* </Card> */}
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                                <Button  variant='contained' sx={{ padding: 1, flex: 1 }}>Aadhar Verified By</Button>
-                              {/* </Card> */}
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                                <Button  variant='contained' sx={{ padding: 1, flex: 1 }}>Aadhar Verified Date</Button>
-                              {/* </Card> */}
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                                <Button  variant='contained' sx={{ padding: 1, flex: 1 }}>Delete</Button>
-                              {/* </Card> */}
-                            </Grid>
-                          </Card>
-
-                          <Card
-                            sx={{
-                             
-                              width: '100%',
-                              maxWidth: '100%',
-                              borderRadius: '8px',
-                              padding: 2,
-                              marginBottom: 2, // Add spacing here
-                            }}
-                          >
-                            <Grid
-                              display="flex"
-                              flexDirection="row"
-                              justifyContent="space-between"
-                              gap={2} // Space between the items
-                              
-                            >
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                              <Button
-                                  variant="contained"
-                                
-                                  startIcon={<CheckCircleIcon />}
-                                  sx={{ padding: 1, flex: 1 ,  backgroundColor:'green' }}
-                                >
-                                  AE100625
-                                </Button>
-                              {/* </Card> */}
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                              <Button
-                                  variant="contained"
-                                
-                                  startIcon={<CheckCircleIcon />}
-                                  sx={{ padding: 1, flex: 1 ,  backgroundColor:'green' }}
-                                >
-                                   AEADMIN
-                                </Button>
-                              {/* </Card> */}
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                              <Button
-                                  variant="contained"
-                                
-                                  startIcon={<CheckCircleIcon />}
-                                  sx={{ textAlign:'center', flex: 1 ,  backgroundColor:'green' }}
-                                >
-                                  20-12-2024 01:59:44
-                                </Button>
-                              {/* </Card> */}
-                              {/* <Card sx={{ padding: 1, flex: 1 }}> */}
-                              <Button
-                                  variant="contained"
-                                
-                                  startIcon={<DeleteIcon />}
-                                  sx={{ padding: 1, flex: 1 ,  backgroundColor:'green' }}
-                                >
-                                  Delete
-                                </Button>
-                              {/* </Card> */}
-                            </Grid>
-                          </Card>
-
-
-
-
-
-                          {/* Buttons Section */}
-                          {/* <Paper elevation={3} sx={{ p: 2 }}> */}
-                          {/* <Grid container spacing={2} alignItems="center">
+                    {/* Buttons Section */}
+                    {/* <Paper elevation={3} sx={{ p: 2 }}> */}
+                    {/* <Grid container spacing={2} alignItems="center">
                               <Grid item xs={12} sm={3}>
                                 <Button
                                   variant="contained"
@@ -1662,8 +1285,8 @@ export default function ViewProfile() {
                               </Grid>
                             </Grid>
                           {/* </Paper> */}
-                        </Box>
-                      {/* </Stack>
+                  </Box>
+                  {/* </Stack>
                     </Grid>
                   </Grid> */}
                 </ListItem>
@@ -1672,17 +1295,15 @@ export default function ViewProfile() {
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={5}>
-
           <Grid item xs={12} style={{ marginTop: '5px' }}>
-            <MainCard >
+            <MainCard>
               <List sx={{ py: 0 }}>
                 <ListItem divider={!matchDownMD}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                      <Stack >
+                      <Stack>
                         <form onSubmit={handleCustomerInfoSubmit} noValidate>
                           <Grid container spacing={2}>
-
                             <Grid item xs={12}>
                               <TextField
                                 label="Comment"
@@ -1701,14 +1322,13 @@ export default function ViewProfile() {
                               {/* <CommonTextAreaField inputProps={formData.addcomments} onChange={handleChanges} /> */}
                             </Grid>
 
-                            <Grid item xs={12} textAlign={"end"}>
+                            <Grid item xs={12} textAlign={'end'}>
                               <Button type="submit" variant="contained" color="primary">
                                 Submit
                               </Button>
                             </Grid>
                           </Grid>
                         </form>
-
                       </Stack>
 
                       {/* Comments Table */}
@@ -1742,10 +1362,9 @@ export default function ViewProfile() {
               </List>
             </MainCard>
           </Grid>
-
         </TabPanel>
         <TabPanel value={value} index={6}>
-          <Grid item xs={12} style={{ marginTop: "5px" }}>
+          <Grid item xs={12} style={{ marginTop: '5px' }}>
             <MainCard>
               <List sx={{ py: 0 }}>
                 <ListItem divider={!matchDownMD}>
@@ -1784,7 +1403,7 @@ export default function ViewProfile() {
                                 autoComplete="off"
                               />
                             </Grid> */}
-                            <Grid item xs={12} textAlign={"end"}>
+                            <Grid item xs={12} textAlign={'end'}>
                               <Button type="submit" variant="contained" color="primary">
                                 Submit
                               </Button>
@@ -1823,8 +1442,8 @@ export default function ViewProfile() {
               </List>
             </MainCard>
           </Grid>
-        </TabPanel>;
-      </Grid >
-    </Grid >
+        </TabPanel>
+      </Grid>
+    </Grid>
   );
 }
